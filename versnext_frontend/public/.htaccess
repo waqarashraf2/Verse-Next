@@ -1,0 +1,7 @@
+RewriteEngine On
+
+RewriteCond %{HTTPS} !=on [OR]
+RewriteCond %{HTTP_HOST} ^www\.versenext\.com$ [NC]
+RewriteRule ^ https://versenext.com%{REQUEST_URI} [R=301,L]
+
+DirectoryIndex index.html

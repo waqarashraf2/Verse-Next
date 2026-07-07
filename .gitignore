@@ -1,0 +1,42 @@
+# Dependencies
+node_modules/
+vendor/
+
+# Environment and secrets
+.env
+.env.*
+!.env.example
+!.env.production.example
+auth.json
+*.pem
+
+# Build outputs and caches
+.next/
+out/
+build/
+public/build/
+public/hot
+coverage/
+*.tsbuildinfo
+.phpunit.cache/
+.phpunit.result.cache
+
+# Local storage and generated files
+storage/*.key
+storage/pail/
+public/storage/
+
+# Editor and OS files
+.DS_Store
+Thumbs.db
+.idea/
+.vscode/
+.fleet/
+.nova/
+.zed/
+
+# Nested Git metadata kept locally while parent repo stores real files
+versnext_frontend/.git-local/
+versenext_backend/.git-local/
+versnext_frontend/.git-parent-hidden/
+versenext_backend/.git-parent-hidden/

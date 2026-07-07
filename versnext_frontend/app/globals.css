@@ -1,0 +1,214 @@
+@import "tailwindcss";
+
+:root {
+  --bg: #f7f8fb;
+  --surface: #ffffff;
+  --surface-soft: #f1f4f8;
+  --text: #071633;
+  --muted: #627089;
+  --border: #dfe5ee;
+  --brand: #4d61b7;
+  --brand-deep: #071633;
+  --brand-soft: #eef1ff;
+  --accent: #6f7ed1;
+  --accent-soft: #f4f6ff;
+  --navy: #071633;
+  --navy-soft: #102345;
+  --gold: #4d61b7;
+  --gold-soft: #eef1ff;
+}
+
+[data-theme="dark"] {
+  --bg: #07101f;
+  --surface: #0d1b34;
+  --surface-soft: #102345;
+  --text: #eef3fb;
+  --muted: #a9b4c6;
+  --border: #263a5c;
+  --brand: #7f90f0;
+  --brand-deep: #071633;
+  --brand-soft: #172454;
+  --accent: #4d61b7;
+  --accent-soft: #111a3c;
+  --navy: #050b16;
+  --navy-soft: #102345;
+  --gold: #7f90f0;
+  --gold-soft: #172454;
+}
+
+[data-theme="blue"] {
+  --bg: #f6f8fc;
+  --surface: #ffffff;
+  --surface-soft: #eef2f8;
+  --text: #071633;
+  --muted: #596a86;
+  --border: #d8e0ec;
+  --brand: #4d61b7;
+  --brand-deep: #071633;
+  --brand-soft: #eef1ff;
+  --accent: #6f7ed1;
+  --accent-soft: #f4f6ff;
+  --navy: #071633;
+  --navy-soft: #102345;
+  --gold: #4d61b7;
+  --gold-soft: #eef1ff;
+}
+
+/* Smooth scrolling */
+html {
+  scroll-behavior: smooth;
+}
+
+/* Hide scrollbar */
+body {
+  overflow-x: hidden;
+  background: var(--bg);
+  color: var(--text);
+}
+
+body::-webkit-scrollbar {
+  width: 8px;
+}
+
+body::-webkit-scrollbar-track {
+  background: #f1f1f1;
+}
+
+body::-webkit-scrollbar-thumb {
+  background: var(--brand);
+  border-radius: 4px;
+}
+
+/* Selection color */
+::selection {
+  background-color: var(--brand);
+  color: var(--navy);
+}
+
+main > div {
+  animation: pageFadeUp 560ms ease both;
+}
+
+@keyframes pageFadeUp {
+  from {
+    opacity: 0;
+    transform: translateY(14px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    scroll-behavior: auto !important;
+    transition-duration: 0.001ms !important;
+  }
+}
+
+/* Keep legacy Tailwind utility colors aligned with the Verse Next theme. */
+.text-blue-600,
+.text-blue-500,
+.text-blue-400,
+.text-blue-300,
+.text-amber-600 {
+  color: var(--brand) !important;
+}
+
+.text-blue-200,
+.text-blue-100 {
+  color: #dbe2ff !important;
+}
+
+.bg-blue-700,
+.bg-blue-600,
+.bg-blue-500,
+.bg-blue-400,
+.bg-amber-50 {
+  background-color: var(--brand) !important;
+}
+
+.bg-blue-50,
+.bg-blue-500\/10,
+.bg-amber-50 {
+  background-color: var(--brand-soft) !important;
+}
+
+.border-blue-100,
+.border-blue-500\/15,
+.hover\:border-blue-500\/30:hover {
+  border-color: rgba(77, 97, 183, 0.28) !important;
+}
+
+.hover\:text-blue-600:hover {
+  color: var(--brand) !important;
+}
+
+.hover\:bg-blue-600:hover,
+.hover\:bg-blue-700:hover,
+.hover\:bg-blue-400:hover {
+  background-color: #4355a5 !important;
+}
+
+.from-blue-600 {
+  --tw-gradient-from: #4d61b7 var(--tw-gradient-from-position) !important;
+  --tw-gradient-to: rgba(77, 97, 183, 0) var(--tw-gradient-to-position) !important;
+  --tw-gradient-stops: var(--tw-gradient-from), var(--tw-gradient-to) !important;
+}
+
+.via-blue-950 {
+  --tw-gradient-to: rgba(7, 22, 51, 0) var(--tw-gradient-to-position) !important;
+  --tw-gradient-stops: var(--tw-gradient-from), #102345 var(--tw-gradient-via-position), var(--tw-gradient-to) !important;
+}
+
+.to-slate-950,
+.from-slate-950,
+.bg-slate-950 {
+  --tw-gradient-to: #071633 var(--tw-gradient-to-position) !important;
+  background-color: #071633 !important;
+}
+
+.shadow-blue-950\/10,
+.shadow-blue-950\/30 {
+  --tw-shadow-color: rgba(7, 22, 51, 0.3) !important;
+}
+
+.text-\[\#d7a915\],
+.text-\[\#e8c65a\] {
+  color: #4d61b7 !important;
+}
+
+.bg-\[\#d7a915\],
+.bg-\[\#e8c65a\] {
+  background-color: #4d61b7 !important;
+}
+
+.border-\[\#d7a915\],
+.hover\:border-\[\#d7a915\]:hover {
+  border-color: rgba(77, 97, 183, 0.42) !important;
+}
+
+.from-\[\#d7a915\] {
+  --tw-gradient-from: #4d61b7 var(--tw-gradient-from-position) !important;
+  --tw-gradient-to: rgba(77, 97, 183, 0) var(--tw-gradient-to-position) !important;
+  --tw-gradient-stops: var(--tw-gradient-from), var(--tw-gradient-to) !important;
+}
+
+.to-\[\#e8c65a\],
+.via-\[\#e8c65a\] {
+  --tw-gradient-to: #6f7ed1 var(--tw-gradient-to-position) !important;
+}
+
+.focus\:border-\[\#3B82F6\]:focus {
+  border-color: var(--brand) !important;
+}
+
+.focus\:ring-\[\#3B82F6\]\/20:focus {
+  --tw-ring-color: rgba(77, 97, 183, 0.2) !important;
+}

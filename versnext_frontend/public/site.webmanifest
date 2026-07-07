@@ -1,0 +1,16 @@
+{
+  "name": "Verse Next",
+  "short_name": "Verse Next",
+  "description": "AI-powered digital solutions for websites, software, apps, SEO, marketing, and automation.",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#ffffff",
+  "theme_color": "#0f172a",
+  "icons": [
+    {
+      "src": "/icon-blue.png",
+      "sizes": "512x512",
+      "type": "image/png"
+    }
+  ]
+}
