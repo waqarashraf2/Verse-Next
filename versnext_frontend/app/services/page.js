@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import Link from "next/link";
 import { motion, AnimatePresence } from "framer-motion";
 import { 
@@ -29,12 +29,21 @@ import {
   Headphones,
   Award,
   Clock,
-  Star
+  Star,
+  X
 } from "lucide-react";
 
 // ========== SERVICES PAGE ==========
 export default function ServicesPage() {
   const [selectedService, setSelectedService] = useState(null);
+
+  useEffect(() => {
+    document.body.style.overflow = selectedService ? "hidden" : "";
+
+    return () => {
+      document.body.style.overflow = "";
+    };
+  }, [selectedService]);
 
   const services = [
     {
@@ -484,54 +493,56 @@ export default function ServicesPage() {
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            className="fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4"
+            className="fixed inset-0 z-[120] grid place-items-center overflow-y-auto bg-[#071633]/70 px-3 py-5 backdrop-blur-sm sm:px-6 sm:py-8"
             onClick={() => setSelectedService(null)}
           >
             <motion.div
-              initial={{ opacity: 0, scale: 0.9, y: 20 }}
+              initial={{ opacity: 0, scale: 0.96, y: 16 }}
               animate={{ opacity: 1, scale: 1, y: 0 }}
-              exit={{ opacity: 0, scale: 0.9, y: 20 }}
-              className="bg-white rounded-2xl max-w-4xl w-full max-h-[90vh] overflow-y-auto"
+              exit={{ opacity: 0, scale: 0.96, y: 16 }}
+              transition={{ duration: 0.2 }}
+              className="flex w-full max-w-4xl flex-col overflow-hidden rounded-2xl border border-white/80 bg-white shadow-2xl shadow-[#071633]/35 max-h-[calc(100vh-40px)] sm:max-h-[calc(100vh-64px)]"
               onClick={(e) => e.stopPropagation()}
             >
-              <div className="p-8">
-                {/* Modal Header */}
-                <div className="flex items-start justify-between mb-8">
-                  <div className="flex items-start gap-6">
-                    <div className="w-20 h-20 rounded-2xl flex items-center justify-center flex-shrink-0" 
+              {/* Modal Header */}
+              <div className="flex flex-shrink-0 items-start justify-between gap-4 border-b border-gray-200 bg-white px-5 py-5 sm:px-8 sm:py-6">
+                <div className="flex min-w-0 items-start gap-4 sm:gap-6">
+                  <div className="flex h-14 w-14 flex-shrink-0 items-center justify-center rounded-2xl sm:h-20 sm:w-20" 
                           style={{ backgroundColor: `${selectedService.color}10` }}>
-                      <selectedService.icon size={40} style={{ color: selectedService.color }} />
-                    </div>
-                    
-                    <div>
-                      <h3 className="text-3xl font-bold text-[#071633]">{selectedService.title}</h3>
-                      <p className="text-[#64748B] mt-2 max-w-2xl">{selectedService.description}</p>
-                      
-                      <div className="flex flex-wrap gap-2 mt-4">
-                        {selectedService.expertise.map((exp, idx) => (
-                          <span
-                            key={idx}
-                            className="px-3 py-1.5 rounded-full text-sm font-medium"
-                            style={{ 
-                              backgroundColor: `${selectedService.color}15`,
-                              color: selectedService.color
-                            }}
-                          >
-                            {exp}
-                          </span>
-                        ))}
-                      </div>
-                    </div>
+                    <selectedService.icon className="h-7 w-7 sm:h-10 sm:w-10" style={{ color: selectedService.color }} />
                   </div>
                   
-                  <button
-                    onClick={() => setSelectedService(null)}
-                    className="w-10 h-10 rounded-xl border border-gray-200 flex items-center justify-center hover:border-[#071633] transition-colors flex-shrink-0"
-                  >
-                    X
-                  </button>
+                  <div className="min-w-0">
+                    <h3 className="text-2xl font-bold leading-tight text-[#071633] sm:text-3xl">{selectedService.title}</h3>
+                    <p className="mt-2 max-w-2xl text-sm leading-relaxed text-[#64748B] sm:text-base">{selectedService.description}</p>
+                    
+                    <div className="mt-4 flex flex-wrap gap-2">
+                      {selectedService.expertise.map((exp, idx) => (
+                        <span
+                          key={idx}
+                          className="rounded-full px-3 py-1.5 text-xs font-medium sm:text-sm"
+                          style={{ 
+                            backgroundColor: `${selectedService.color}15`,
+                            color: selectedService.color
+                          }}
+                        >
+                          {exp}
+                        </span>
+                      ))}
+                    </div>
+                  </div>
                 </div>
+                
+                <button
+                  onClick={() => setSelectedService(null)}
+                  className="flex h-11 w-11 flex-shrink-0 items-center justify-center rounded-xl border border-gray-200 text-[#071633] transition hover:border-[#071633] hover:bg-gray-50"
+                  aria-label="Close service details"
+                >
+                  <X className="h-5 w-5" />
+                </button>
+              </div>
 
+              <div className="min-h-0 flex-1 overflow-y-auto px-5 py-6 sm:px-8 sm:py-8">
                 {/* Modal Content */}
                 <div className="grid lg:grid-cols-2 gap-8">
                   {/* Features */}
