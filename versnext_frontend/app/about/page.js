@@ -260,7 +260,7 @@ export default function AboutPage() {
     <div className="min-h-screen bg-white">
       {/* ========== Cursor Effect ========== */}
       {/* ========== HERO SECTION ========== */}
-      <section className="relative py-32 overflow-hidden">
+      <section className="verse-wave-section relative py-32 overflow-hidden">
         <div className="absolute inset-0 bg-gradient-to-b from-white to-gray-50" />
         
         {/* Background Pattern */}
@@ -321,7 +321,7 @@ export default function AboutPage() {
       </section>
 
       {/* ========== OUR STORY SECTION ========== */}
-      <section className="py-20 bg-gray-50">
+      <section className="verse-wave-section py-20 bg-gray-50">
         <div className="container mx-auto px-4 sm:px-6 lg:px-8">
           <div className="grid lg:grid-cols-2 gap-16 items-center">
             <motion.div
@@ -417,7 +417,7 @@ export default function AboutPage() {
       </section>
 
       {/* ========== OUR VALUES SECTION ========== */}
-      <section className="py-20 bg-white">
+      <section className="verse-wave-section py-20 bg-white">
         <div className="container mx-auto px-4 sm:px-6 lg:px-8">
           <motion.div
             initial={{ opacity: 0, y: 30 }}
@@ -488,7 +488,7 @@ export default function AboutPage() {
       </section>
 
       {/* ========== OUR TEAM SECTION ========== */}
-      <section className="py-20 bg-gray-50">
+      <section className="verse-wave-section py-20 bg-gray-50">
         <div className="container mx-auto px-4 sm:px-6 lg:px-8">
           <motion.div
             initial={{ opacity: 0, y: 30 }}
@@ -544,7 +544,7 @@ export default function AboutPage() {
       </section>
 
       {/* ========== EXPERTISE SECTION ========== */}
-      <section className="py-20 bg-white">
+      <section className="verse-wave-section py-20 bg-white">
         <div className="container mx-auto px-4 sm:px-6 lg:px-8">
           <motion.div
             initial={{ opacity: 0, y: 30 }}
@@ -634,7 +634,7 @@ export default function AboutPage() {
       </section>
 
       {/* ========== CTA SECTION ========== */}
-      <section className="py-32 bg-gradient-to-br from-[#071633] to-[#263a5c] mb-2">
+      <section className="verse-wave-section py-32 bg-gradient-to-br from-[#071633] to-[#263a5c] mb-2">
         <div className="container mx-auto px-4 sm:px-6 lg:px-8">
           <motion.div
             initial={{ opacity: 0, scale: 0.95 }}

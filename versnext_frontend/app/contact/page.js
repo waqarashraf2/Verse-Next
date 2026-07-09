@@ -250,7 +250,7 @@ const handleSubmit = async (e) => {
     <div className="min-h-screen bg-white overflow-x-hidden">
       {/* ========== Cursor Effect ========== */}
       {/* ========== HERO SECTION ========== */}
-      <section className="relative py-16 sm:py-24 lg:py-32 overflow-hidden">
+      <section className="verse-wave-section relative py-16 sm:py-24 lg:py-32 overflow-hidden">
         <div className="absolute inset-0 bg-gradient-to-b from-white to-gray-50" />
         
         {/* Background Pattern */}
@@ -314,7 +314,7 @@ const handleSubmit = async (e) => {
       </section>
 
       {/* ========== CONTACT FORM & INFO ========== */}
-      <section className="py-12 sm:py-16 lg:py-20 bg-white px-2 sm:px-0">
+      <section className="verse-wave-section py-12 sm:py-16 lg:py-20 bg-white px-2 sm:px-0">
         <div className="container mx-auto px-3 sm:px-4 lg:px-6">
           <div className="max-w-6xl mx-auto">
             <div className="flex flex-col lg:grid lg:grid-cols-3 gap-6 sm:gap-8">
@@ -586,7 +586,7 @@ const handleSubmit = async (e) => {
       </section>
 
       {/* ========== FAQ SECTION ========== */}
-      <section className="py-12 sm:py-16 lg:py-20 bg-gray-50 px-2 sm:px-0">
+      <section className="verse-wave-section py-12 sm:py-16 lg:py-20 bg-gray-50 px-2 sm:px-0">
         <div className="container mx-auto px-3 sm:px-4 lg:px-6">
           <motion.div
             initial={{ opacity: 0, y: 30 }}
@@ -631,7 +631,7 @@ const handleSubmit = async (e) => {
       </section>
 
       {/* ========== SOCIAL & NEWSLETTER SECTION ========== */}
-      <section className="py-12 sm:py-16 lg:py-20 bg-white px-2 sm:px-0">
+      <section className="verse-wave-section py-12 sm:py-16 lg:py-20 bg-white px-2 sm:px-0">
         <div className="container mx-auto px-3 sm:px-4 lg:px-6">
           <div className="max-w-6xl mx-auto">
             <div className="flex flex-col lg:grid lg:grid-cols-2 gap-8 sm:gap-12 lg:gap-16">
@@ -738,7 +738,7 @@ const handleSubmit = async (e) => {
       </section>
 
       {/* ========== FINAL CTA SECTION ========== */}
-      <section className="py-12 sm:py-16 lg:py-20 bg-gradient-to-br from-[#071633] to-[#263a5c] px-2 sm:px-0">
+      <section className="verse-wave-section py-12 sm:py-16 lg:py-20 bg-gradient-to-br from-[#071633] to-[#263a5c] px-2 sm:px-0">
         <div className="container mx-auto px-3 sm:px-4 lg:px-6">
           <motion.div
             initial={{ opacity: 0, scale: 0.95 }}

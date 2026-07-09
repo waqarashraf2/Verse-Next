@@ -145,7 +145,7 @@ function ServiceCard({ service, index }: { service: Service; index: number }) {
       whileInView={{ opacity: 1, y: 0 }}
       viewport={{ once: true }}
       transition={{ delay: index * 0.04 }}
-      className="group rounded-2xl border border-slate-200 bg-white p-5 shadow-sm transition hover:-translate-y-1 hover:border-blue-500/30 hover:shadow-xl"
+      className="verse-wave-card group rounded-2xl border border-slate-200 bg-white p-5 shadow-sm transition hover:-translate-y-1 hover:border-blue-500/30 hover:shadow-xl"
     >
       <div className="mb-4 flex items-center justify-between">
         <div className="flex h-11 w-11 items-center justify-center rounded-xl bg-gradient-to-br from-blue-600 to-slate-950 text-white shadow-lg shadow-blue-950/10">
@@ -167,7 +167,7 @@ function ServiceCard({ service, index }: { service: Service; index: number }) {
 export default function Home() {
   return (
     <div className="min-h-screen bg-[var(--bg)] text-[var(--text)]">
-      <section className="relative min-h-screen overflow-hidden bg-[#050816] text-white">
+      <section className="verse-wave-section relative min-h-screen overflow-hidden bg-[#050816] text-white">
         <Image
           src={heroBg}
           alt="Verse Next AI-powered digital solutions platform for websites, software, SEO and automation"
@@ -257,7 +257,7 @@ export default function Home() {
         </div>
       </section>
 
-      <section className="bg-white px-4 py-20 sm:px-6 lg:px-8">
+      <section className="verse-wave-section bg-white px-4 py-20 sm:px-6 lg:px-8">
         <SectionHeader label="Services" title="Digital solutions with a practical business focus" text="Everything is designed to look professional, load fast, capture leads, and support long-term growth." />
         <div className="mx-auto grid max-w-7xl gap-5 md:grid-cols-2 lg:grid-cols-4">
           {services.map((service, index) => (
@@ -278,7 +278,7 @@ export default function Home() {
         </div>
       </section>
 
-      <section className="bg-slate-950 px-4 py-20 text-white sm:px-6 lg:px-8">
+      <section className="verse-wave-section bg-slate-950 px-4 py-20 text-white sm:px-6 lg:px-8">
         <div className="mx-auto max-w-7xl">
           <div className="max-w-3xl">
             <div className="mb-3 inline-flex rounded-full border border-white/10 bg-white/10 px-3 py-1.5 text-xs font-semibold text-blue-100">
@@ -324,7 +324,7 @@ export default function Home() {
         </div>
       </section>
 
-      <section className="relative overflow-hidden border-y border-slate-200 bg-slate-50 px-4 py-20 sm:px-6 lg:px-8">
+      <section className="verse-wave-section relative overflow-hidden border-y border-slate-200 bg-slate-50 px-4 py-20 sm:px-6 lg:px-8">
         <div className="absolute right-0 top-0 h-64 w-64 rounded-full bg-blue-500/10 blur-3xl" />
         <div className="relative mx-auto grid max-w-7xl gap-8 lg:grid-cols-[0.9fr_1.1fr]">
           <div className="rounded-3xl border border-slate-200 bg-white p-7 shadow-sm">
@@ -372,11 +372,11 @@ export default function Home() {
         </div>
       </section>
 
-      <section className="bg-white px-4 py-20 sm:px-6 lg:px-8">
+      <section className="verse-wave-section bg-white px-4 py-20 sm:px-6 lg:px-8">
         <SectionHeader label="Process" title="A clear process from idea to launch" text="No confusing handoff. We plan, design, build, test, and improve with your business goals in view." />
         <div className="mx-auto grid max-w-7xl gap-4 md:grid-cols-5">
           {processSteps.map(([number, title, text]) => (
-            <div key={number} className="relative overflow-hidden rounded-2xl border border-slate-200 bg-white p-5 shadow-sm transition hover:-translate-y-1 hover:shadow-lg">
+            <div key={number} className="verse-wave-card relative overflow-hidden rounded-2xl border border-slate-200 bg-white p-5 shadow-sm transition hover:-translate-y-1 hover:shadow-lg">
               <div className="absolute right-0 top-0 h-20 w-20 rounded-full bg-blue-500/5 blur-2xl" />
               <div className="mb-4 flex h-10 w-10 items-center justify-center rounded-xl bg-blue-500/10 text-sm font-bold text-blue-600">{number}</div>
               <h3 className="font-bold text-slate-950">{title}</h3>
@@ -386,7 +386,7 @@ export default function Home() {
         </div>
       </section>
 
-      <section className="bg-gradient-to-br from-slate-950 via-blue-950 to-slate-950 px-4 py-20 text-white sm:px-6 lg:px-8">
+      <section className="verse-wave-section bg-gradient-to-br from-slate-950 via-blue-950 to-slate-950 px-4 py-20 text-white sm:px-6 lg:px-8">
         <div className="mx-auto grid max-w-7xl gap-8 md:grid-cols-[1fr_0.8fr] md:items-center">
           <div>
             <div className="mb-3 text-xs font-semibold uppercase tracking-[0.18em] text-blue-200">Consultation</div>

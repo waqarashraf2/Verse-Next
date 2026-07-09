@@ -1,7 +1,13 @@
 export const metadata = {
   title: "Portfolio",
   description:
-    "View Verse Next portfolio examples across web development, ecommerce, mobile apps, UI/UX design, digital marketing, and business platforms.",
+    "View Verse Next portfolio examples from a Pakistan digital services company across web development, ecommerce, mobile apps, UI/UX design, digital marketing, and business platforms.",
+  keywords: [
+    "Pakistan web development portfolio",
+    "digital agency portfolio Pakistan",
+    "software projects Pakistan",
+    "Verse Next portfolio",
+  ],
   alternates: {
     canonical: "/portfolio",
   },

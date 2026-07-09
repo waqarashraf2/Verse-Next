@@ -208,7 +208,7 @@ export default function PortfolioPage() {
     <div className="min-h-screen bg-white">
       {/* ========== Cursor Effect ========== */}
       {/* ========== HERO SECTION ========== */}
-      <section className="relative py-32 overflow-hidden">
+      <section className="verse-wave-section relative py-32 overflow-hidden">
         <div className="absolute inset-0 bg-gradient-to-b from-white to-gray-50" />
         
         {/* Background Pattern */}
@@ -269,7 +269,7 @@ export default function PortfolioPage() {
       </section>
 
       {/* ========== FILTER SECTION ========== */}
-      <section className="py-12 bg-gray-50 top-20 z-30 shadow-sm">
+      <section className="verse-wave-section py-12 bg-gray-50 top-20 z-30 shadow-sm">
         <div className="container mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex flex-col lg:flex-row items-center justify-between gap-6">
             <div className="flex items-center gap-3">
@@ -304,7 +304,7 @@ export default function PortfolioPage() {
       </section>
 
       {/* ========== PORTFOLIO GRID ========== */}
-      <section className="py-20">
+      <section className="verse-wave-section py-20">
         <div className="container mx-auto px-4 sm:px-6 lg:px-8">
           <AnimatePresence mode="wait">
             {currentProjects.length > 0 ? (
@@ -466,7 +466,7 @@ export default function PortfolioPage() {
       </section>
 
       {/* ========== CTA SECTION ========== */}
-      <section className="py-32 bg-gradient-to-br from-[#071633] to-[#263a5c] mb-2">
+      <section className="verse-wave-section py-32 bg-gradient-to-br from-[#071633] to-[#263a5c] mb-2">
         <div className="container mx-auto px-4 sm:px-6 lg:px-8">
           <motion.div
             initial={{ opacity: 0, scale: 0.95 }}

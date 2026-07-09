@@ -27,6 +27,12 @@ export const metadata = {
   description: "Verse Next builds enterprise-grade websites, software, mobile apps, SEO systems, digital marketing campaigns, and AI automation platforms.",
   keywords: [
     "AI digital agency",
+    "Pakistan digital services",
+    "Pakistan web service providers",
+    "web development company Pakistan",
+    "digital agency Lahore",
+    "SEO services Pakistan",
+    "software company Pakistan",
     "enterprise web development",
     "Laravel development",
     "Next.js development",
@@ -75,6 +81,15 @@ export default function RootLayout({ children }) {
     logo: "https://versenext.com/icon-blue.png",
     description:
       "Verse Next is an AI-powered digital solutions platform for websites, software, mobile apps, SEO systems, digital marketing campaigns, and automation.",
+    areaServed: ["Pakistan", "Lahore", "Karachi", "Islamabad", "United States", "United Kingdom"],
+    knowsAbout: [
+      "Pakistan digital services",
+      "web development",
+      "software development",
+      "SEO services",
+      "digital marketing",
+      "AI automation",
+    ],
     founder: {
       "@type": "Person",
       name: "Waqar Ashraf",

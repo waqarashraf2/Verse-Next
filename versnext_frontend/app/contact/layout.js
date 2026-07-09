@@ -1,7 +1,13 @@
 export const metadata = {
   title: "Contact",
   description:
-    "Contact Verse Next to discuss a website, software platform, mobile app, SEO campaign, digital marketing project, or AI automation workflow.",
+    "Contact Verse Next in Lahore, Pakistan to discuss a website, software platform, mobile app, SEO campaign, digital marketing project, or AI automation workflow.",
+  keywords: [
+    "contact web development company Pakistan",
+    "hire digital agency Lahore",
+    "Pakistan SEO services contact",
+    "website development quote Pakistan",
+  ],
   alternates: {
     canonical: "/contact",
   },

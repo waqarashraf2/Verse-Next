@@ -173,7 +173,7 @@ export default function ServicesPage() {
       {/* ========== Cursor Effect ========== */}
 
       {/* ========== HERO SECTION ========== */}
-      <section className="relative py-32 overflow-hidden">
+      <section className="verse-wave-section relative py-32 overflow-hidden">
         <div className="absolute inset-0 bg-gradient-to-b from-white to-gray-50" />
         
         {/* Background Elements */}
@@ -252,7 +252,7 @@ export default function ServicesPage() {
       </section>
 
       {/* ========== SERVICES GRID ========== */}
-      <section className="py-20 bg-gray-50">
+      <section className="verse-wave-section py-20 bg-gray-50">
         <div className="container mx-auto px-4 sm:px-6 lg:px-8">
           <motion.div
             initial={{ opacity: 0, y: 30 }}
@@ -286,7 +286,7 @@ export default function ServicesPage() {
                   onClick={() => setSelectedService(service)}
                   className="group cursor-pointer"
                 >
-                  <div className="h-full bg-white rounded-2xl p-8 border border-gray-200 hover:border-[#4d61b7] transition-all duration-500 hover:shadow-2xl hover:-translate-y-2">
+                  <div className="verse-wave-card h-full bg-white rounded-2xl p-8 border border-gray-200 hover:border-[#4d61b7] transition-all duration-500 hover:shadow-2xl hover:-translate-y-2">
                     {/* Icon & Badge */}
                     <div className="flex items-start justify-between mb-6">
                       <motion.div
@@ -366,7 +366,7 @@ export default function ServicesPage() {
       </section>
 
       {/* ========== PROCESS SECTION ========== */}
-      <section className="py-32 bg-white">
+      <section className="verse-wave-section py-32 bg-white">
         <div className="container mx-auto px-4 sm:px-6 lg:px-8">
           <motion.div
             initial={{ opacity: 0, y: 30 }}
@@ -435,7 +435,7 @@ export default function ServicesPage() {
       </section>
 
       {/* ========== CTA SECTION ========== */}
-      <section className="py-32 bg-gradient-to-br from-[#071633] to-[#263a5c] mb-2">
+      <section className="verse-wave-section py-32 bg-gradient-to-br from-[#071633] to-[#263a5c] mb-2">
         <div className="container mx-auto px-4 sm:px-6 lg:px-8">
           <motion.div
             initial={{ opacity: 0, scale: 0.95 }}
