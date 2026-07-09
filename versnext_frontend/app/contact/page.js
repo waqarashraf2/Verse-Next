@@ -104,10 +104,10 @@ export default function ContactPage() {
   const contactInfo = [
     {
       icon: MapPin,
-      title: "Our Office",
-      details: ["Karachi, Pakistan", "Dubai, UAE", "London, UK"],
+      title: "Head Office",
+      details: ["Lahore, Pakistan", "Remote worldwide support", "Serving clients globally"],
       color: "#4d61b7",
-      description: "Visit us at our headquarters"
+      description: "Main office for Verse Next operations"
     },
     {
       icon: Mail,

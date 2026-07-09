@@ -105,7 +105,7 @@ const Footer = () => {
                   </svg>
                 </div>
                 <p className="text-slate-300">
-                  Karachi, Pakistan
+                  Lahore, Pakistan
                 </p>
               </div>
               <div className="flex items-start space-x-3">

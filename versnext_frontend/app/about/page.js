@@ -168,8 +168,8 @@ export default function AboutPage() {
       id: 1,
       name: "Waqar Ashraf",
       position: "CEO & Founder",
-      bio: "Expert in digital transformation and business strategy",
-      expertise: ["Strategy", "Leadership", "Innovation"],
+      bio: "Full stack web app and software developer leading digital strategy, product architecture, and delivery.",
+      expertise: ["Full Stack", "Web Apps", "Software"],
       experience: "12 Years",
       projects: 150,
       color: "#4d61b7"
@@ -178,48 +178,48 @@ export default function AboutPage() {
       id: 2,
       name: "Chudary Qaser",
       position: "CTO",
-      bio: "Expert in scalable architectures and emerging technologies",
-      expertise: ["Architecture", "DevOps", "AI/ML"],
+      bio: "Full stack web app and software developer focused on scalable systems, APIs, and emerging technologies.",
+      expertise: ["Full Stack", "APIs", "AI/ML"],
       experience: "9 Years",
       projects: 120,
       color: "#6f7ed1"
     },
     {
       id: 3,
-      name: "David Park",
-      position: "Creative Director",
-      bio: "Award-winning designer with focus on user-centered design",
-      expertise: ["UI/UX", "Branding", "Product Design"],
+      name: "Iqra Nawaz",
+      position: "Graphic Designer",
+      bio: "Creative graphic designer focused on brand visuals, social media creatives, and polished marketing assets.",
+      expertise: ["Branding", "Social Design", "Creatives"],
       experience: "8 Years",
       projects: 95,
       color: "#071633"
     },
     {
       id: 4,
-      name: "Maria Rodriguez",
-      position: "Head of Development",
-      bio: "Full-stack developer passionate about clean code and performance",
-      expertise: ["React", "Node.js", "Cloud"],
+      name: "Burhan Ishafaq",
+      position: "AI Video Editor",
+      bio: "AI video editor creating modern video content, motion edits, reels, and AI-assisted visual storytelling.",
+      expertise: ["AI Video", "Reels", "Motion"],
       experience: "7 Years",
       projects: 110,
       color: "#4d61b7"
     },
     {
       id: 5,
-      name: "James Wilson",
-      position: "Marketing Director",
-      bio: "Data-driven marketer with expertise in growth strategies",
-      expertise: ["SEO", "Analytics", "Growth"],
+      name: "Manat Zahra",
+      position: "SEO & Social Media Specialist",
+      bio: "SEO and social media specialist helping brands grow through search visibility, content planning, and campaigns.",
+      expertise: ["SEO", "Social Media", "Content"],
       experience: "6 Years",
       projects: 85,
       color: "#6f7ed1"
     },
     {
       id: 6,
-      name: "Lisa Taylor",
-      position: "Project Manager",
-      bio: "Agile expert ensuring projects are delivered on time and budget",
-      expertise: ["Agile", "Scrum", "Delivery"],
+      name: "Umair",
+      position: "Video Editor & Grapher",
+      bio: "Video editor and grapher producing clean edits, commercial visuals, brand reels, and visual content.",
+      expertise: ["Video Editing", "Graphy", "Reels"],
       experience: "5 Years",
       projects: 70,
       color: "#071633"
@@ -668,9 +668,9 @@ export default function AboutPage() {
                 <div className="text-center">
                   <div className="flex items-center justify-center gap-2 mb-4">
                     <MapPin className="text-[#6f7ed1]" size={20} />
-                    <div className="text-white font-medium">Karachi, Pakistan</div>
+                    <div className="text-white font-medium">Lahore, Pakistan</div>
                   </div>
-                  <div className="text-gray-300">Main Headquarters</div>
+                  <div className="text-gray-300">Head Office</div>
                 </div>
                 
                 <div className="text-center">
