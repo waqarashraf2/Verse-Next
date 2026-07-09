@@ -34,13 +34,13 @@ type Service = {
 const services: Service[] = [
   {
     title: "Website Development",
-    description: "Modern business websites, ecommerce stores, landing pages, and SEO-ready content structures.",
+    description: "Modern business websites, ecommerce stores, landing pages, and SEO-ready content structures for Pakistan and global clients.",
     icon: Globe2,
     tag: "Web",
   },
   {
     title: "Software Development",
-    description: "Dashboards, portals, SaaS products, CRMs, APIs, and internal business systems.",
+    description: "Web applications, business applications, dashboards, portals, SaaS products, CRMs, APIs, and internal systems.",
     icon: Code2,
     tag: "Software",
   },
@@ -105,6 +105,10 @@ const heroFeatures: Array<[string, ElementType]> = [
 ];
 
 const seoHighlights = [
+  {
+    title: "Website development and application development",
+    text: "Verse Next builds professional websites, web applications, business applications, ecommerce stores, dashboards, customer portals, admin panels, mobile app backends, and API-based software systems. Each project is planned for usability, performance, search visibility, lead generation, and long-term business growth.",
+  },
   {
     title: "AI-powered digital solutions platform",
     text: "Verse Next brings strategy, design, frontend development, Laravel backend development, SEO optimization, digital marketing, and AI automation into one professional delivery process. This helps a business avoid scattered tools and disconnected vendors while keeping the website, software, content, and lead flow aligned.",
@@ -185,14 +189,14 @@ export default function Home() {
               Verse Next digital solutions
             </div>
             <h1 className="text-[31px] font-semibold leading-[1.12] tracking-[-0.025em] text-white sm:text-[40px] lg:text-[48px]">
-              Verse Next AI-powered digital solutions platform for websites, software and SEO growth.
+              Verse Next website development, application development and SEO growth partner.
             </h1>
             <p className="mt-4 max-w-xl text-[15px] leading-7 text-slate-300">
-              Verse Next builds enterprise-grade websites, business software, mobile apps, SEO systems, digital marketing campaigns, and AI automation platforms with a sharp focus on performance, trust, search visibility, and lead generation.
+              Verse Next builds enterprise-grade websites, web applications, business software, mobile apps, SEO systems, digital marketing campaigns, and AI automation platforms with a sharp focus on performance, trust, search visibility, and lead generation.
             </p>
             <div className="mt-6 flex flex-col gap-3 sm:flex-row">
               <Link href="/contact" className="inline-flex items-center justify-center rounded-lg bg-blue-500 px-4 py-2.5 text-[13px] font-semibold text-white shadow-lg shadow-blue-950/30 transition hover:-translate-y-0.5 hover:bg-blue-400">
-                Start a Project <ArrowRight className="ml-2" size={15} />
+                Get Free Consultation <ArrowRight className="ml-2" size={15} />
               </Link>
               <Link href="/services" className="inline-flex items-center justify-center rounded-lg border border-white/15 bg-white/8 px-4 py-2.5 text-[13px] font-semibold text-white backdrop-blur transition hover:bg-white/12">
                 Explore Services

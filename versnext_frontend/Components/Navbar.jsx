@@ -77,7 +77,7 @@ const Navbar = () => {
                 href="/contact"
                 className="block rounded-xl bg-[#071633] px-5 py-2.5 text-[14px] font-semibold text-white shadow-lg shadow-[#071633]/20 transition hover:bg-[#4d61b7]"
               >
-                Get Started
+                Get Free Consultation
               </Link>
             </motion.div>
           </div>
@@ -113,7 +113,7 @@ const Navbar = () => {
                   </Link>
                 ))}
                 <Link href="/contact" className="mt-3 block w-full rounded-xl bg-[#071633] py-3 text-center text-sm font-semibold text-white shadow-sm hover:bg-[#4d61b7]" onClick={() => setIsOpen(false)}>
-                  Get Started
+                  Get Free Consultation
                 </Link>
               </div>
             </motion.div>
