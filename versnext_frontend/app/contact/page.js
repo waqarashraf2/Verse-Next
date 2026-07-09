@@ -112,7 +112,7 @@ export default function ContactPage() {
     {
       icon: Mail,
       title: "Email Us",
-      details: ["team@versenext.com", "mail@versenext.com", "careers@versenext.com"],
+      details: ["versanext@gmail.com", "team@versenext.com", "careers@versenext.com"],
       color: "#6f7ed1",
       description: "We respond within 24 hours"
     },
@@ -379,7 +379,7 @@ const handleSubmit = async (e) => {
                   
                   <div className="space-y-3 sm:space-y-4">
                     <a
-                      href="mailto:support@versenext.com"
+                      href="mailto:versanext@gmail.com"
                       className="block w-full px-4 sm:px-6 py-2.5 sm:py-3 bg-white text-[#071633] font-semibold rounded-lg hover:bg-gray-100 transition-colors text-center text-sm sm:text-base"
                     >
                       Email Support
@@ -721,7 +721,7 @@ const handleSubmit = async (e) => {
                       </div>
                     </div>
 
-                    <a href="mailto:team@versenext.com" className="w-full px-6 sm:px-8 py-2.5 sm:py-3 md:py-4 bg-[#071633] text-white font-semibold rounded-lg sm:rounded-xl hover:bg-[#263a5c] transition-colors flex items-center justify-center group text-sm sm:text-base">
+                    <a href="mailto:versanext@gmail.com" className="w-full px-6 sm:px-8 py-2.5 sm:py-3 md:py-4 bg-[#071633] text-white font-semibold rounded-lg sm:rounded-xl hover:bg-[#263a5c] transition-colors flex items-center justify-center group text-sm sm:text-base">
                       Subscribe to Newsletter
                       <ArrowRight className="w-4 h-4 sm:w-5 sm:h-5 ml-2 sm:ml-3 group-hover:translate-x-1 transition-transform" />
                     </a>

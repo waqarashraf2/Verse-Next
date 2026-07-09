@@ -87,7 +87,7 @@ export default function RootLayout({ children }) {
     contactPoint: {
       "@type": "ContactPoint",
       contactType: "customer support",
-      email: "support@versenext.com",
+      email: "versanext@gmail.com",
       url: "https://versenext.com/contact",
     },
   };

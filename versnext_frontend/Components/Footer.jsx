@@ -125,7 +125,7 @@ const Footer = () => {
                   </svg>
                 </div>
                 <p className="text-slate-300">
-                  team@versenext.com
+                  versanext@gmail.com
                 </p>
               </div>
             </div>
