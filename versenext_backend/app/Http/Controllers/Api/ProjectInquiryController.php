@@ -29,7 +29,7 @@ public function store(Request $request)
     $inquiry = ProjectInquiry::create($validated);
 
 
-Mail::to('versanext@gmail.com')
+Mail::to(['team@versenext.com', 'versanext@gmail.com'])
     ->queue(new AdminInquiryMail($inquiry));
 
 Mail::to($inquiry->email)

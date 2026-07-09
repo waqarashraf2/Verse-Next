@@ -84,10 +84,11 @@ export default function RootLayout({ children }) {
       "https://www.linkedin.com/company/verse-next/posts/?feedView=all",
       "https://www.tiktok.com/@verse.next?_r=1&_t=ZS-97m7D4rkex8",
     ],
+    email: ["team@versenext.com", "versanext@gmail.com"],
     contactPoint: {
       "@type": "ContactPoint",
       contactType: "customer support",
-      email: "versanext@gmail.com",
+      email: "team@versenext.com",
       url: "https://versenext.com/contact",
     },
   };

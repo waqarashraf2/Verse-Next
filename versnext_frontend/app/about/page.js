@@ -676,7 +676,7 @@ export default function AboutPage() {
                 <div className="text-center">
                   <div className="flex items-center justify-center gap-2 mb-4">
                     <Mail className="text-[#4d61b7]" size={20} />
-                    <div className="text-white font-medium">versanext@gmail.com</div>
+                    <div className="text-white font-medium">team@versenext.com | versanext@gmail.com</div>
                   </div>
                   <div className="text-gray-300">Email Us Anytime</div>
                 </div>
