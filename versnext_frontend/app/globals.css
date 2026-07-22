@@ -152,6 +152,24 @@ main > * {
   opacity: 0.9;
 }
 
+.before-after-range::-webkit-slider-thumb {
+  width: 56px;
+  height: 56px;
+  appearance: none;
+}
+
+.before-after-range::-moz-range-thumb {
+  width: 56px;
+  height: 56px;
+  border: 0;
+  background: transparent;
+}
+
+.before-after-range:focus-visible {
+  outline: 3px solid rgba(255, 255, 255, 0.75);
+  outline-offset: -6px;
+}
+
 @keyframes pageFadeUp {
   from {
     opacity: 0;

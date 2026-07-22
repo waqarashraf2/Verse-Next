@@ -1,6 +1,7 @@
 "use client";
 
 import type { ElementType } from "react";
+import { useState } from "react";
 import Link from "next/link";
 import Image from "next/image";
 import { motion } from "framer-motion";
@@ -14,6 +15,7 @@ import {
   Globe2,
   Layers3,
   Megaphone,
+  MoveHorizontal,
   Palette,
   Search,
   ShieldCheck,
@@ -23,6 +25,8 @@ import {
   Zap,
 } from "lucide-react";
 import heroBg from "@/assets/bg.png";
+import declutteringAfter from "@/assets/decluttering-after-optimized.webp";
+import declutteringBefore from "@/assets/decluttering-before-optimized.webp";
 
 type Service = {
   title: string;
@@ -98,11 +102,21 @@ const stats = [
 ];
 
 const heroFeatures: Array<[string, ElementType]> = [
-  ["Secure APIs", ShieldCheck],
+  ["Image enhancement", ShieldCheck],
   ["Fast delivery", Zap],
-  ["Clean UI", Layers3],
-  ["Growth focus", BarChart3],
+  ["Graphic design", Layers3],
+  ["Portfolio ready", BarChart3],
 ];
+
+const beforeAfterShowcase = {
+  eyebrow: "Real estate graphic design",
+  title: "Before and after image enhancement",
+  beforeLabel: "Before",
+  afterLabel: "After",
+  beforeImage: declutteringBefore,
+  afterImage: declutteringAfter,
+  bullets: ["Exterior cleanup", "Driveway and garden polish", "Color and light correction", "Listing-ready visuals"],
+};
 
 const seoHighlights = [
   {
@@ -168,6 +182,104 @@ function ServiceCard({ service, index }: { service: Service; index: number }) {
   );
 }
 
+function BeforeAfterSlider() {
+  const [position, setPosition] = useState(50);
+  const [missingImages, setMissingImages] = useState({ before: false, after: false });
+  const hasMissingImages = missingImages.before || missingImages.after;
+  const handlePosition = `clamp(24px, ${position}%, calc(100% - 24px))`;
+
+  return (
+    <div className="w-full max-w-full min-w-0 overflow-hidden rounded-xl border border-slate-200 bg-white p-2 shadow-xl shadow-slate-950/8 sm:rounded-2xl sm:p-4">
+      <div className="mb-3 inline-flex max-w-full items-center gap-2 rounded-full border border-blue-500/15 bg-blue-500/10 px-3 py-1.5 text-[11px] font-semibold text-blue-600 sm:mb-4 sm:text-[12px]">
+        <span className="h-2 w-2 rounded-full bg-blue-600" />
+        <span className="truncate">{beforeAfterShowcase.eyebrow}</span>
+      </div>
+
+      <div className="relative overflow-hidden rounded-lg border border-slate-200 bg-slate-950 shadow-2xl sm:rounded-xl">
+        <div className="relative aspect-[4/3] w-full sm:aspect-[16/10]">
+          <Image
+            src={beforeAfterShowcase.afterImage}
+            alt="After professional real estate image enhancement"
+            fill
+            sizes="(min-width: 1024px) 760px, (min-width: 640px) 92vw, 100vw"
+            className="object-cover object-center"
+            loading="lazy"
+            onError={() => setMissingImages((current) => ({ ...current, after: true }))}
+          />
+          <div
+            className="absolute inset-0 overflow-hidden"
+            style={{ clipPath: `inset(0 ${100 - position}% 0 0)` }}
+            aria-hidden="true"
+          >
+            <Image
+              src={beforeAfterShowcase.beforeImage}
+              alt=""
+              fill
+              sizes="(min-width: 1024px) 760px, (min-width: 640px) 92vw, 100vw"
+              className="max-w-none object-cover object-center"
+              loading="lazy"
+              onError={() => setMissingImages((current) => ({ ...current, before: true }))}
+            />
+          </div>
+
+          {hasMissingImages ? (
+            <div className="absolute inset-0 z-20 flex items-center justify-center bg-slate-950 px-4 text-center">
+              <div className="max-w-xs rounded-lg border border-white/10 bg-white/10 p-4 text-white backdrop-blur">
+                <div className="text-sm font-semibold">Before/after images not found</div>
+                <div className="mt-2 text-xs leading-5 text-slate-300">
+                  Add `Decluttering Before.jpg` and `Decluttering After.jpg` inside `assets`.
+                </div>
+              </div>
+            </div>
+          ) : null}
+
+          <div className="absolute left-3 top-3 z-30 rounded-full bg-black/70 px-2.5 py-1 text-[10px] font-bold uppercase tracking-[0.12em] text-white backdrop-blur sm:left-4 sm:top-4 sm:px-3 sm:py-1.5 sm:text-[11px]">
+            {beforeAfterShowcase.beforeLabel}
+          </div>
+          <div className="absolute right-3 top-3 z-30 rounded-full bg-white/90 px-2.5 py-1 text-[10px] font-bold uppercase tracking-[0.12em] text-slate-950 backdrop-blur sm:right-4 sm:top-4 sm:px-3 sm:py-1.5 sm:text-[11px]">
+            {beforeAfterShowcase.afterLabel}
+          </div>
+
+          <div
+            className="absolute inset-y-0 z-10 w-px bg-white/90"
+            style={{ left: `${position}%` }}
+            aria-hidden="true"
+          />
+          <div
+            className="absolute top-1/2 z-20 flex h-10 w-10 -translate-x-1/2 -translate-y-1/2 items-center justify-center rounded-full border border-white bg-white text-slate-950 shadow-xl sm:h-12 sm:w-12"
+            style={{ left: handlePosition }}
+            aria-hidden="true"
+          >
+            <MoveHorizontal size={19} />
+          </div>
+
+          <input
+            aria-label="Compare before and after image enhancement"
+            type="range"
+            min="0"
+            max="100"
+            value={position}
+            onChange={(event) => setPosition(Number(event.target.value))}
+            className="before-after-range absolute inset-0 z-30 h-full w-full cursor-ew-resize opacity-0"
+          />
+        </div>
+      </div>
+
+      <div className="rounded-b-lg border-x border-b border-slate-200 bg-slate-50 p-3 sm:rounded-b-xl sm:p-4">
+        <h2 className="text-[15px] font-semibold leading-6 text-slate-950 sm:text-base">{beforeAfterShowcase.title}</h2>
+        <div className="mt-3 grid gap-2 sm:mt-4 sm:grid-cols-2 sm:gap-3">
+          {beforeAfterShowcase.bullets.map((item) => (
+            <div key={item} className="flex min-w-0 items-center gap-2 text-[12px] font-semibold leading-5 text-slate-700">
+              <CheckCircle size={15} className="shrink-0 text-blue-300" />
+              <span>{item}</span>
+            </div>
+          ))}
+        </div>
+      </div>
+    </div>
+  );
+}
+
 export default function Home() {
   return (
     <div className="min-h-screen bg-[var(--bg)] text-[var(--text)]">
@@ -213,36 +325,38 @@ export default function Home() {
             </div>
           </div>
 
-          <div className="rounded-2xl border border-white/12 bg-[#071023]/88 p-4 shadow-2xl shadow-blue-950/30 backdrop-blur-xl">
-            <div className="rounded-xl border border-white/10 bg-white/[0.06] p-4 text-white">
-              <div className="mb-5 flex items-center justify-between">
-                <div className="flex items-center gap-3">
-                  <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-white/10">
-                    <Bot size={19} />
-                  </div>
-                  <div>
-                    <div className="text-[13px] font-semibold">AI Project Assistant</div>
-                    <div className="text-[11px] text-slate-300">Lead guidance and service matching</div>
-                  </div>
-                </div>
-                <span className="rounded-full bg-emerald-400/15 px-2.5 py-1 text-[11px] text-emerald-200">Ready</span>
-              </div>
-              <div className="rounded-xl border border-white/10 bg-white/[0.06] p-4">
-                <div className="mb-4 h-2 w-24 rounded-full bg-blue-400/70" />
-                <div className="space-y-2">
-                  {[
-                    ["Website", "SEO-ready company and ecommerce websites"],
-                    ["Software", "Dashboards, portals, APIs and admin systems"],
-                    ["Growth", "SEO, marketing, design and video content"],
-                  ].map(([title, text]) => (
-                    <div key={title} className="flex items-start gap-3 rounded-lg bg-white/[0.06] p-3">
-                      <CheckCircle className="mt-0.5 text-[var(--accent)]" size={15} />
-                      <div>
-                        <div className="text-[12px] font-semibold text-white">{title}</div>
-                        <div className="text-[11px] leading-5 text-slate-300">{text}</div>
-                      </div>
+          <div>
+            <div className="rounded-2xl border border-white/12 bg-[#071023]/88 p-4 shadow-2xl shadow-blue-950/30 backdrop-blur-xl">
+              <div className="rounded-xl border border-white/10 bg-white/[0.06] p-4 text-white">
+                <div className="mb-5 flex items-center justify-between">
+                  <div className="flex items-center gap-3">
+                    <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-white/10">
+                      <Bot size={19} />
                     </div>
-                  ))}
+                    <div>
+                      <div className="text-[13px] font-semibold">AI Project Assistant</div>
+                      <div className="text-[11px] text-slate-300">Lead guidance and service matching</div>
+                    </div>
+                  </div>
+                  <span className="rounded-full bg-emerald-400/15 px-2.5 py-1 text-[11px] text-emerald-200">Ready</span>
+                </div>
+                <div className="rounded-xl border border-white/10 bg-white/[0.06] p-4">
+                  <div className="mb-4 h-2 w-24 rounded-full bg-blue-400/70" />
+                  <div className="space-y-2">
+                    {[
+                      ["Website", "SEO-ready company and ecommerce websites"],
+                      ["Software", "Dashboards, portals, APIs and admin systems"],
+                      ["Growth", "SEO, marketing, design and video content"],
+                    ].map(([title, text]) => (
+                      <div key={title} className="flex items-start gap-3 rounded-lg bg-white/[0.06] p-3">
+                        <CheckCircle className="mt-0.5 text-[var(--accent)]" size={15} />
+                        <div>
+                          <div className="text-[12px] font-semibold text-white">{title}</div>
+                          <div className="text-[11px] leading-5 text-slate-300">{text}</div>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
                 </div>
               </div>
             </div>
@@ -279,6 +393,26 @@ export default function Home() {
               <p className="mt-2 text-sm leading-6 text-slate-600">{text}</p>
             </div>
           ))}
+        </div>
+      </section>
+
+      <section className="verse-wave-section overflow-hidden bg-slate-50 px-3 py-14 sm:px-6 sm:py-20 lg:px-8">
+        <div className="mx-auto grid w-full max-w-7xl min-w-0 gap-6 lg:grid-cols-[0.75fr_1.25fr] lg:items-center">
+          <div className="min-w-0">
+            <div className="mb-3 inline-flex rounded-full border border-blue-500/15 bg-blue-500/10 px-3 py-1.5 text-xs font-semibold text-blue-600">
+              Portfolio preview
+            </div>
+            <h2 className="text-[24px] font-semibold leading-tight tracking-tight text-slate-950 md:text-[34px]">
+              Professional before and after visuals for property marketing.
+            </h2>
+            <p className="mt-4 text-[15px] leading-7 text-slate-600">
+              Use this section to showcase real estate image cleanup, exterior improvement, object removal, color correction, and graphic design work without changing the hero background.
+            </p>
+            <Link href="/portfolio" className="mt-6 inline-flex w-full items-center justify-center rounded-lg bg-blue-600 px-4 py-2.5 text-[13px] font-semibold text-white shadow-lg shadow-blue-950/10 transition hover:-translate-y-0.5 hover:bg-blue-700 sm:w-auto">
+              View Portfolio <ArrowRight className="ml-2" size={15} />
+            </Link>
+          </div>
+          <BeforeAfterSlider />
         </div>
       </section>
 
