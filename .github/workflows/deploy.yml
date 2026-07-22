@@ -1,0 +1,118 @@
+name: Deploy Verse Next to Hostinger
+
+on:
+  push:
+    branches:
+      - main
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: versenext-production
+  cancel-in-progress: true
+
+jobs:
+  deploy:
+    name: Build and Deploy
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+          cache: npm
+          cache-dependency-path: versnext_frontend/package-lock.json
+
+      - name: Install frontend dependencies
+        working-directory: versnext_frontend
+        run: npm ci
+
+      - name: Build Next.js frontend
+        working-directory: versnext_frontend
+        env:
+          NEXT_PUBLIC_API_BASE_URL: https://api.versenext.com/api
+        run: npm run build:production
+
+      - name: Configure SSH
+        env:
+          SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
+          SSH_HOST: ${{ secrets.SSH_HOST }}
+          SSH_PORT: ${{ secrets.SSH_PORT }}
+        run: |
+          mkdir -p ~/.ssh
+          printf '%s\n' "$SSH_PRIVATE_KEY" > ~/.ssh/hostinger_deploy_key
+          chmod 600 ~/.ssh/hostinger_deploy_key
+          ssh-keyscan -p "$SSH_PORT" -H "$SSH_HOST" >> ~/.ssh/known_hosts
+
+      - name: Test SSH connection
+        env:
+          SSH_HOST: ${{ secrets.SSH_HOST }}
+          SSH_PORT: ${{ secrets.SSH_PORT }}
+          SSH_USER: ${{ secrets.SSH_USER }}
+        run: |
+          ssh -i ~/.ssh/hostinger_deploy_key \
+            -p "$SSH_PORT" \
+            "$SSH_USER@$SSH_HOST" \
+            "echo 'SSH connection successful'"
+
+      - name: Deploy frontend
+        env:
+          SSH_HOST: ${{ secrets.SSH_HOST }}
+          SSH_PORT: ${{ secrets.SSH_PORT }}
+          SSH_USER: ${{ secrets.SSH_USER }}
+          FRONTEND_PATH: ${{ secrets.FRONTEND_DEPLOY_PATH }}
+        run: |
+          rsync -az --delete \
+            --exclude='.htaccess' \
+            -e "ssh -i ~/.ssh/hostinger_deploy_key -p $SSH_PORT" \
+            versnext_frontend/out/ \
+            "$SSH_USER@$SSH_HOST:$FRONTEND_PATH/"
+
+      - name: Deploy Laravel backend files
+        env:
+          SSH_HOST: ${{ secrets.SSH_HOST }}
+          SSH_PORT: ${{ secrets.SSH_PORT }}
+          SSH_USER: ${{ secrets.SSH_USER }}
+          BACKEND_PATH: ${{ secrets.BACKEND_DEPLOY_PATH }}
+        run: |
+          rsync -az \
+            --exclude='.env' \
+            --exclude='.htaccess' \
+            --exclude='vendor/' \
+            --exclude='node_modules/' \
+            --exclude='storage/' \
+            --exclude='public/storage' \
+            --exclude='AA/' \
+            --exclude='.git/' \
+            -e "ssh -i ~/.ssh/hostinger_deploy_key -p $SSH_PORT" \
+            versenext_backend/ \
+            "$SSH_USER@$SSH_HOST:$BACKEND_PATH/"
+
+      - name: Install backend dependencies and migrate
+        env:
+          SSH_HOST: ${{ secrets.SSH_HOST }}
+          SSH_PORT: ${{ secrets.SSH_PORT }}
+          SSH_USER: ${{ secrets.SSH_USER }}
+          BACKEND_PATH: ${{ secrets.BACKEND_DEPLOY_PATH }}
+        run: |
+          ssh -i ~/.ssh/hostinger_deploy_key \
+            -p "$SSH_PORT" \
+            "$SSH_USER@$SSH_HOST" \
+            "cd '$BACKEND_PATH' &&
+             test -f .env &&
+             composer install --no-dev --no-interaction --prefer-dist --optimize-autoloader &&
+             php artisan migrate --force &&
+             php artisan optimize:clear &&
+             php artisan config:cache &&
+             php artisan route:cache &&
+             php artisan view:cache"
+
+      - name: Deployment completed
+        run: echo "Verse Next deployment completed successfully."
