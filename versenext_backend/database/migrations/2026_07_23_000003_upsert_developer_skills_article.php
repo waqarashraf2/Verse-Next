@@ -1,63 +1,29 @@
 <?php
 
-namespace Database\Seeders;
+use Illuminate\Database\Migrations\Migration;
+use Illuminate\Support\Facades\DB;
 
-use App\Models\Article;
-use App\Models\KnowledgeBaseEntry;
-use App\Models\User;
-use Illuminate\Database\Console\Seeds\WithoutModelEvents;
-use Illuminate\Database\Seeder;
-use Illuminate\Support\Facades\Hash;
-use Illuminate\Support\Str;
-
-class DatabaseSeeder extends Seeder
+return new class extends Migration
 {
-    use WithoutModelEvents;
-
-    /**
-     * Seed the application's database.
-     */
-    public function run(): void
+    public function up(): void
     {
-        $this->call(VerseNextKnowledgeBaseSeeder::class);
-
-        $adminEmail = env('VERSE_ADMIN_EMAIL', 'versanext@gmail.com');
-        $adminPassword = env('VERSE_ADMIN_PASSWORD');
-
-        if ($adminPassword) {
-            User::updateOrCreate(
-                ['email' => $adminEmail],
-                [
-                    'name' => 'Verse Next Admin',
-                    'password' => Hash::make($adminPassword),
-                    'role' => 'admin',
-                ]
-            );
-        }
-
-        $this->seedArticles();
-        $this->seedFaqs();
-    }
-
-    private function seedArticles(): void
-    {
-        Article::whereIn('slug', [
+        DB::table('articles')->whereIn('slug', [
             'seo-ready-business-website-2026',
             'ai-automation-for-small-businesses',
             'technical-seo-checklist-nextjs-laravel',
         ])->delete();
 
-        Article::updateOrCreate(
+        DB::table('articles')->updateOrInsert(
             ['slug' => 'developers-in-2026-need-more-than-coding-skills'],
             [
                 'title' => 'Developers in 2026 Need More Than Coding Skills',
                 'category' => 'Developer Skills',
+                'featured_image' => '/articles/developers-2026-cover.webp',
                 'seo_title' => 'Developers in 2026 Need More Than Coding Skills | Verse Next',
                 'seo_description' => 'A practical founder-led guide on the developer skills companies need in 2026: AI judgment, Git, deployment, communication, problem-solving, ownership, and full-stack understanding.',
-                'featured_image' => '/articles/developers-2026-cover.webp',
                 'author' => 'Waqar Ashraf Gondal',
                 'reading_time' => 14,
-                'tags' => [
+                'tags' => json_encode([
                     'developer skills 2026',
                     'AI-assisted development',
                     'full-stack development',
@@ -65,7 +31,7 @@ class DatabaseSeeder extends Seeder
                     'deployment skills',
                     'software engineering career',
                     'problem-solving',
-                ],
+                ]),
                 'content' => implode("\n\n", [
                     'A few years ago, being a good developer often meant being good at writing code. Frontend developers built interfaces, backend developers managed APIs and databases, and DevOps engineers handled deployment. That model is changing. In 2026, companies want developers who can understand a business problem, propose a practical solution, build the product, deploy it, maintain it, and take responsibility when something goes wrong.',
                     'This is not only a trend I have read about online. I have seen it directly in my own work. My name is Waqar Ashraf Gondal. I am the Founder and CEO of VerseNext, and I also work as a full-stack developer. Over time, I have interviewed developers, worked with technical teams, reviewed projects, hired support for development work, and observed how quickly expectations are changing.',
@@ -89,67 +55,17 @@ class DatabaseSeeder extends Seeder
                 'status' => 'published',
                 'is_featured' => true,
                 'published_at' => now(),
+                'scheduled_at' => null,
+                'created_at' => now(),
+                'updated_at' => now(),
             ]
         );
     }
 
-    private function seedFaqs(): void
+    public function down(): void
     {
-        $faqs = [
-            [
-                'title' => 'What kind of digital solutions does Verse Next build?',
-                'summary' => 'Verse Next builds business websites, software platforms, CRM systems, CMS-driven websites, admin dashboards, ecommerce workflows, AI agents, lead management systems, mobile app backends, SEO foundations, brand growth assets, and marketing automation workflows.',
-            ],
-            [
-                'title' => 'When should a business pick a custom CRM over a ready made tool?',
-                'summary' => 'A ready-made CRM tends to work best when the workflow is pretty basic, and the business is okay with a standard setup. A custom CRM is more sensible when the company runs on special lead stages, distinct team roles reporting, approval steps, client history, integrations, or industry specific operations that generic tools cannot fit neatly.',
-            ],
-            [
-                'title' => 'How can AI agents help a business without damaging customer trust?',
-                'summary' => 'AI agents do the most good when they assist with straightforward chores, like handling FAQs, qualifying leads, routing incoming messages, summarizing requests, preparing follow-ups, and helping staff answer quicker. They should be fed with trustworthy business knowledge, then watched over time, and built so a human can take over easily when a decision needs real judgment.',
-            ],
-            [
-                'title' => 'Why does a CMS matter for SEO and broader business growth?',
-                'summary' => 'A CMS lets a business publish service pages, blog posts, landing pages, FAQs, case studies, and ongoing updates without waiting on developers for each small change. For SEO the CMS should allow clean URLs, metadata controls, proper heading structure, image alt text, internal links, schema friendly content, plus fast loading pages.',
-            ],
-            [
-                'title' => 'What makes an enterprise web system different from a normal website?',
-                'summary' => 'A typical website is mostly about presenting information. An enterprise web system usually includes login access, roles and permissions, dashboards, databases, APIs, reporting, audit logs, integrations, data security, and ongoing maintenance planning. It also needs more durable architecture since real teams depend on it daily, not just occasionally.',
-            ],
-            [
-                'title' => 'How should a company plan a website that can rank on Google?',
-                'summary' => 'Begin with genuine customer questions, service intent, location intent, real proof, a sensible page outline, speed, and metadata that is accurate. Google friendly content should help people first, skip empty keyword stuffing, and show the business as genuinely knowledgeable.',
-            ],
-            [
-                'title' => 'Can branding and graphic design affect digital growth?',
-                'summary' => 'Branding affects trust, recall, conversion, and first impressions. A consistent visual system helps websites, social posts, ads, proposals, and product screens feel more professional.',
-            ],
-            [
-                'title' => 'What should a business automate first?',
-                'summary' => 'Start with a repeated task that has clear rules, such as lead capture, appointment requests, follow-up reminders, inquiry sorting, internal notifications, quote preparation, FAQ responses, or report generation.',
-            ],
-            [
-                'title' => 'How does Verse Next keep content useful instead of generic?',
-                'summary' => 'Content should be based on real services, buyer questions, practical experience, and clear decision-making, with useful explanations, service context, internal links, FAQs, schema, and human editing.',
-            ],
-            [
-                'title' => 'What is the safest way to use AI in software projects?',
-                'summary' => 'AI should speed up research, drafts, documentation, testing ideas, and repetitive development work, while developers still review logic, security, data flow, edge cases, and business fit.',
-            ],
-        ];
-
-        foreach ($faqs as $index => $faq) {
-            KnowledgeBaseEntry::updateOrCreate(
-                ['slug' => Str::slug($faq['title'])],
-                [
-                    'type' => 'faq',
-                    'title' => $faq['title'],
-                    'summary' => $faq['summary'],
-                    'content' => $faq['summary'],
-                    'is_active' => true,
-                    'sort_order' => $index + 1,
-                ]
-            );
-        }
+        DB::table('articles')
+            ->where('slug', 'developers-in-2026-need-more-than-coding-skills')
+            ->delete();
     }
-}
+};

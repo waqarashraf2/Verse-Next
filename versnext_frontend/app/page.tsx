@@ -462,6 +462,36 @@ export default function Home() {
         </div>
       </section>
 
+      <section className="verse-wave-section bg-white px-4 py-20 sm:px-6 lg:px-8">
+        <SectionHeader
+          label="Knowledge Hub"
+          title="Articles and FAQs built for trust, SEO and AI search"
+          text="Helpful technology content gives visitors clearer answers and gives search systems stronger context about what Verse Next does."
+        />
+        <div className="mx-auto grid max-w-7xl gap-5 md:grid-cols-2">
+          {[
+            [
+              "Technology Articles",
+              "Humanized guides about websites, software, SEO, digital marketing, and AI automation for business growth.",
+              "/articles",
+            ],
+            [
+              "SEO and AI Search FAQs",
+              "Clear answers about ranking, structured data, useful content, AI-assisted writing, and keyword strategy.",
+              "/faqs",
+            ],
+          ].map(([title, text, href]) => (
+            <div key={title} className="verse-wave-card rounded-2xl border border-slate-200 bg-slate-50 p-6 shadow-sm">
+              <h3 className="text-xl font-bold text-slate-950">{title}</h3>
+              <p className="mt-3 text-sm leading-7 text-slate-600">{text}</p>
+              <Link href={href} className="mt-5 inline-flex items-center text-sm font-semibold text-blue-600">
+                Explore <ArrowRight className="ml-2" size={15} />
+              </Link>
+            </div>
+          ))}
+        </div>
+      </section>
+
       <section className="verse-wave-section relative overflow-hidden border-y border-slate-200 bg-slate-50 px-4 py-20 sm:px-6 lg:px-8">
         <div className="absolute right-0 top-0 h-64 w-64 rounded-full bg-blue-500/10 blur-3xl" />
         <div className="relative mx-auto grid max-w-7xl gap-8 lg:grid-cols-[0.9fr_1.1fr]">
