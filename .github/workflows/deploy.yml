@@ -57,10 +57,15 @@ jobs:
           SSH_PORT: ${{ secrets.SSH_PORT }}
           SSH_USER: ${{ secrets.SSH_USER }}
         run: |
-          ssh -i ~/.ssh/hostinger_deploy_key \
-            -p "$SSH_PORT" \
-            "$SSH_USER@$SSH_HOST" \
-            "echo 'SSH connection successful'"
+          SSH_OPTS="-i ~/.ssh/hostinger_deploy_key -p $SSH_PORT -o BatchMode=yes -o ConnectTimeout=30 -o ServerAliveInterval=15 -o ServerAliveCountMax=2"
+          for attempt in 1 2 3; do
+            if ssh $SSH_OPTS "$SSH_USER@$SSH_HOST" "echo 'SSH connection successful'"; then
+              exit 0
+            fi
+            echo "SSH connection attempt $attempt failed; retrying in 20 seconds..."
+            sleep 20
+          done
+          exit 1
 
       - name: Deploy frontend
         env:
@@ -71,7 +76,7 @@ jobs:
         run: |
           rsync -az --delete \
             --exclude='.htaccess' \
-            -e "ssh -i ~/.ssh/hostinger_deploy_key -p $SSH_PORT" \
+            -e "ssh -i ~/.ssh/hostinger_deploy_key -p $SSH_PORT -o BatchMode=yes -o ConnectTimeout=30 -o ServerAliveInterval=15 -o ServerAliveCountMax=2" \
             versnext_frontend/out/ \
             "$SSH_USER@$SSH_HOST:$FRONTEND_PATH/"
 
@@ -84,6 +89,10 @@ jobs:
         run: |
           scp -i ~/.ssh/hostinger_deploy_key \
             -P "$SSH_PORT" \
+            -o BatchMode=yes \
+            -o ConnectTimeout=30 \
+            -o ServerAliveInterval=15 \
+            -o ServerAliveCountMax=2 \
             deployment/public_html/.htaccess \
             "$SSH_USER@$SSH_HOST:$FRONTEND_PATH/.htaccess"
 
@@ -103,7 +112,7 @@ jobs:
             --exclude='public/storage' \
             --exclude='AA/' \
             --exclude='.git/' \
-            -e "ssh -i ~/.ssh/hostinger_deploy_key -p $SSH_PORT" \
+            -e "ssh -i ~/.ssh/hostinger_deploy_key -p $SSH_PORT -o BatchMode=yes -o ConnectTimeout=30 -o ServerAliveInterval=15 -o ServerAliveCountMax=2" \
             versenext_backend/ \
             "$SSH_USER@$SSH_HOST:$BACKEND_PATH/"
 
@@ -116,6 +125,10 @@ jobs:
         run: |
           ssh -i ~/.ssh/hostinger_deploy_key \
             -p "$SSH_PORT" \
+            -o BatchMode=yes \
+            -o ConnectTimeout=30 \
+            -o ServerAliveInterval=15 \
+            -o ServerAliveCountMax=2 \
             "$SSH_USER@$SSH_HOST" \
             "cd '$BACKEND_PATH' &&
              test -f .env &&
