@@ -70,6 +70,9 @@ export const metadata = {
     index: true,
     follow: true,
   },
+  verification: {
+    google: "qhLgk4WKFKivtmVTvNjBd7xdOByohGKLSnavOzb2p6U",
+  },
 };
 
 export default function RootLayout({ children }) {

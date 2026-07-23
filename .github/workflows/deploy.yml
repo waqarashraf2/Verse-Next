@@ -75,6 +75,18 @@ jobs:
             versnext_frontend/out/ \
             "$SSH_USER@$SSH_HOST:$FRONTEND_PATH/"
 
+      - name: Deploy frontend routing and SEO headers
+        env:
+          SSH_HOST: ${{ secrets.SSH_HOST }}
+          SSH_PORT: ${{ secrets.SSH_PORT }}
+          SSH_USER: ${{ secrets.SSH_USER }}
+          FRONTEND_PATH: ${{ secrets.FRONTEND_DEPLOY_PATH }}
+        run: |
+          scp -i ~/.ssh/hostinger_deploy_key \
+            -P "$SSH_PORT" \
+            deployment/public_html/.htaccess \
+            "$SSH_USER@$SSH_HOST:$FRONTEND_PATH/.htaccess"
+
       - name: Deploy Laravel backend files
         env:
           SSH_HOST: ${{ secrets.SSH_HOST }}

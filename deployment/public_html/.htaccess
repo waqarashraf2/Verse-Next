@@ -4,6 +4,17 @@
 
 DirectoryIndex index.html index.php
 
+AddDefaultCharset UTF-8
+
+<IfModule mod_mime.c>
+    AddType "text/html; charset=UTF-8" .html .htm
+    AddCharset UTF-8 .html .htm .css .js .json .xml .txt
+</IfModule>
+
+<IfModule mod_headers.c>
+    Header edit Content-Type "^text/html($|;.*)" "text/html; charset=UTF-8"
+</IfModule>
+
 <IfModule mod_rewrite.c>
     RewriteEngine On
 

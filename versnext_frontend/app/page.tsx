@@ -213,7 +213,7 @@ function BeforeAfterSlider() {
           >
             <Image
               src={beforeAfterShowcase.beforeImage}
-              alt=""
+              alt="Before real estate image enhancement showing exterior cleanup work needed"
               fill
               sizes="(min-width: 1024px) 760px, (min-width: 640px) 92vw, 100vw"
               className="max-w-none object-cover object-center"
@@ -301,10 +301,10 @@ export default function Home() {
               Verse Next digital solutions
             </div>
             <h1 className="text-[31px] font-semibold leading-[1.12] tracking-[-0.025em] text-white sm:text-[40px] lg:text-[48px]">
-              Verse Next website development, application development and SEO growth partner.
+              Verse Next AI-powered digital solutions platform for websites, software and SEO growth.
             </h1>
             <p className="mt-4 max-w-xl text-[15px] leading-7 text-slate-300">
-              Verse Next builds enterprise-grade websites, web applications, business software, mobile apps, SEO systems, digital marketing campaigns, and AI automation platforms with a sharp focus on performance, trust, search visibility, and lead generation.
+              Verse Next is an AI-powered digital solutions platform that builds enterprise-grade websites, software platforms, web applications, mobile apps, SEO systems, digital marketing campaigns, and AI automation with a sharp focus on performance, trust, search visibility, and lead generation.
             </p>
             <div className="mt-6 flex flex-col gap-3 sm:flex-row">
               <Link href="/contact" className="inline-flex items-center justify-center rounded-lg bg-blue-500 px-4 py-2.5 text-[13px] font-semibold text-white shadow-lg shadow-blue-950/30 transition hover:-translate-y-0.5 hover:bg-blue-400">
