@@ -15,13 +15,13 @@ export const metadata = {
   description:
     "Read Verse Next articles about web development, software, SEO, digital marketing, AI automation, and practical technology decisions for growing businesses.",
   alternates: {
-    canonical: "/articles",
+    canonical: "/articles/",
   },
   openGraph: {
     title: "Verse Next Articles and Technology Insights",
     description:
       "Human-written technology articles for business websites, SEO, AI automation, software development, and digital growth.",
-    url: "https://versenext.com/articles",
+    url: "https://versenext.com/articles/",
     type: "website",
   },
 };
@@ -54,12 +54,12 @@ export default async function ArticlesPage() {
     "@context": "https://schema.org",
     "@type": "CollectionPage",
     name: "Verse Next Technology Articles",
-    url: "https://versenext.com/articles",
+    url: "https://versenext.com/articles/",
     description: metadata.description,
     mainEntity: articles.map((article) => ({
       "@type": "BlogPosting",
       headline: article.title,
-      url: `https://versenext.com/articles/${article.slug}`,
+      url: `https://versenext.com/articles/${article.slug}/`,
       author: article.author || "Verse Next Editorial Team",
       keywords: Array.isArray(article.tags) ? article.tags.join(", ") : article.tags,
     })),

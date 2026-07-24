@@ -2,10 +2,6 @@
     Options -MultiViews -Indexes
 </IfModule>
 
-<IfModule mod_dir.c>
-    DirectorySlash Off
-</IfModule>
-
 DirectoryIndex index.html index.php
 
 AddDefaultCharset UTF-8
@@ -21,9 +17,9 @@ AddDefaultCharset UTF-8
     RewriteCond %{HTTP_HOST} ^www\.versenext\.com$ [NC]
     RewriteRule ^ https://versenext.com%{REQUEST_URI} [R=301,L]
 
-    RewriteCond %{REQUEST_URI} ^/(.+)/$
-    RewriteCond %{DOCUMENT_ROOT}/%1.html -f
-    RewriteRule ^ %1.html [L]
+    RewriteCond %{REQUEST_FILENAME} -d
+    RewriteCond %{REQUEST_URI} !/$
+    RewriteRule ^(.+)$ https://versenext.com/$1/ [R=301,L]
 
     RewriteCond %{REQUEST_FILENAME}.html -f
     RewriteRule ^(.+)$ $1.html [L]

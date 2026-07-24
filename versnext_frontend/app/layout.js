@@ -107,7 +107,7 @@ export default function RootLayout({ children }) {
       "@type": "ContactPoint",
       contactType: "customer support",
       email: "team@versenext.com",
-      url: "https://versenext.com/contact",
+      url: "https://versenext.com/contact/",
     },
   };
 
@@ -118,7 +118,7 @@ export default function RootLayout({ children }) {
     url: "https://versenext.com",
     potentialAction: {
       "@type": "SearchAction",
-      target: "https://versenext.com/services?query={search_term_string}",
+      target: "https://versenext.com/services/?query={search_term_string}",
       "query-input": "required name=search_term_string",
     },
   };

@@ -7,13 +7,13 @@ export const metadata = {
   description:
     "Straightforward answers to common questions about AI agents, CRM, CMS, websites, branding, and growth for business owners who want clear technology advice without fluff.",
   alternates: {
-    canonical: "/faqs",
+    canonical: "/faqs/",
   },
   openGraph: {
     title: "Verse Next Business Technology FAQs",
     description:
       "Clear answers about AI agents, CRM, CMS, enterprise systems, websites, SEO, branding, automation, and digital growth.",
-    url: "https://versenext.com/faqs",
+    url: "https://versenext.com/faqs/",
     type: "website",
   },
 };

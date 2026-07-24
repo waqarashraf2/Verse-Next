@@ -75,12 +75,12 @@ export async function generateMetadata({ params }) {
     title: article.seo_title || article.title,
     description: article.seo_description || article.excerpt,
     alternates: {
-      canonical: `/articles/${article.slug}`,
+      canonical: `/articles/${article.slug}/`,
     },
     openGraph: {
       title: article.seo_title || article.title,
       description: article.seo_description || article.excerpt,
-      url: `https://versenext.com/articles/${article.slug}`,
+      url: `https://versenext.com/articles/${article.slug}/`,
       type: "article",
       publishedTime: article.published_at,
       authors: [article.author || "Verse Next Editorial Team"],

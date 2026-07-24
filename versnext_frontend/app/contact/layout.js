@@ -9,13 +9,13 @@ export const metadata = {
     "website development quote Pakistan",
   ],
   alternates: {
-    canonical: "/contact",
+    canonical: "/contact/",
   },
   openGraph: {
     title: "Contact Verse Next",
     description:
       "Start a project with Verse Next for web, software, app, SEO, marketing, design, video, or AI automation work.",
-    url: "https://versenext.com/contact",
+    url: "https://versenext.com/contact/",
   },
 };
 

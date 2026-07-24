@@ -11,13 +11,13 @@ export const metadata = {
     "Lahore digital agency",
   ],
   alternates: {
-    canonical: "/services",
+    canonical: "/services/",
   },
   openGraph: {
     title: "Verse Next Services",
     description:
       "Pakistan web service provider for websites, software, mobile apps, SEO, marketing, design, video, and AI automation.",
-    url: "https://versenext.com/services",
+    url: "https://versenext.com/services/",
   },
 };
 

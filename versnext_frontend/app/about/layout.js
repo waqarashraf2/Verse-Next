@@ -10,13 +10,13 @@ export const metadata = {
     "SEO and social media Pakistan",
   ],
   alternates: {
-    canonical: "/about",
+    canonical: "/about/",
   },
   openGraph: {
     title: "About Verse Next",
     description:
       "Meet Verse Next and its digital product, SEO, marketing, and AI automation capabilities.",
-    url: "https://versenext.com/about",
+    url: "https://versenext.com/about/",
   },
 };
 
