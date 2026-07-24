@@ -493,15 +493,18 @@ export default function ServicesPage() {
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            className="fixed inset-0 z-[120] grid place-items-center overflow-y-auto bg-[#071633]/70 px-3 py-5 backdrop-blur-sm sm:px-6 sm:py-8"
+            className="fixed inset-0 z-[120] flex h-[100dvh] items-center justify-center overflow-hidden bg-[#071633]/70 px-3 py-4 backdrop-blur-sm sm:px-6 sm:py-8"
             onClick={() => setSelectedService(null)}
           >
             <motion.div
-              initial={{ opacity: 0, scale: 0.96, y: 16 }}
+              initial={{ opacity: 0, scale: 0.96, y: 8 }}
               animate={{ opacity: 1, scale: 1, y: 0 }}
-              exit={{ opacity: 0, scale: 0.96, y: 16 }}
+              exit={{ opacity: 0, scale: 0.96, y: 8 }}
               transition={{ duration: 0.2 }}
-              className="flex w-full max-w-4xl flex-col overflow-hidden rounded-2xl border border-white/80 bg-white shadow-2xl shadow-[#071633]/35 max-h-[calc(100vh-40px)] sm:max-h-[calc(100vh-64px)]"
+              role="dialog"
+              aria-modal="true"
+              aria-labelledby="service-detail-title"
+              className="flex max-h-[calc(100dvh-32px)] w-full max-w-4xl flex-col overflow-hidden rounded-2xl border border-white/80 bg-white shadow-2xl shadow-[#071633]/35 sm:max-h-[calc(100dvh-64px)]"
               onClick={(e) => e.stopPropagation()}
             >
               {/* Modal Header */}
@@ -513,7 +516,7 @@ export default function ServicesPage() {
                   </div>
                   
                   <div className="min-w-0">
-                    <h3 className="text-2xl font-bold leading-tight text-[#071633] sm:text-3xl">{selectedService.title}</h3>
+                    <h3 id="service-detail-title" className="text-2xl font-bold leading-tight text-[#071633] sm:text-3xl">{selectedService.title}</h3>
                     <p className="mt-2 max-w-2xl text-sm leading-relaxed text-[#64748B] sm:text-base">{selectedService.description}</p>
                     
                     <div className="mt-4 flex flex-wrap gap-2">
