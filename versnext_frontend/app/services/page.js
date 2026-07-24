@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import Link from "next/link";
+import { createPortal } from "react-dom";
 import { motion, AnimatePresence } from "framer-motion";
 import { 
   Code, 
@@ -38,10 +39,29 @@ export default function ServicesPage() {
   const [selectedService, setSelectedService] = useState(null);
 
   useEffect(() => {
-    document.body.style.overflow = selectedService ? "hidden" : "";
+    const originalOverflow = document.body.style.overflow;
+    document.body.style.overflow = selectedService ? "hidden" : originalOverflow;
 
     return () => {
-      document.body.style.overflow = "";
+      document.body.style.overflow = originalOverflow;
+    };
+  }, [selectedService]);
+
+  useEffect(() => {
+    if (!selectedService) {
+      return undefined;
+    }
+
+    const handleKeyDown = (event) => {
+      if (event.key === "Escape") {
+        setSelectedService(null);
+      }
+    };
+
+    window.addEventListener("keydown", handleKeyDown);
+
+    return () => {
+      window.removeEventListener("keydown", handleKeyDown);
     };
   }, [selectedService]);
 
@@ -486,130 +506,140 @@ export default function ServicesPage() {
         </div>
       </section>
 
-      {/* ========== SERVICE DETAIL MODAL ========== */}
-      <AnimatePresence>
-        {selectedService && (
-          <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            className="fixed inset-0 z-[120] flex h-[100dvh] items-center justify-center overflow-hidden bg-[#071633]/70 px-3 py-4 backdrop-blur-sm sm:px-6 sm:py-8"
-            onClick={() => setSelectedService(null)}
-          >
-            <motion.div
-              initial={{ opacity: 0, scale: 0.96, y: 8 }}
-              animate={{ opacity: 1, scale: 1, y: 0 }}
-              exit={{ opacity: 0, scale: 0.96, y: 8 }}
-              transition={{ duration: 0.2 }}
-              role="dialog"
-              aria-modal="true"
-              aria-labelledby="service-detail-title"
-              className="flex max-h-[calc(100dvh-32px)] w-full max-w-4xl flex-col overflow-hidden rounded-2xl border border-white/80 bg-white shadow-2xl shadow-[#071633]/35 sm:max-h-[calc(100dvh-64px)]"
-              onClick={(e) => e.stopPropagation()}
-            >
-              {/* Modal Header */}
-              <div className="flex flex-shrink-0 items-start justify-between gap-4 border-b border-gray-200 bg-white px-5 py-5 sm:px-8 sm:py-6">
-                <div className="flex min-w-0 items-start gap-4 sm:gap-6">
-                  <div className="flex h-14 w-14 flex-shrink-0 items-center justify-center rounded-2xl sm:h-20 sm:w-20" 
-                          style={{ backgroundColor: `${selectedService.color}10` }}>
-                    <selectedService.icon className="h-7 w-7 sm:h-10 sm:w-10" style={{ color: selectedService.color }} />
-                  </div>
-                  
-                  <div className="min-w-0">
-                    <h3 id="service-detail-title" className="text-2xl font-bold leading-tight text-[#071633] sm:text-3xl">{selectedService.title}</h3>
-                    <p className="mt-2 max-w-2xl text-sm leading-relaxed text-[#64748B] sm:text-base">{selectedService.description}</p>
-                    
-                    <div className="mt-4 flex flex-wrap gap-2">
-                      {selectedService.expertise.map((exp, idx) => (
-                        <span
-                          key={idx}
-                          className="rounded-full px-3 py-1.5 text-xs font-medium sm:text-sm"
-                          style={{ 
-                            backgroundColor: `${selectedService.color}15`,
-                            color: selectedService.color
-                          }}
-                        >
-                          {exp}
-                        </span>
-                      ))}
-                    </div>
-                  </div>
-                </div>
-                
-                <button
+      {selectedService && typeof document !== "undefined"
+        ? createPortal(
+            <AnimatePresence>
+              {selectedService && (
+                <motion.div
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  exit={{ opacity: 0 }}
+                  className="fixed inset-0 z-[9999] flex h-[100dvh] items-center justify-center overflow-hidden bg-[#071633]/70 px-3 py-4 backdrop-blur-sm sm:px-6 sm:py-8"
                   onClick={() => setSelectedService(null)}
-                  className="flex h-11 w-11 flex-shrink-0 items-center justify-center rounded-xl border border-gray-200 text-[#071633] transition hover:border-[#071633] hover:bg-gray-50"
-                  aria-label="Close service details"
                 >
-                  <X className="h-5 w-5" />
-                </button>
-              </div>
-
-              <div className="min-h-0 flex-1 overflow-y-auto px-5 py-6 sm:px-8 sm:py-8">
-                {/* Modal Content */}
-                <div className="grid lg:grid-cols-2 gap-8">
-                  {/* Features */}
-                  <div>
-                    <h4 className="text-xl font-bold text-[#071633] mb-6 pb-3 border-b border-gray-200">
-                      Key Features
-                    </h4>
-                    <div className="space-y-4">
-                      {selectedService.features.map((feature, idx) => (
-                        <div key={idx} className="flex items-start">
-                          <div className="w-6 h-6 rounded-full flex items-center justify-center mr-4 flex-shrink-0 mt-0.5" 
-                                style={{ backgroundColor: `${selectedService.color}10` }}>
-                            <CheckCircle size={14} style={{ color: selectedService.color }} />
-                          </div>
-                          <span className="text-[#64748B]">{feature}</span>
+                  <motion.div
+                    initial={{ opacity: 0, scale: 0.96, y: 8 }}
+                    animate={{ opacity: 1, scale: 1, y: 0 }}
+                    exit={{ opacity: 0, scale: 0.96, y: 8 }}
+                    transition={{ duration: 0.2 }}
+                    role="dialog"
+                    aria-modal="true"
+                    aria-labelledby="service-detail-title"
+                    className="flex max-h-[calc(100dvh-32px)] w-full max-w-4xl flex-col overflow-hidden rounded-2xl border border-white/80 bg-white shadow-2xl shadow-[#071633]/35 sm:max-h-[calc(100dvh-64px)]"
+                    onClick={(e) => e.stopPropagation()}
+                  >
+                    {/* Modal Header */}
+                    <div className="flex flex-shrink-0 items-start justify-between gap-4 border-b border-gray-200 bg-white px-5 py-5 sm:px-8 sm:py-6">
+                      <div className="flex min-w-0 items-start gap-4 sm:gap-6">
+                        <div
+                          className="flex h-14 w-14 flex-shrink-0 items-center justify-center rounded-2xl sm:h-20 sm:w-20"
+                          style={{ backgroundColor: `${selectedService.color}10` }}
+                        >
+                          <selectedService.icon className="h-7 w-7 sm:h-10 sm:w-10" style={{ color: selectedService.color }} />
                         </div>
-                      ))}
-                    </div>
-                  </div>
 
-                  {/* Process */}
-                  <div>
-                    <h4 className="text-xl font-bold text-[#071633] mb-6 pb-3 border-b border-gray-200">
-                      Our Process
-                    </h4>
-                    <div className="space-y-6">
-                      {selectedService.process.map((step, idx) => (
-                        <div key={idx} className="flex items-start">
-                          <div className="w-10 h-10 rounded-xl flex items-center justify-center mr-4 flex-shrink-0 font-bold text-white" 
-                                style={{ backgroundColor: selectedService.color }}>
-                            {idx + 1}
-                          </div>
-                          <div>
-                            <div className="font-semibold text-[#071633] mb-1">{step}</div>
-                            <div className="text-sm text-[#64748B]">
-                              Detailed implementation of {step.toLowerCase()} phase
-                            </div>
+                        <div className="min-w-0">
+                          <h3 id="service-detail-title" className="text-2xl font-bold leading-tight text-[#071633] sm:text-3xl">{selectedService.title}</h3>
+                          <p className="mt-2 max-w-2xl text-sm leading-relaxed text-[#64748B] sm:text-base">{selectedService.description}</p>
+
+                          <div className="mt-4 flex flex-wrap gap-2">
+                            {selectedService.expertise.map((exp, idx) => (
+                              <span
+                                key={idx}
+                                className="rounded-full px-3 py-1.5 text-xs font-medium sm:text-sm"
+                                style={{
+                                  backgroundColor: `${selectedService.color}15`,
+                                  color: selectedService.color
+                                }}
+                              >
+                                {exp}
+                              </span>
+                            ))}
                           </div>
                         </div>
-                      ))}
-                    </div>
-                  </div>
-                </div>
+                      </div>
 
-                {/* CTA Buttons */}
-                <div className="mt-12 pt-8 border-t border-gray-200">
-                  <div className="flex flex-col sm:flex-row gap-4">
-                    <Link href="/contact" className="flex-1 px-8 py-4 bg-[#071633] text-white font-semibold rounded-xl hover:bg-[#263a5c] transition-colors flex items-center justify-center group">
-                      <MessageSquare className="mr-3" size={20} />
-                      Discuss Project
-                      <ArrowRight className="ml-3 group-hover:translate-x-1 transition-transform" />
-                    </Link>
-                    
-                    <Link href="/contact" className="flex-1 px-8 py-4 bg-white text-[#071633] font-semibold rounded-xl border-2 border-gray-200 hover:border-[#071633] transition-colors flex items-center justify-center">
-                      <Calendar className="mr-3" size={20} />
-                      Schedule Call
-                    </Link>
-                  </div>
-                </div>
-              </div>
-            </motion.div>
-          </motion.div>
-        )}
-      </AnimatePresence>
+                      <button
+                        onClick={() => setSelectedService(null)}
+                        className="flex h-11 w-11 flex-shrink-0 items-center justify-center rounded-xl border border-gray-200 text-[#071633] transition hover:border-[#071633] hover:bg-gray-50"
+                        aria-label="Close service details"
+                      >
+                        <X className="h-5 w-5" />
+                      </button>
+                    </div>
+
+                    <div className="min-h-0 flex-1 overflow-y-auto px-5 py-6 sm:px-8 sm:py-8">
+                      {/* Modal Content */}
+                      <div className="grid lg:grid-cols-2 gap-8">
+                        {/* Features */}
+                        <div>
+                          <h4 className="text-xl font-bold text-[#071633] mb-6 pb-3 border-b border-gray-200">
+                            Key Features
+                          </h4>
+                          <div className="space-y-4">
+                            {selectedService.features.map((feature, idx) => (
+                              <div key={idx} className="flex items-start">
+                                <div
+                                  className="w-6 h-6 rounded-full flex items-center justify-center mr-4 flex-shrink-0 mt-0.5"
+                                  style={{ backgroundColor: `${selectedService.color}10` }}
+                                >
+                                  <CheckCircle size={14} style={{ color: selectedService.color }} />
+                                </div>
+                                <span className="text-[#64748B]">{feature}</span>
+                              </div>
+                            ))}
+                          </div>
+                        </div>
+
+                        {/* Process */}
+                        <div>
+                          <h4 className="text-xl font-bold text-[#071633] mb-6 pb-3 border-b border-gray-200">
+                            Our Process
+                          </h4>
+                          <div className="space-y-6">
+                            {selectedService.process.map((step, idx) => (
+                              <div key={idx} className="flex items-start">
+                                <div
+                                  className="w-10 h-10 rounded-xl flex items-center justify-center mr-4 flex-shrink-0 font-bold text-white"
+                                  style={{ backgroundColor: selectedService.color }}
+                                >
+                                  {idx + 1}
+                                </div>
+                                <div>
+                                  <div className="font-semibold text-[#071633] mb-1">{step}</div>
+                                  <div className="text-sm text-[#64748B]">
+                                    Detailed implementation of {step.toLowerCase()} phase
+                                  </div>
+                                </div>
+                              </div>
+                            ))}
+                          </div>
+                        </div>
+                      </div>
+
+                      {/* CTA Buttons */}
+                      <div className="mt-12 pt-8 border-t border-gray-200">
+                        <div className="flex flex-col sm:flex-row gap-4">
+                          <Link href="/contact" className="flex-1 px-8 py-4 bg-[#071633] text-white font-semibold rounded-xl hover:bg-[#263a5c] transition-colors flex items-center justify-center group">
+                            <MessageSquare className="mr-3" size={20} />
+                            Discuss Project
+                            <ArrowRight className="ml-3 group-hover:translate-x-1 transition-transform" />
+                          </Link>
+
+                          <Link href="/contact" className="flex-1 px-8 py-4 bg-white text-[#071633] font-semibold rounded-xl border-2 border-gray-200 hover:border-[#071633] transition-colors flex items-center justify-center">
+                            <Calendar className="mr-3" size={20} />
+                            Schedule Call
+                          </Link>
+                        </div>
+                      </div>
+                    </div>
+                  </motion.div>
+                </motion.div>
+              )}
+            </AnimatePresence>,
+            document.body
+          )
+        : null}
     </div>
   );
 }
