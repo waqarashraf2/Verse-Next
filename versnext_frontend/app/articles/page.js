@@ -10,6 +10,15 @@ const hiddenLegacySlugs = new Set([
   "technical-seo-checklist-nextjs-laravel",
 ]);
 
+function mergeArticles(primaryArticles, fallbackItems) {
+  const bySlug = new Map();
+
+  fallbackItems.forEach((article) => bySlug.set(article.slug, article));
+  primaryArticles.forEach((article) => bySlug.set(article.slug, article));
+
+  return Array.from(bySlug.values()).filter((article) => !hiddenLegacySlugs.has(article.slug));
+}
+
 export const metadata = {
   title: "Technology Articles, SEO Guides and AI Automation Insights",
   description:
@@ -37,9 +46,7 @@ async function getArticles() {
     const payload = await response.json();
     const articles = payload?.data?.data || payload?.data || [];
 
-    const visibleArticles = articles.filter((article) => !hiddenLegacySlugs.has(article.slug));
-
-    return visibleArticles.length ? visibleArticles : fallbackArticles;
+    return mergeArticles(articles, fallbackArticles);
   } catch {
     return fallbackArticles;
   }

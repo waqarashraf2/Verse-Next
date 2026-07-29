@@ -12,6 +12,15 @@ const hiddenLegacySlugs = new Set([
 ]);
 const legacySlugParams = Array.from(hiddenLegacySlugs).map((slug) => ({ slug }));
 
+function mergeArticles(primaryArticles, fallbackItems) {
+  const bySlug = new Map();
+
+  fallbackItems.forEach((article) => bySlug.set(article.slug, article));
+  primaryArticles.forEach((article) => bySlug.set(article.slug, article));
+
+  return Array.from(bySlug.values()).filter((article) => !hiddenLegacySlugs.has(article.slug));
+}
+
 async function fetchArticles() {
   try {
     const response = await fetch(`${API_BASE}/articles?per_page=100`, {
@@ -23,9 +32,7 @@ async function fetchArticles() {
     const payload = await response.json();
     const articles = payload?.data?.data || payload?.data || [];
 
-    const visibleArticles = articles.filter((article) => !hiddenLegacySlugs.has(article.slug));
-
-    return visibleArticles.length ? visibleArticles : fallbackArticles;
+    return mergeArticles(articles, fallbackArticles);
   } catch {
     return fallbackArticles;
   }
@@ -138,6 +145,7 @@ export default async function ArticleDetailPage({ params }) {
   const tags = Array.isArray(article.tags) ? article.tags : [];
   const fallbackArticle = fallbackArticles.find((item) => item.slug === article.slug);
   const internalLinks = article.internalLinks || fallbackArticle?.internalLinks || [];
+  const faqs = article.faqs || fallbackArticle?.faqs || [];
 
   const articleSchema = {
     "@context": "https://schema.org",
@@ -191,10 +199,26 @@ export default async function ArticleDetailPage({ params }) {
     ],
   };
 
+  const faqSchema = faqs.length
+    ? {
+        "@context": "https://schema.org",
+        "@type": "FAQPage",
+        mainEntity: faqs.map((faq) => ({
+          "@type": "Question",
+          name: faq.question,
+          acceptedAnswer: {
+            "@type": "Answer",
+            text: faq.answer,
+          },
+        })),
+      }
+    : null;
+
   return (
     <article className="min-h-screen bg-white">
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(articleSchema) }} />
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbSchema) }} />
+      {faqSchema ? <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(faqSchema) }} /> : null}
 
       <section className="verse-wave-section bg-slate-50 px-4 pb-14 pt-40 sm:px-6 lg:px-8">
         <div className="mx-auto max-w-4xl">
@@ -254,6 +278,20 @@ export default async function ArticleDetailPage({ params }) {
               </section>
             ))}
           </div>
+
+          {faqs.length ? (
+            <section className="mt-14">
+              <h2 className="text-3xl font-semibold tracking-tight text-slate-950">Frequently asked questions</h2>
+              <div className="mt-6 space-y-4">
+                {faqs.map((faq) => (
+                  <div key={faq.question} className="rounded-2xl border border-slate-200 bg-slate-50 p-5">
+                    <h3 className="text-lg font-semibold text-slate-950">{faq.question}</h3>
+                    <p className="mt-2 text-sm leading-7 text-slate-600">{faq.answer}</p>
+                  </div>
+                ))}
+              </div>
+            </section>
+          ) : null}
 
           <div className="mt-14 rounded-2xl border border-slate-200 bg-slate-50 p-6">
             <h2 className="text-xl font-semibold text-slate-950">Need this for your business?</h2>
