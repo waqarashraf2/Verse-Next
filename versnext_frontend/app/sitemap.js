@@ -2,7 +2,9 @@ export const dynamic = "force-static";
 
 import { fallbackArticles } from "@/lib/editorial-content";
 
-const routes = ["", "services", "portfolio", "articles", "faqs", "about", "contact"];
+import { tools } from "@/lib/tools-content";
+
+const routes = ["", "services", "tools", "portfolio", "articles", "faqs", "about", "contact"];
 const lastModified = new Date("2026-07-23");
 const withTrailingSlash = (path) => (path ? `https://versenext.com/${path}/` : "https://versenext.com/");
 
@@ -21,5 +23,12 @@ export default function sitemap() {
     priority: article.is_featured ? 0.85 : 0.75,
   }));
 
-  return [...staticRoutes, ...articleRoutes];
+  const toolRoutes = tools.map((tool) => ({
+    url: `https://versenext.com/tools/${tool.slug}/`,
+    lastModified,
+    changeFrequency: "monthly",
+    priority: 0.86,
+  }));
+
+  return [...staticRoutes, ...toolRoutes, ...articleRoutes];
 }
