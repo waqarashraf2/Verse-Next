@@ -15,11 +15,11 @@ export const metadata = {
   },
   icons: {
     icon: [
-      { url: "/favicon.ico", sizes: "any" },
       { url: "/icon-blue.png", type: "image/png" },
+      { url: "/favicon.ico", sizes: "any" },
     ],
     shortcut: "/favicon.ico",
-    apple: "/icon-blue.png",
+    apple: "/apple-touch-icon.png",
   },
   manifest: "/site.webmanifest",
   applicationName: "Verse Next",
