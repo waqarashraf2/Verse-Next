@@ -3,6 +3,7 @@
 import { useState } from "react";
 import Link from "next/link";
 import { motion } from "framer-motion";
+import { breadcrumbSchema, pageSeo, webPageSchema } from "@/lib/seo-content";
 import { 
   Users,
   Target,
@@ -117,6 +118,16 @@ const TeamMember = ({ member, index }) => {
 // ========== ABOUT PAGE ==========
 export default function AboutPage() {
   const [activeValue, setActiveValue] = useState(0);
+  const pageSchema = webPageSchema({
+    name: pageSeo.about.title,
+    description: pageSeo.about.description,
+    path: "/about/",
+    type: "AboutPage",
+  });
+  const breadcrumbs = breadcrumbSchema([
+    { name: "Home", path: "/" },
+    { name: "About", path: "/about/" },
+  ]);
 
   const values = [
     {
@@ -129,7 +140,7 @@ export default function AboutPage() {
     {
       id: 2,
       title: "Innovation",
-      description: "Constantly pushing boundaries with creative solutions and cutting-edge technology.",
+      description: "Solving practical business problems with modern tools, clear thinking, and careful execution.",
       icon: Zap,
       color: "#6f7ed1"
     },
@@ -150,7 +161,7 @@ export default function AboutPage() {
     {
       id: 5,
       title: "Growth",
-      description: "Continuously learning and evolving to stay ahead in the digital landscape.",
+      description: "Learning from each project and improving the systems, content, and workflows we deliver.",
       icon: TrendingUp,
       color: "#6f7ed1"
     },
@@ -227,12 +238,12 @@ export default function AboutPage() {
   ];
 
   const milestones = [
-    { year: "2018", event: "Company Founded", description: "Started with 3 team members" },
-    { year: "2019", event: "First Major Client", description: "Partnered with Fortune 500 company" },
-    { year: "2020", event: "Team Expansion", description: "Grew to 15 team members" },
-    { year: "2021", event: "Award Recognition", description: "Won Digital Agency of the Year" },
-    { year: "2022", event: "Global Expansion", description: "Served clients in 10+ countries" },
-    { year: "2023", event: "Innovation Lab", description: "Launched R&D division" },
+    { year: "2018", event: "Early client work", description: "Started helping businesses with websites and digital services" },
+    { year: "2019", event: "Service focus", description: "Expanded work across web development, SEO, and brand support" },
+    { year: "2020", event: "Software systems", description: "Moved deeper into dashboards, portals, and business applications" },
+    { year: "2021", event: "Remote delivery", description: "Improved project communication, documentation, and delivery workflows" },
+    { year: "2022", event: "Automation work", description: "Added more workflow automation and API integration projects" },
+    { year: "2023", event: "AI direction", description: "Started combining web platforms with practical AI automation" },
   ];
 
   const socialLinks = [
@@ -258,6 +269,8 @@ export default function AboutPage() {
 
   return (
     <div className="min-h-screen bg-white">
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(pageSchema) }} />
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbs) }} />
       {/* ========== Cursor Effect ========== */}
       {/* ========== HERO SECTION ========== */}
       <section className="verse-wave-section relative py-32 overflow-hidden">
@@ -287,7 +300,7 @@ export default function AboutPage() {
             
             <p className="text-xl text-[#64748B] mb-10 max-w-3xl mx-auto">
               We are a team of passionate innovators dedicated to transforming 
-              businesses through cutting-edge digital solutions and strategic insight.
+              businesses through practical digital systems, reliable delivery, and strategic thinking.
             </p>
             
             {/* Stats */}
@@ -355,7 +368,7 @@ export default function AboutPage() {
                   { value: "Global", label: "Client Reach", icon: Globe },
                   { value: "24/7", label: "Support", icon: Shield },
                   { value: "Agile", label: "Methodology", icon: GitBranch },
-                  { value: "Award", label: "Winning", icon: Award },
+                  { value: "Quality", label: "Focused", icon: Award },
                 ].map((item, idx) => {
                   const Icon = item.icon;
                   return (

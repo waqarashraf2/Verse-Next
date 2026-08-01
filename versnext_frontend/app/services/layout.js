@@ -1,23 +1,24 @@
+import { pageSeo } from "@/lib/seo-content";
+
 export const metadata = {
-  title: "Services",
-  description:
-    "Explore Verse Next Pakistan digital services including web development, software development, mobile apps, SEO, digital marketing, graphic design, video production, and AI automation.",
-  keywords: [
-    "Pakistan digital services",
-    "web service providers Pakistan",
-    "web development company Pakistan",
-    "SEO services Pakistan",
-    "digital marketing agency Pakistan",
-    "Lahore digital agency",
-  ],
+  title: pageSeo.services.title,
+  description: pageSeo.services.description,
+  keywords: pageSeo.services.keywords,
   alternates: {
     canonical: "/services/",
   },
   openGraph: {
-    title: "Verse Next Services",
-    description:
-      "Pakistan web service provider for websites, software, mobile apps, SEO, marketing, design, video, and AI automation.",
+    title: pageSeo.services.title,
+    description: pageSeo.services.description,
     url: "https://versenext.com/services/",
+    type: "website",
+    images: ["/icon-blue.png"],
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: pageSeo.services.title,
+    description: pageSeo.services.description,
+    images: ["/icon-blue.png"],
   },
 };
 

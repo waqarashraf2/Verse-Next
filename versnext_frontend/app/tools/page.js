@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { ArrowRight, FileText, Image as ImageIcon, Layers, Search, ShieldCheck, Sparkles } from "lucide-react";
 import { toolIndex, tools } from "@/lib/tools-content";
+import { breadcrumbSchema, webPageSchema } from "@/lib/seo-content";
 
 export const metadata = {
   title: "Free Online PDF Tools for Image to PDF, JPG to PDF, Merge, Compress and Split",
@@ -14,6 +15,13 @@ export const metadata = {
     description: toolIndex.description,
     url: "https://versenext.com/tools/",
     type: "website",
+    images: ["/icon-blue.png"],
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "Free Online PDF Tools by Verse Next",
+    description: toolIndex.description,
+    images: ["/icon-blue.png"],
   },
 };
 
@@ -33,10 +41,22 @@ export default function ToolsPage() {
       description: tool.description,
     })),
   };
+  const pageSchema = webPageSchema({
+    name: toolIndex.title,
+    description: toolIndex.description,
+    path: "/tools/",
+    type: "CollectionPage",
+  });
+  const breadcrumbs = breadcrumbSchema([
+    { name: "Home", path: "/" },
+    { name: "Tools", path: "/tools/" },
+  ]);
 
   return (
     <div className="min-h-screen bg-white">
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(collectionSchema) }} />
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(pageSchema) }} />
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbs) }} />
 
       <section className="verse-wave-section bg-slate-50 px-4 pb-16 pt-40 sm:px-6 lg:px-8">
         <div className="mx-auto max-w-7xl">

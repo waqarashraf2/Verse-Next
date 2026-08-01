@@ -1,21 +1,24 @@
+import { pageSeo } from "@/lib/seo-content";
+
 export const metadata = {
-  title: "Contact",
-  description:
-    "Contact Verse Next in Lahore, Pakistan to discuss a website, software platform, mobile app, SEO campaign, digital marketing project, or AI automation workflow.",
-  keywords: [
-    "contact web development company Pakistan",
-    "hire digital agency Lahore",
-    "Pakistan SEO services contact",
-    "website development quote Pakistan",
-  ],
+  title: pageSeo.contact.title,
+  description: pageSeo.contact.description,
+  keywords: pageSeo.contact.keywords,
   alternates: {
     canonical: "/contact/",
   },
   openGraph: {
-    title: "Contact Verse Next",
-    description:
-      "Start a project with Verse Next for web, software, app, SEO, marketing, design, video, or AI automation work.",
+    title: pageSeo.contact.title,
+    description: pageSeo.contact.description,
     url: "https://versenext.com/contact/",
+    type: "website",
+    images: ["/icon-blue.png"],
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: pageSeo.contact.title,
+    description: pageSeo.contact.description,
+    images: ["/icon-blue.png"],
   },
 };
 

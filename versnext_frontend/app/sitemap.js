@@ -5,7 +5,7 @@ import { fallbackArticles } from "@/lib/editorial-content";
 import { tools } from "@/lib/tools-content";
 
 const routes = ["", "services", "tools", "portfolio", "articles", "faqs", "about", "contact"];
-const lastModified = new Date("2026-07-23");
+const lastModified = new Date("2026-08-02");
 const withTrailingSlash = (path) => (path ? `https://versenext.com/${path}/` : "https://versenext.com/");
 
 export default function sitemap() {

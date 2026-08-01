@@ -3,6 +3,7 @@
 import { useState } from "react";
 import Link from "next/link";
 import { motion } from "framer-motion";
+import { breadcrumbSchema, pageSeo, webPageSchema } from "@/lib/seo-content";
 import { 
   Mail,
   Phone,
@@ -89,6 +90,16 @@ export default function ContactPage() {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isSubmitted, setIsSubmitted] = useState(false);
   const [openFAQ, setOpenFAQ] = useState(null);
+  const pageSchema = webPageSchema({
+    name: pageSeo.contact.title,
+    description: pageSeo.contact.description,
+    path: "/contact/",
+    type: "ContactPage",
+  });
+  const breadcrumbs = breadcrumbSchema([
+    { name: "Home", path: "/" },
+    { name: "Contact", path: "/contact/" },
+  ]);
 
   const services = [
     "Web Development",
@@ -158,6 +169,18 @@ export default function ContactPage() {
       answer: "Yes, we offer various support packages including maintenance, updates, hosting, and technical support to ensure your solution continues to perform optimally."
     }
   ];
+  const faqSchema = {
+    "@context": "https://schema.org",
+    "@type": "FAQPage",
+    mainEntity: faqs.map((faq) => ({
+      "@type": "Question",
+      name: faq.question,
+      acceptedAnswer: {
+        "@type": "Answer",
+        text: faq.answer,
+      },
+    })),
+  };
 
   const socialLinks = [
     {
@@ -248,6 +271,9 @@ const handleSubmit = async (e) => {
 
   return (
     <div className="min-h-screen bg-white overflow-x-hidden">
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(pageSchema) }} />
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbs) }} />
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(faqSchema) }} />
       {/* ========== Cursor Effect ========== */}
       {/* ========== HERO SECTION ========== */}
       <section className="verse-wave-section relative py-16 sm:py-24 lg:py-32 overflow-hidden">

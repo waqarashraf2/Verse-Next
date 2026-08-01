@@ -15,8 +15,8 @@ return new class extends Migration
                 'title' => 'The Future of Software Developers in the Age of AI',
                 'category' => 'AI-Assisted Development',
                 'featured_image' => '/articles/developers-2026-to-2036-ai-future.png',
-                'seo_title' => 'The Future of Software Developers in the Age of AI | 2026 to 2036',
-                'seo_description' => 'A practical guide for new developers on what to learn from 2026 to 2036 as AI coding tools become more advanced: fundamentals, AI agents, system design, security, cloud, product thinking, and business skills.',
+                'seo_title' => 'Future of Software Developers in the Age of AI',
+                'seo_description' => 'What new developers should learn from 2026 to 2036 as AI coding tools grow: fundamentals, AI agents, system design, security, cloud and product thinking.',
                 'author' => 'Waqar Ashraf Gondal',
                 'reading_time' => 18,
                 'tags' => json_encode([

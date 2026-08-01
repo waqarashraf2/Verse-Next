@@ -1,20 +1,27 @@
 import Link from "next/link";
 import { ArrowRight, CheckCircle, HelpCircle, Search, Sparkles } from "lucide-react";
 import { recommendedKeywordClusters, seoFaqs } from "@/lib/editorial-content";
+import { breadcrumbSchema, pageSeo, webPageSchema } from "@/lib/seo-content";
 
 export const metadata = {
-  title: "Business Technology FAQs: AI Agents, CRM, CMS, Websites and Growth",
-  description:
-    "Straightforward answers to common questions about AI agents, CRM, CMS, websites, branding, and growth for business owners who want clear technology advice without fluff.",
+  title: pageSeo.faqs.title,
+  description: pageSeo.faqs.description,
+  keywords: pageSeo.faqs.keywords,
   alternates: {
     canonical: "/faqs/",
   },
   openGraph: {
-    title: "Verse Next Business Technology FAQs",
-    description:
-      "Clear answers about AI agents, CRM, CMS, enterprise systems, websites, SEO, branding, automation, and digital growth.",
+    title: pageSeo.faqs.title,
+    description: pageSeo.faqs.description,
     url: "https://versenext.com/faqs/",
     type: "website",
+    images: ["/icon-blue.png"],
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: pageSeo.faqs.title,
+    description: pageSeo.faqs.description,
+    images: ["/icon-blue.png"],
   },
 };
 
@@ -31,10 +38,22 @@ export default function FaqsPage() {
       },
     })),
   };
+  const pageSchema = webPageSchema({
+    name: pageSeo.faqs.title,
+    description: pageSeo.faqs.description,
+    path: "/faqs/",
+    type: "FAQPage",
+  });
+  const breadcrumbs = breadcrumbSchema([
+    { name: "Home", path: "/" },
+    { name: "FAQs", path: "/faqs/" },
+  ]);
 
   return (
     <div className="min-h-screen bg-white">
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(faqSchema) }} />
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(pageSchema) }} />
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbs) }} />
 
       <section className="verse-wave-section bg-slate-50 px-4 pb-16 pt-40 sm:px-6 lg:px-8">
         <div className="mx-auto max-w-7xl">

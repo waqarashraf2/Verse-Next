@@ -3,6 +3,7 @@ import { notFound } from "next/navigation";
 import { ArrowRight, CheckCircle, HelpCircle, ListChecks, Search, ShieldCheck, Sparkles } from "lucide-react";
 import PdfToolClient from "@/Components/PdfToolClient";
 import { getToolBySlug, tools } from "@/lib/tools-content";
+import { breadcrumbSchema } from "@/lib/seo-content";
 
 export function generateStaticParams() {
   return tools.map((tool) => ({ slug: tool.slug }));
@@ -12,19 +13,27 @@ export async function generateMetadata({ params }) {
   const { slug } = await params;
   const tool = getToolBySlug(slug);
   if (!tool) return {};
+  const seoTitle = `${tool.title} Online Free by Verse Next`;
 
   return {
-    title: `${tool.title} Online Free with Multiple Files Supported`,
+    title: seoTitle,
     description: tool.description,
     keywords: tool.keywords,
     alternates: {
       canonical: `/tools/${tool.slug}/`,
     },
     openGraph: {
-      title: `${tool.title} by Verse Next`,
+      title: seoTitle,
       description: tool.description,
       url: `https://versenext.com/tools/${tool.slug}/`,
       type: "article",
+      images: ["/icon-blue.png"],
+    },
+    twitter: {
+      card: "summary_large_image",
+      title: seoTitle,
+      description: tool.description,
+      images: ["/icon-blue.png"],
     },
   };
 }
@@ -79,7 +88,13 @@ export default async function ToolDetailPage({ params }) {
       },
     },
     mainEntityOfPage: toolUrl,
+    image: "https://versenext.com/icon-blue.png",
   };
+  const breadcrumbs = breadcrumbSchema([
+    { name: "Home", path: "/" },
+    { name: "Tools", path: "/tools/" },
+    { name: tool.title, path: `/tools/${tool.slug}/` },
+  ]);
 
   const relatedTools = tools.filter((item) => item.slug !== tool.slug);
 
@@ -88,6 +103,7 @@ export default async function ToolDetailPage({ params }) {
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(appSchema) }} />
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(articleSchema) }} />
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(faqSchema) }} />
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbs) }} />
 
       <section className="verse-wave-section bg-slate-50 px-4 pb-14 pt-40 sm:px-6 lg:px-8">
         <div className="mx-auto grid max-w-7xl gap-10 lg:grid-cols-[0.95fr_1.05fr] lg:items-start">

@@ -167,11 +167,11 @@ export default async function ArticleDetailPage({ params }) {
         url: "https://versenext.com/icon-blue.png",
       },
     },
-    mainEntityOfPage: `https://versenext.com/articles/${article.slug}`,
+    mainEntityOfPage: `https://versenext.com/articles/${article.slug}/`,
     articleSection: article.category,
     keywords: tags.join(", "),
     wordCount: articleToText(article).split(/\s+/).filter(Boolean).length,
-    image: article.featured_image ? `https://versenext.com${article.featured_image}` : undefined,
+    image: article.featured_image ? `https://versenext.com${article.featured_image}` : "https://versenext.com/icon-blue.png",
   };
 
   const breadcrumbSchema = {
@@ -182,19 +182,19 @@ export default async function ArticleDetailPage({ params }) {
         "@type": "ListItem",
         position: 1,
         name: "Home",
-        item: "https://versenext.com",
+        item: "https://versenext.com/",
       },
       {
         "@type": "ListItem",
         position: 2,
         name: "Articles",
-        item: "https://versenext.com/articles",
+        item: "https://versenext.com/articles/",
       },
       {
         "@type": "ListItem",
         position: 3,
         name: article.title,
-        item: `https://versenext.com/articles/${article.slug}`,
+        item: `https://versenext.com/articles/${article.slug}/`,
       },
     ],
   };

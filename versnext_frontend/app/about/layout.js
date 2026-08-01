@@ -1,22 +1,24 @@
+import { pageSeo } from "@/lib/seo-content";
+
 export const metadata = {
-  title: "About Verse Next",
-  description:
-    "Learn about Verse Next, a Lahore, Pakistan digital solutions company building websites, software, apps, SEO systems, marketing campaigns, and business automation.",
-  keywords: [
-    "Verse Next Pakistan",
-    "Lahore digital agency",
-    "Pakistan software company",
-    "web app developers Pakistan",
-    "SEO and social media Pakistan",
-  ],
+  title: pageSeo.about.title,
+  description: pageSeo.about.description,
+  keywords: pageSeo.about.keywords,
   alternates: {
     canonical: "/about/",
   },
   openGraph: {
-    title: "About Verse Next",
-    description:
-      "Meet Verse Next and its digital product, SEO, marketing, and AI automation capabilities.",
+    title: pageSeo.about.title,
+    description: pageSeo.about.description,
     url: "https://versenext.com/about/",
+    type: "website",
+    images: ["/icon-blue.png"],
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: pageSeo.about.title,
+    description: pageSeo.about.description,
+    images: ["/icon-blue.png"],
   },
 };
 

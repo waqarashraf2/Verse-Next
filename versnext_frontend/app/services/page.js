@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import Link from "next/link";
 import { createPortal } from "react-dom";
 import { motion, AnimatePresence } from "framer-motion";
+import { breadcrumbSchema, pageSeo, serviceListSchema, webPageSchema } from "@/lib/seo-content";
 import { 
   Code, 
   Search, 
@@ -169,7 +170,7 @@ export default function ServicesPage() {
     {
       id: 11,
       title: "Business Intelligence",
-      description: "Transform data into actionable insights with advanced analytics and reporting.",
+      description: "Turn business data into useful dashboards, reports, and clearer operating decisions.",
       icon: BarChart3,
       features: ["Data Visualization", "Predictive Analytics", "Dashboards", "KPI Tracking", "Reporting"],
       process: ["Data Collection", "Analysis", "Visualization", "Insights", "Reporting"],
@@ -179,7 +180,7 @@ export default function ServicesPage() {
     {
       id: 12,
       title: "Digital Transformation",
-      description: "End-to-end digital transformation strategies for legacy system modernization.",
+      description: "Modernize outdated workflows with practical software, automation, integrations, and support.",
       icon: Zap,
       features: ["Strategy", "Implementation", "Training", "Support", "Optimization"],
       process: ["Assessment", "Roadmap", "Implementation", "Training", "Support"],
@@ -187,9 +188,23 @@ export default function ServicesPage() {
       expertise: ["Strategy", "Implementation", "Change Management"]
     },
   ];
+  const pageSchema = webPageSchema({
+    name: pageSeo.services.title,
+    description: pageSeo.services.description,
+    path: "/services/",
+    type: "ServiceChannel",
+  });
+  const servicesSchema = serviceListSchema(services);
+  const breadcrumbs = breadcrumbSchema([
+    { name: "Home", path: "/" },
+    { name: "Services", path: "/services/" },
+  ]);
 
   return (
     <div className="min-h-screen bg-white">
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(pageSchema) }} />
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(servicesSchema) }} />
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbs) }} />
       {/* ========== Cursor Effect ========== */}
 
       {/* ========== HERO SECTION ========== */}
@@ -237,7 +252,7 @@ export default function ServicesPage() {
             </h1>
             
             <p className="text-xl text-[#64748B] mb-10 max-w-3xl mx-auto">
-              We deliver end-to-end digital solutions that combine technical 
+              We deliver practical digital solutions that combine technical 
               excellence with strategic insight to drive measurable business results.
             </p>
             
@@ -247,7 +262,7 @@ export default function ServicesPage() {
                 { value: "12+", label: "Services", icon: Layers, color: "#4d61b7" },
                 { value: "98%", label: "Satisfaction", icon: Star, color: "#6f7ed1" },
                 { value: "24/7", label: "Support", icon: Headphones, color: "#071633" },
-                { value: "50+", label: "Experts", icon: Award, color: "#4d61b7" },
+                { value: "Multi", label: "Skill Team", icon: Award, color: "#4d61b7" },
               ].map((stat, idx) => {
                 const Icon = stat.icon;
                 return (

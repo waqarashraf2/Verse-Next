@@ -110,9 +110,9 @@ export const fallbackArticles = [
     title: "The Future of Software Developers in the Age of AI",
     slug: "future-of-software-developers-ai-2026-to-2036",
     category: "AI-Assisted Development",
-    seo_title: "The Future of Software Developers in the Age of AI | 2026 to 2036",
+    seo_title: "Future of Software Developers in the Age of AI",
     seo_description:
-      "A practical guide for new developers on what to learn from 2026 to 2036 as AI coding tools become more advanced: fundamentals, AI agents, system design, security, cloud, product thinking, and business skills.",
+      "What new developers should learn from 2026 to 2036 as AI coding tools grow: fundamentals, AI agents, system design, security, cloud and product thinking.",
     author: "Waqar Ashraf Gondal",
     featured_image: "/articles/developers-2026-to-2036-ai-future.png",
     reading_time: 18,
@@ -331,7 +331,7 @@ export const fallbackArticles = [
     category: "Developer Skills",
     seo_title: "Developers in 2026 Need More Than Coding Skills | Verse Next",
     seo_description:
-      "A practical founder-led guide on the developer skills companies need in 2026: AI judgment, Git, deployment, communication, problem-solving, ownership, and full-stack understanding.",
+      "A practical guide on the developer skills companies need in 2026: AI judgment, Git, deployment, communication, ownership and full-stack understanding.",
     author: "Waqar Ashraf Gondal",
     featured_image: "/articles/developers-2026-cover.webp",
     reading_time: 14,

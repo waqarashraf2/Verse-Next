@@ -3,6 +3,7 @@
 import { useState } from "react";
 import Link from "next/link";
 import { motion, AnimatePresence } from "framer-motion";
+import { breadcrumbSchema, pageSeo, webPageSchema } from "@/lib/seo-content";
 import { 
   ArrowUpRight,
   Filter,
@@ -35,6 +36,16 @@ export default function PortfolioPage() {
   const [selectedProject, setSelectedProject] = useState(null);
   const [currentPage, setCurrentPage] = useState(1);
   const projectsPerPage = 6;
+  const pageSchema = webPageSchema({
+    name: pageSeo.portfolio.title,
+    description: pageSeo.portfolio.description,
+    path: "/portfolio/",
+    type: "CollectionPage",
+  });
+  const breadcrumbs = breadcrumbSchema([
+    { name: "Home", path: "/" },
+    { name: "Portfolio", path: "/portfolio/" },
+  ]);
 
   const filters = [
     { id: "all", label: "All Projects" },
@@ -51,7 +62,7 @@ export default function PortfolioPage() {
       title: "Fintech Analytics Dashboard",
       category: "web",
       client: "FinCorp Solutions",
-      description: "A comprehensive financial analytics platform with real-time data visualization and predictive insights for enterprise clients.",
+      description: "A financial analytics dashboard concept with reporting views, data visualization, and decision support for business teams.",
       technologies: ["Next.js", "TypeScript", "D3.js", "Tailwind", "PostgreSQL"],
       results: ["+45% User Engagement", "2.5x Faster Insights", "99.9% Uptime"],
       year: "2023",
@@ -67,7 +78,7 @@ export default function PortfolioPage() {
       title: "E-commerce Luxury Store",
       category: "ecommerce",
       client: "Luxury Brands Inc",
-      description: "High-end e-commerce platform with AR product previews, personalized recommendations, and seamless checkout experience.",
+      description: "An ecommerce platform concept with product previews, recommendations, and a cleaner checkout flow.",
       technologies: ["React", "Node.js", "MongoDB", "Stripe", "Redis"],
       results: ["+300% Sales", "4.8 Star Rating", "2M+ Revenue"],
       year: "2023",
@@ -99,7 +110,7 @@ export default function PortfolioPage() {
       title: "SaaS Project Management",
       category: "web",
       client: "TeamFlow Tech",
-      description: "Collaborative project management tool with AI-powered task allocation, time tracking, and resource management.",
+      description: "A project management platform concept with task planning, time tracking, and resource management.",
       technologies: ["Vue.js", "Python", "PostgreSQL", "Django", "Docker"],
       results: ["+200% Productivity", "10K+ Users", "40% Time Saved"],
       year: "2022",
@@ -181,7 +192,7 @@ export default function PortfolioPage() {
       client: "Wanderlust Travel",
       description: "All-in-one travel booking platform with flight, hotel, and activity reservations with personalized recommendations.",
       technologies: ["Angular", "Spring Boot", "MySQL", "Redis", "Elasticsearch"],
-      results: ["+120% Bookings", "Global Reach", "Award Winning"],
+      results: ["More Bookings", "Wider Reach", "Cleaner Planning"],
       year: "2021",
       duration: "10 Months",
       team: "20 Members",
@@ -206,6 +217,8 @@ export default function PortfolioPage() {
 
   return (
     <div className="min-h-screen bg-white">
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(pageSchema) }} />
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbs) }} />
       {/* ========== Cursor Effect ========== */}
       {/* ========== HERO SECTION ========== */}
       <section className="verse-wave-section relative py-32 overflow-hidden">

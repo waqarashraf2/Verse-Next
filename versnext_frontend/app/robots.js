@@ -6,7 +6,7 @@ export default function robots() {
       {
         userAgent: "*",
         allow: "/",
-        disallow: ["/admin"],
+        disallow: ["/admin", "/admin/"],
       },
     ],
     sitemap: "https://versenext.com/sitemap.xml",

@@ -2,6 +2,7 @@ import Link from "next/link";
 import Image from "next/image";
 import { ArrowRight, BookOpen, CalendarDays, Search, Sparkles, Tags } from "lucide-react";
 import { fallbackArticles, recommendedKeywordClusters } from "@/lib/editorial-content";
+import { breadcrumbSchema, webPageSchema } from "@/lib/seo-content";
 
 const API_BASE = process.env.NEXT_PUBLIC_API_BASE_URL || "https://api.versenext.com/api";
 const hiddenLegacySlugs = new Set([
@@ -32,6 +33,14 @@ export const metadata = {
       "Human-written technology articles for business websites, SEO, AI automation, software development, and digital growth.",
     url: "https://versenext.com/articles/",
     type: "website",
+    images: ["/icon-blue.png"],
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "Verse Next Articles and Technology Insights",
+    description:
+      "Human-written technology articles for business websites, SEO, AI automation, software development, and digital growth.",
+    images: ["/icon-blue.png"],
   },
 };
 
@@ -71,10 +80,22 @@ export default async function ArticlesPage() {
       keywords: Array.isArray(article.tags) ? article.tags.join(", ") : article.tags,
     })),
   };
+  const pageSchema = webPageSchema({
+    name: "Verse Next Technology Articles",
+    description: metadata.description,
+    path: "/articles/",
+    type: "CollectionPage",
+  });
+  const breadcrumbs = breadcrumbSchema([
+    { name: "Home", path: "/" },
+    { name: "Articles", path: "/articles/" },
+  ]);
 
   return (
     <div className="min-h-screen bg-white">
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(collectionSchema) }} />
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(pageSchema) }} />
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbs) }} />
 
       <section className="verse-wave-section bg-slate-50 px-4 pb-16 pt-40 sm:px-6 lg:px-8">
         <div className="mx-auto max-w-7xl">
