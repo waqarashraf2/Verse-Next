@@ -61,13 +61,13 @@ export default function PortfolioPage() {
       id: 1,
       title: "Fintech Analytics Dashboard",
       category: "web",
-      client: "FinCorp Solutions",
+      client: "Internal Concept",
       description: "A financial analytics dashboard concept with reporting views, data visualization, and decision support for business teams.",
       technologies: ["Next.js", "TypeScript", "D3.js", "Tailwind", "PostgreSQL"],
-      results: ["+45% User Engagement", "2.5x Faster Insights", "99.9% Uptime"],
-      year: "2023",
-      duration: "4 Months",
-      team: "8 Members",
+      results: ["Dashboard Flow", "Reporting UI", "Secure Layout"],
+      year: "2026",
+      duration: "Concept Build",
+      team: "Core Team",
       color: "#4d61b7",
       image: "https://images.unsplash.com/photo-1551288049-bebda4e38f71?w=800&auto=format&fit=crop",
       challenges: ["Real-time data processing", "Complex visualization", "Security compliance"],
@@ -77,13 +77,13 @@ export default function PortfolioPage() {
       id: 2,
       title: "E-commerce Luxury Store",
       category: "ecommerce",
-      client: "Luxury Brands Inc",
+      client: "Internal Concept",
       description: "An ecommerce platform concept with product previews, recommendations, and a cleaner checkout flow.",
       technologies: ["React", "Node.js", "MongoDB", "Stripe", "Redis"],
-      results: ["+300% Sales", "4.8 Star Rating", "2M+ Revenue"],
-      year: "2023",
-      duration: "6 Months",
-      team: "12 Members",
+      results: ["Product Flow", "Checkout Plan", "Store UI"],
+      year: "2026",
+      duration: "Concept Build",
+      team: "Core Team",
       color: "#6f7ed1",
       image: "https://images.unsplash.com/photo-1556742049-0cfed4f6a45d?w=800&auto=format&fit=crop",
       challenges: ["High traffic handling", "Payment security", "Inventory management"],
@@ -93,13 +93,13 @@ export default function PortfolioPage() {
       id: 3,
       title: "Healthcare Mobile App",
       category: "mobile",
-      client: "HealthFirst Medical",
-      description: "Telemedicine platform connecting patients with doctors through video consultations, prescription management, and health tracking.",
+      client: "Internal Concept",
+      description: "Healthcare app interface concept for appointments, patient records, reminders, and clearer service communication.",
       technologies: ["React Native", "Firebase", "WebRTC", "AWS", "GraphQL"],
-      results: ["50K+ Downloads", "4.9 App Store", "95% Satisfaction"],
-      year: "2023",
-      duration: "5 Months",
-      team: "10 Members",
+      results: ["App Flow", "Patient UX", "Secure Forms"],
+      year: "2026",
+      duration: "Concept Build",
+      team: "Core Team",
       color: "#071633",
       image: "https://images.unsplash.com/photo-1579684385127-1ef15d508118?w=800&auto=format&fit=crop",
       challenges: ["HIPAA compliance", "Real-time video", "Cross-platform"],
@@ -109,13 +109,13 @@ export default function PortfolioPage() {
       id: 4,
       title: "SaaS Project Management",
       category: "web",
-      client: "TeamFlow Tech",
+      client: "Internal Concept",
       description: "A project management platform concept with task planning, time tracking, and resource management.",
       technologies: ["Vue.js", "Python", "PostgreSQL", "Django", "Docker"],
-      results: ["+200% Productivity", "10K+ Users", "40% Time Saved"],
-      year: "2022",
-      duration: "8 Months",
-      team: "15 Members",
+      results: ["Task Flow", "Team Views", "Reporting Plan"],
+      year: "2025",
+      duration: "Concept Build",
+      team: "Core Team",
       color: "#4d61b7",
       image: "https://images.unsplash.com/photo-1460925895917-afdab827c52f?w=800&auto=format&fit=crop",
       challenges: ["Complex workflows", "Team collaboration", "Data synchronization"],
@@ -125,13 +125,13 @@ export default function PortfolioPage() {
       id: 5,
       title: "Real Estate Platform",
       category: "web",
-      client: "Prime Properties",
-      description: "Interactive real estate marketplace with 3D property tours, mortgage calculator, and agent matching system.",
+      client: "Internal Concept",
+      description: "Real estate platform concept with property listings, enquiry capture, map views, and agent follow-up workflow.",
       technologies: ["Next.js", "Three.js", "Mapbox", "NestJS", "MongoDB"],
-      results: ["+80% Lead Conversion", "3D View Engagement", "25% Faster Sales"],
-      year: "2022",
-      duration: "7 Months",
-      team: "14 Members",
+      results: ["Listing UX", "Lead Capture", "Agent Workflow"],
+      year: "2025",
+      duration: "Concept Build",
+      team: "Core Team",
       color: "#6f7ed1",
       image: "https://images.unsplash.com/photo-1560518883-ce09059eeffa?w=800&auto=format&fit=crop",
       challenges: ["3D rendering", "Location services", "Lead management"],
@@ -141,13 +141,13 @@ export default function PortfolioPage() {
       id: 6,
       title: "Fitness Tracking App",
       category: "mobile",
-      client: "FitLife",
-      description: "Comprehensive fitness app with workout plans, nutrition tracking, progress analytics, and social features.",
+      client: "Internal Concept",
+      description: "Fitness app concept with workout plans, progress screens, profile views, and simple habit tracking.",
       technologies: ["Flutter", "Node.js", "MongoDB", "Firebase", "TensorFlow"],
-      results: ["100K+ Active Users", "4.7 Rating", "30% Retention"],
-      year: "2022",
-      duration: "6 Months",
-      team: "11 Members",
+      results: ["Mobile UX", "Progress Views", "Habit Flow"],
+      year: "2025",
+      duration: "Concept Build",
+      team: "Core Team",
       color: "#071633",
       image: "https://images.unsplash.com/photo-1571019613454-1cb2f99b2d8b?w=800&auto=format&fit=crop",
       challenges: ["Wearable integration", "Personalization", "Social features"],
@@ -157,13 +157,13 @@ export default function PortfolioPage() {
       id: 7,
       title: "Educational Platform",
       category: "web",
-      client: "EduTech Solutions",
-      description: "Online learning platform with interactive courses, progress tracking, and certification system for professional development.",
+      client: "Internal Concept",
+      description: "Online learning platform concept with course pages, progress tracking, lesson structure, and student dashboard planning.",
       technologies: ["React", "Django", "PostgreSQL", "WebSocket", "AWS"],
-      results: ["500+ Courses", "95% Completion", "Industry Recognition"],
-      year: "2021",
-      duration: "9 Months",
-      team: "18 Members",
+      results: ["Course UX", "Student Flow", "Dashboard Plan"],
+      year: "2025",
+      duration: "Concept Build",
+      team: "Core Team",
       color: "#4d61b7",
       image: "https://images.unsplash.com/photo-1486312338219-ce68d2c6f44d?w=800&auto=format&fit=crop",
       challenges: ["Content delivery", "User engagement", "Certification"],
@@ -173,13 +173,13 @@ export default function PortfolioPage() {
       id: 8,
       title: "Food Delivery Service",
       category: "mobile",
-      client: "QuickBite",
+      client: "Internal Concept",
       description: "Food delivery app with real-time order tracking, restaurant management, and intelligent delivery routing.",
       technologies: ["React Native", "Express.js", "MongoDB", "Socket.io", "Google Maps"],
-      results: ["+150% Orders", "20min Avg Delivery", "4.8 Customer Rating"],
-      year: "2021",
-      duration: "5 Months",
-      team: "13 Members",
+      results: ["Order Flow", "Vendor Views", "Tracking UX"],
+      year: "2025",
+      duration: "Concept Build",
+      team: "Core Team",
       color: "#6f7ed1",
       image: "https://images.unsplash.com/photo-1565299624946-b28f40a0ca4b?w=800&auto=format&fit=crop",
       challenges: ["Real-time tracking", "Multi-vendor", "Delivery optimization"],
@@ -189,13 +189,13 @@ export default function PortfolioPage() {
       id: 9,
       title: "Travel Booking Platform",
       category: "web",
-      client: "Wanderlust Travel",
+      client: "Internal Concept",
       description: "All-in-one travel booking platform with flight, hotel, and activity reservations with personalized recommendations.",
       technologies: ["Angular", "Spring Boot", "MySQL", "Redis", "Elasticsearch"],
       results: ["More Bookings", "Wider Reach", "Cleaner Planning"],
-      year: "2021",
-      duration: "10 Months",
-      team: "20 Members",
+      year: "2025",
+      duration: "Concept Build",
+      team: "Core Team",
       color: "#071633",
       image: "https://images.unsplash.com/photo-1488646953014-85cb44e25828?w=800&auto=format&fit=crop",
       challenges: ["Multi-provider integration", "Dynamic pricing", "Global payments"],
@@ -239,7 +239,7 @@ export default function PortfolioPage() {
           >
             <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-[#6f7ed1]/10 text-[#071633] text-sm font-medium mb-6">
               <Sparkles className="w-4 h-4" />
-              <span>Showcase of Excellence</span>
+              <span>Selected Work Samples</span>
             </div>
             
             <h1 className="text-5xl md:text-6xl lg:text-7xl font-bold text-[#071633] mb-6">
@@ -247,17 +247,16 @@ export default function PortfolioPage() {
             </h1>
             
             <p className="text-xl text-[#64748B] mb-10 max-w-3xl mx-auto">
-              Explore our successful projects that demonstrate our expertise in 
-              delivering innovative digital solutions across various industries.
+              Explore selected work samples, internal concepts, and project-style examples that show how Verse Next thinks about websites, apps, dashboards, SEO, and digital systems.
             </p>
             
             {/* Stats */}
             <div className="grid grid-cols-2 md:grid-cols-4 gap-6 max-w-2xl mx-auto mt-12">
               {[
                 { value: projects.length, label: "Projects", icon: Target, color: "#4d61b7" },
-                { value: "98%", label: "Success Rate", icon: Star, color: "#6f7ed1" },
-                { value: "50+", label: "Happy Clients", icon: Users, color: "#071633" },
-                { value: "3M+", label: "Users Impacted", icon: TrendingUp, color: "#4d61b7" },
+                { value: "2025", label: "Company Founded", icon: Star, color: "#6f7ed1" },
+                { value: "Core", label: "Specialist Team", icon: Users, color: "#071633" },
+                { value: "Practical", label: "Build Focus", icon: TrendingUp, color: "#4d61b7" },
               ].map((stat, idx) => {
                 const Icon = stat.icon;
                 return (
@@ -414,7 +413,7 @@ export default function PortfolioPage() {
                             </div>
                             
                             <div className="flex items-center text-[#4d61b7] font-medium group-hover:gap-3 transition-all">
-                              <span>Case Study</span>
+                              <span>View Details</span>
                               <ArrowUpRight className="ml-2 group-hover:translate-x-1 group-hover:-translate-y-1 transition-transform" />
                             </div>
                           </div>
@@ -491,7 +490,7 @@ export default function PortfolioPage() {
               Ready to Start Your Project?
             </h2>
             <p className="text-xl text-gray-300 mb-12 max-w-2xl mx-auto">
-              Let's create something amazing together. Share your project ideas with us.
+              Share your project idea and we will suggest a practical, transparent way to move forward.
             </p>
             
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
@@ -521,8 +520,8 @@ export default function PortfolioPage() {
                 </div>
                 
                 <div className="text-center">
-                  <div className="text-2xl font-bold text-white mb-2">Proven Results</div>
-                  <div className="text-gray-300">Track record of successful deliveries</div>
+                  <div className="text-2xl font-bold text-white mb-2">Honest Scope</div>
+                  <div className="text-gray-300">Clear deliverables before work starts</div>
                 </div>
               </div>
             </div>
@@ -665,7 +664,7 @@ export default function PortfolioPage() {
                       onClick={() => setSelectedProject(null)}
                       className="flex-1 px-8 py-4 bg-white text-[#071633] font-semibold rounded-xl border-2 border-gray-200 hover:border-[#071633] transition-colors flex items-center justify-center"
                     >
-                      Close Case Study
+                      Close Details
                     </button>
                   </div>
                 </div>

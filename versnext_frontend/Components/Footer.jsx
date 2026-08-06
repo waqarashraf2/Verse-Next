@@ -13,11 +13,11 @@ const Footer = () => {
   ];
 
   const services = [
-    { label: "Web Development", href: "/services" },
-    { label: "SEO Services", href: "/services" },
-    { label: "Digital Marketing", href: "/services" },
-    { label: "Video Editing", href: "/services" },
-    { label: "AI Automation", href: "/services" },
+    { label: "Web Development", href: "/services/web-development" },
+    { label: "SEO Services", href: "/services/seo-optimization" },
+    { label: "Digital Marketing", href: "/services/digital-marketing" },
+    { label: "Video Editing", href: "/services/video-production" },
+    { label: "AI Automation", href: "/services/ai-automation" },
   ];
 
   const socialLinks = [

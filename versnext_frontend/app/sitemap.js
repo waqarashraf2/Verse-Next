@@ -1,6 +1,7 @@
 export const dynamic = "force-static";
 
 import { fallbackArticles } from "@/lib/editorial-content";
+import { servicePages } from "@/lib/services-content";
 
 import { tools } from "@/lib/tools-content";
 
@@ -30,5 +31,12 @@ export default function sitemap() {
     priority: 0.86,
   }));
 
-  return [...staticRoutes, ...toolRoutes, ...articleRoutes];
+  const serviceRoutes = servicePages.map((service) => ({
+    url: `https://versenext.com/services/${service.slug}/`,
+    lastModified,
+    changeFrequency: "monthly",
+    priority: 0.84,
+  }));
+
+  return [...staticRoutes, ...serviceRoutes, ...toolRoutes, ...articleRoutes];
 }

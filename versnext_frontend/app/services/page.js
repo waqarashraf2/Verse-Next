@@ -5,6 +5,7 @@ import Link from "next/link";
 import { createPortal } from "react-dom";
 import { motion, AnimatePresence } from "framer-motion";
 import { breadcrumbSchema, pageSeo, serviceListSchema, webPageSchema } from "@/lib/seo-content";
+import { servicePages } from "@/lib/services-content";
 import { 
   Code, 
   Search, 
@@ -69,6 +70,7 @@ export default function ServicesPage() {
   const services = [
     {
       id: 1,
+      slug: "web-development",
       title: "Web Development",
       description: "Custom web applications built with modern technologies for optimal performance and scalability.",
       icon: Code,
@@ -79,6 +81,7 @@ export default function ServicesPage() {
     },
     {
       id: 2,
+      slug: "seo-optimization",
       title: "SEO Optimization",
       description: "Comprehensive SEO strategies to improve search rankings and drive sustainable organic traffic.",
       icon: Search,
@@ -89,6 +92,7 @@ export default function ServicesPage() {
     },
     {
       id: 3,
+      slug: "digital-marketing",
       title: "Digital Marketing",
       description: "Data-driven marketing campaigns across all digital channels for maximum ROI and growth.",
       icon: TrendingUp,
@@ -99,6 +103,7 @@ export default function ServicesPage() {
     },
     {
       id: 4,
+      slug: "video-production",
       title: "Video Production",
       description: "Professional video editing and animation services for commercials and social media content.",
       icon: Video,
@@ -109,6 +114,7 @@ export default function ServicesPage() {
     },
     {
       id: 5,
+      slug: "social-media-management",
       title: "Social Media Management",
       description: "Complete social media management including content creation and community engagement.",
       icon: Users,
@@ -119,6 +125,7 @@ export default function ServicesPage() {
     },
     {
       id: 6,
+      slug: "brand-strategy",
       title: "Brand Strategy",
       description: "Develop a strong brand identity that resonates with your target audience and drives loyalty.",
       icon: Globe,
@@ -129,6 +136,7 @@ export default function ServicesPage() {
     },
     {
       id: 7,
+      slug: "ui-ux-design",
       title: "UI/UX Design",
       description: "User-centered design solutions that enhance user experience and drive conversions.",
       icon: Palette,
@@ -139,6 +147,7 @@ export default function ServicesPage() {
     },
     {
       id: 8,
+      slug: "mobile-app-development",
       title: "Mobile App Development",
       description: "Native and cross-platform mobile applications for iOS and Android platforms.",
       icon: Smartphone,
@@ -149,6 +158,7 @@ export default function ServicesPage() {
     },
     {
       id: 9,
+      slug: "cybersecurity-solutions",
       title: "Cybersecurity Solutions",
       description: "Comprehensive security measures to protect your digital assets and customer data.",
       icon: Shield,
@@ -159,6 +169,7 @@ export default function ServicesPage() {
     },
     {
       id: 10,
+      slug: "cloud-infrastructure",
       title: "Cloud Infrastructure",
       description: "Cloud solutions for scalability, reliability, and optimized performance.",
       icon: Cloud,
@@ -169,6 +180,7 @@ export default function ServicesPage() {
     },
     {
       id: 11,
+      slug: "business-intelligence",
       title: "Business Intelligence",
       description: "Turn business data into useful dashboards, reports, and clearer operating decisions.",
       icon: BarChart3,
@@ -179,6 +191,7 @@ export default function ServicesPage() {
     },
     {
       id: 12,
+      slug: "digital-transformation",
       title: "Digital Transformation",
       description: "Modernize outdated workflows with practical software, automation, integrations, and support.",
       icon: Zap,
@@ -194,7 +207,7 @@ export default function ServicesPage() {
     path: "/services/",
     type: "ServiceChannel",
   });
-  const servicesSchema = serviceListSchema(services);
+  const servicesSchema = serviceListSchema(servicePages);
   const breadcrumbs = breadcrumbSchema([
     { name: "Home", path: "/" },
     { name: "Services", path: "/services/" },
@@ -318,10 +331,9 @@ export default function ServicesPage() {
                   whileInView={{ opacity: 1, y: 0 }}
                   viewport={{ once: true, margin: "-50px" }}
                   transition={{ duration: 0.5, delay: index * 0.1 }}
-                  onClick={() => setSelectedService(service)}
-                  className="group cursor-pointer"
+                  className="group"
                 >
-                  <div className="verse-wave-card h-full bg-white rounded-2xl p-8 border border-gray-200 hover:border-[#4d61b7] transition-all duration-500 hover:shadow-2xl hover:-translate-y-2">
+                  <Link href={`/services/${service.slug}`} className="verse-wave-card block h-full rounded-2xl border border-gray-200 bg-white p-8 transition-all duration-500 hover:-translate-y-2 hover:border-[#4d61b7] hover:shadow-2xl">
                     {/* Icon & Badge */}
                     <div className="flex items-start justify-between mb-6">
                       <motion.div
@@ -392,7 +404,7 @@ export default function ServicesPage() {
                         </div>
                       </div>
                     </div>
-                  </div>
+                  </Link>
                 </motion.div>
               );
             })}

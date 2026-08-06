@@ -8,9 +8,9 @@ export const brandLinks = [
 
 export const pageSeo = {
   about: {
-    title: "About Verse Next - Software, SEO and AI Automation",
+    title: "About Verse Next - Pakistan Software, SEO and AI Company",
     description:
-      "Learn about Verse Next, a Pakistan technology company building websites, software platforms, mobile apps, SEO systems and practical AI automation.",
+      "Learn about Verse Next, a Pakistan technology company founded in 2025 to build websites, software, SEO systems, content and practical AI automation.",
     keywords: [
       "about Verse Next",
       "Pakistan software company",
@@ -34,9 +34,9 @@ export const pageSeo = {
     ],
   },
   portfolio: {
-    title: "Portfolio - Web, Software, App, SEO and Digital Product Work",
+    title: "Portfolio - Selected Web, App, SEO and Software Work Samples",
     description:
-      "View Verse Next portfolio examples for websites, ecommerce, mobile apps, dashboards, UI/UX design, marketing systems and business platforms.",
+      "View selected Verse Next work samples, internal concepts and project-style examples for websites, apps, dashboards, SEO and digital systems.",
     keywords: [
       "Verse Next portfolio",
       "web development portfolio Pakistan",

@@ -106,7 +106,7 @@ const TeamMember = ({ member, index }) => {
             <div className="w-1 h-1 rounded-full bg-[#64748B]" />
             <div className="flex items-center gap-1">
               <Trophy size={14} />
-              <span>{member.projects}+ projects</span>
+              <span>{member.projectLabel || `${member.projects}+ projects`}</span>
             </div>
           </div>
         </div>
@@ -181,8 +181,8 @@ export default function AboutPage() {
       position: "CEO & Founder",
       bio: "Full stack web app and software developer leading digital strategy, product architecture, and delivery.",
       expertise: ["Full Stack", "Web Apps", "Software"],
-      experience: "12 Years",
-      projects: 150,
+      experience: "Founder",
+      projectLabel: "Delivery lead",
       color: "#4d61b7"
     },
     {
@@ -191,8 +191,8 @@ export default function AboutPage() {
       position: "CTO",
       bio: "Full stack web app and software developer focused on scalable systems, APIs, and emerging technologies.",
       expertise: ["Full Stack", "APIs", "AI/ML"],
-      experience: "9 Years",
-      projects: 120,
+      experience: "Core Team",
+      projectLabel: "System planning",
       color: "#6f7ed1"
     },
     {
@@ -201,8 +201,8 @@ export default function AboutPage() {
       position: "Graphic Designer",
       bio: "Creative graphic designer focused on brand visuals, social media creatives, and polished marketing assets.",
       expertise: ["Branding", "Social Design", "Creatives"],
-      experience: "8 Years",
-      projects: 95,
+      experience: "Creative",
+      projectLabel: "Brand assets",
       color: "#071633"
     },
     {
@@ -211,8 +211,8 @@ export default function AboutPage() {
       position: "AI Video Editor",
       bio: "AI video editor creating modern video content, motion edits, reels, and AI-assisted visual storytelling.",
       expertise: ["AI Video", "Reels", "Motion"],
-      experience: "7 Years",
-      projects: 110,
+      experience: "Video",
+      projectLabel: "Motion content",
       color: "#4d61b7"
     },
     {
@@ -221,8 +221,8 @@ export default function AboutPage() {
       position: "SEO & Social Media Specialist",
       bio: "SEO and social media specialist helping brands grow through search visibility, content planning, and campaigns.",
       expertise: ["SEO", "Social Media", "Content"],
-      experience: "6 Years",
-      projects: 85,
+      experience: "SEO",
+      projectLabel: "Content growth",
       color: "#6f7ed1"
     },
     {
@@ -231,19 +231,17 @@ export default function AboutPage() {
       position: "Video Editor & Grapher",
       bio: "Video editor and grapher producing clean edits, commercial visuals, brand reels, and visual content.",
       expertise: ["Video Editing", "Graphy", "Reels"],
-      experience: "5 Years",
-      projects: 70,
+      experience: "Editing",
+      projectLabel: "Visual work",
       color: "#071633"
     },
   ];
 
   const milestones = [
-    { year: "2018", event: "Early client work", description: "Started helping businesses with websites and digital services" },
-    { year: "2019", event: "Service focus", description: "Expanded work across web development, SEO, and brand support" },
-    { year: "2020", event: "Software systems", description: "Moved deeper into dashboards, portals, and business applications" },
-    { year: "2021", event: "Remote delivery", description: "Improved project communication, documentation, and delivery workflows" },
-    { year: "2022", event: "Automation work", description: "Added more workflow automation and API integration projects" },
-    { year: "2023", event: "AI direction", description: "Started combining web platforms with practical AI automation" },
+    { year: "2025", event: "Company launch", description: "Verse Next started as a focused digital company in Lahore, Pakistan" },
+    { year: "2025", event: "Service foundation", description: "Defined core services across websites, SEO, content, design, and automation" },
+    { year: "2026", event: "Product direction", description: "Expanded the public platform with articles, SEO resources, and free PDF tools" },
+    { year: "2026", event: "AI workflows", description: "Started shaping practical AI automation services for lead handling and operations" },
   ];
 
   const socialLinks = [
@@ -306,10 +304,10 @@ export default function AboutPage() {
             {/* Stats */}
             <div className="grid grid-cols-2 md:grid-cols-4 gap-6 max-w-2xl mx-auto mt-12">
               {[
-                { value: "6+", label: "Years Experience", icon: Clock, color: "#4d61b7" },
-                { value: "50+", label: "Team Members", icon: TeamIcon, color: "#6f7ed1" },
-                { value: "250+", label: "Projects", icon: Trophy, color: "#071633" },
-                { value: "98%", label: "Satisfaction", icon: Heart, color: "#4d61b7" },
+                { value: "2025", label: "Company Founded", icon: Clock, color: "#4d61b7" },
+                { value: "Core", label: "Specialist Team", icon: TeamIcon, color: "#6f7ed1" },
+                { value: "9", label: "Public Work Samples", icon: Trophy, color: "#071633" },
+                { value: "Trust", label: "First Approach", icon: Heart, color: "#4d61b7" },
               ].map((stat, idx) => {
                 const Icon = stat.icon;
                 return (
@@ -352,21 +350,21 @@ export default function AboutPage() {
               </h2>
               
               <p className="text-lg text-[#64748B] mb-8">
-                Founded in 2018, Versenext began with a simple vision: to help businesses 
-                thrive in the digital age. What started as a small team of three has grown 
-                into a full-service digital agency serving clients worldwide.
+                Founded in 2025, Verse Next began with a clear goal: to help businesses 
+                build useful digital systems, not just attractive pages. We focus on websites, 
+                software, SEO, content, design, video, and practical AI automation.
               </p>
               
               <p className="text-lg text-[#64748B] mb-12">
-                Our journey has been defined by a commitment to excellence, innovation, 
-                and meaningful client relationships. We believe that technology should 
-                serve business goals, not the other way around.
+                We are still a growing company, so our content avoids inflated claims and 
+                focuses on what we can explain, build, measure, and improve. Technology 
+                should serve business goals, not the other way around.
               </p>
 
               <div className="grid grid-cols-2 gap-6">
                 {[
-                  { value: "Global", label: "Client Reach", icon: Globe },
-                  { value: "24/7", label: "Support", icon: Shield },
+                  { value: "Pakistan", label: "Based In", icon: Globe },
+                  { value: "Clear", label: "Communication", icon: Shield },
                   { value: "Agile", label: "Methodology", icon: GitBranch },
                   { value: "Quality", label: "Focused", icon: Award },
                 ].map((item, idx) => {
@@ -518,7 +516,7 @@ export default function AboutPage() {
               The Minds Behind <span className="text-[#4d61b7]">Versenext</span>
             </h2>
             <p className="text-lg text-[#64748B]">
-              A diverse team of experts united by passion for innovation and excellence
+              A focused team bringing development, SEO, design, video, and automation skills together
             </p>
           </motion.div>
 
@@ -537,10 +535,10 @@ export default function AboutPage() {
           >
             <div className="grid grid-cols-2 md:grid-cols-4 gap-8">
               {[
-                { value: "15+", label: "Nationalities", icon: Globe },
-                { value: "40%", label: "Women in Tech", icon: Users },
-                { value: "8", label: "Time Zones", icon: Clock },
-                { value: "100+", label: "Certifications", icon: BookOpen },
+                { value: "2025", label: "Founded", icon: Globe },
+                { value: "Local", label: "Pakistan Based", icon: Users },
+                { value: "Remote", label: "Work Ready", icon: Clock },
+                { value: "Learning", label: "Focused Team", icon: BookOpen },
               ].map((stat, idx) => {
                 const Icon = stat.icon;
                 return (
