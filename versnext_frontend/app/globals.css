@@ -152,6 +152,39 @@ main > * {
   opacity: 0.9;
 }
 
+.home-hero-wave {
+  isolation: isolate;
+}
+
+.home-hero-wave::before,
+.home-hero-wave::after {
+  content: "";
+  position: absolute;
+  left: -8%;
+  right: -8%;
+  bottom: -2px;
+  z-index: 0;
+  pointer-events: none;
+}
+
+.home-hero-wave::before {
+  height: 265px;
+  background:
+    repeating-radial-gradient(ellipse at 68% 100%, rgba(14, 165, 233, 0.28) 0 1px, transparent 1px 10px),
+    linear-gradient(100deg, rgba(14, 165, 233, 0.02), rgba(56, 189, 248, 0.2), rgba(37, 99, 235, 0.1));
+  clip-path: polygon(0 58%, 10% 66%, 22% 62%, 35% 55%, 47% 63%, 60% 72%, 74% 64%, 88% 45%, 100% 28%, 100% 100%, 0 100%);
+  opacity: 0.9;
+}
+
+.home-hero-wave::after {
+  height: 180px;
+  background:
+    linear-gradient(100deg, rgba(125, 211, 252, 0.55), rgba(14, 165, 233, 0.38), rgba(59, 130, 246, 0.28)),
+    linear-gradient(180deg, transparent 0%, rgba(239, 249, 255, 0.95) 82%);
+  clip-path: polygon(0 68%, 9% 74%, 20% 70%, 32% 64%, 45% 72%, 55% 79%, 68% 75%, 80% 67%, 91% 54%, 100% 48%, 100% 100%, 0 100%);
+  opacity: 0.95;
+}
+
 .before-after-range::-webkit-slider-thumb {
   width: 56px;
   height: 56px;

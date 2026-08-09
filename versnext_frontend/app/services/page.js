@@ -221,7 +221,7 @@ export default function ServicesPage() {
       {/* ========== Cursor Effect ========== */}
 
       {/* ========== HERO SECTION ========== */}
-      <section className="verse-wave-section relative py-32 overflow-hidden">
+      <section className="verse-wave-section relative pt-28 pb-12 overflow-hidden">
         <div className="absolute inset-0 bg-gradient-to-b from-white to-gray-50" />
         
         {/* Background Elements */}
@@ -264,13 +264,13 @@ export default function ServicesPage() {
               Our <span className="text-[#4d61b7]">Services</span>
             </h1>
             
-            <p className="text-xl text-[#64748B] mb-10 max-w-3xl mx-auto">
+            <p className="text-xl text-[#64748B] mb-8 max-w-3xl mx-auto">
               We deliver practical digital solutions that combine technical 
               excellence with strategic insight to drive measurable business results.
             </p>
             
             {/* Stats */}
-            <div className="grid grid-cols-2 md:grid-cols-4 gap-6 max-w-2xl mx-auto mt-12">
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-6 max-w-2xl mx-auto mt-8">
               {[
                 { value: "12+", label: "Services", icon: Layers, color: "#4d61b7" },
                 { value: "98%", label: "Satisfaction", icon: Star, color: "#6f7ed1" },
@@ -300,13 +300,13 @@ export default function ServicesPage() {
       </section>
 
       {/* ========== SERVICES GRID ========== */}
-      <section className="verse-wave-section py-20 bg-gray-50">
+      <section className="verse-wave-section py-12 bg-gray-50">
         <div className="container mx-auto px-4 sm:px-6 lg:px-8">
           <motion.div
             initial={{ opacity: 0, y: 30 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
-            className="text-center max-w-3xl mx-auto mb-16"
+            className="text-center max-w-3xl mx-auto mb-10"
           >
             <div className="inline-flex items-center gap-2 text-[#64748B] text-sm font-medium mb-4">
               <div className="w-12 h-px bg-[#263a5c]" />

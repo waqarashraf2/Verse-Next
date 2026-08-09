@@ -13,18 +13,16 @@ import {
   CheckCircle,
   Code2,
   Globe2,
-  Layers3,
   Megaphone,
   MoveHorizontal,
   Palette,
   Search,
-  ShieldCheck,
   Smartphone,
   Sparkles,
+  Star,
   Video,
   Zap,
 } from "lucide-react";
-import heroBg from "@/assets/bg.png";
 import declutteringAfter from "@/assets/decluttering-after-optimized.webp";
 import declutteringBefore from "@/assets/decluttering-before-optimized.webp";
 
@@ -95,17 +93,10 @@ const processSteps = [
 ];
 
 const stats = [
-  ["250+", "Projects completed"],
-  ["98%", "Client satisfaction"],
-  ["24h", "Average response"],
-  ["8+", "Core services"],
-];
-
-const heroFeatures: Array<[string, ElementType]> = [
-  ["Image enhancement", ShieldCheck],
-  ["Fast delivery", Zap],
-  ["Graphic design", Layers3],
-  ["Portfolio ready", BarChart3],
+  ["2025", "Company founded", CheckCircle],
+  ["Core", "Specialist team", Bot],
+  ["Clear", "Project guidance", Zap],
+  ["13", "Service pages", Star],
 ];
 
 const beforeAfterShowcase = {
@@ -283,93 +274,89 @@ function BeforeAfterSlider() {
 export default function Home() {
   return (
     <div className="min-h-screen bg-[var(--bg)] text-[var(--text)]">
-      <section className="verse-wave-section relative min-h-screen overflow-hidden bg-[#050816] text-white">
-        <Image
-          src={heroBg}
-          alt="Verse Next AI-powered digital solutions platform for websites, software, SEO and automation"
-          fill
-          priority
-          sizes="100vw"
-          className="object-cover object-center opacity-75"
-        />
-        <div className="absolute inset-0 bg-[linear-gradient(90deg,rgba(5,8,22,0.96)_0%,rgba(5,8,22,0.88)_38%,rgba(5,8,22,0.48)_72%,rgba(5,8,22,0.72)_100%)]" />
-        <div className="absolute inset-0 bg-[radial-gradient(circle_at_18%_24%,rgba(37,99,235,0.32),transparent_28%),linear-gradient(180deg,rgba(5,8,22,0.18),rgba(5,8,22,0.7))]" />
-        <div className="relative mx-auto grid min-h-screen max-w-6xl items-center gap-8 px-4 pb-14 pt-32 sm:px-6 lg:grid-cols-[0.94fr_0.78fr] lg:px-8">
+      <section className="home-hero-wave relative min-h-screen overflow-hidden bg-white text-[#071633]">
+        <div className="absolute right-[-7rem] top-32 h-80 w-80 rounded-full bg-cyan-300/20 blur-3xl" />
+        <div className="absolute left-[-8rem] bottom-20 h-72 w-72 rounded-full bg-sky-200/25 blur-3xl" />
+        <div className="relative mx-auto grid min-h-screen max-w-7xl items-center gap-10 px-5 pb-28 pt-32 sm:px-8 lg:grid-cols-[1fr_0.82fr] lg:px-10">
           <div className="max-w-2xl">
-            <div className="mb-4 inline-flex items-center gap-2 rounded-full border border-white/10 bg-white/8 px-3 py-1.5 text-[12px] font-semibold text-blue-100 shadow-sm backdrop-blur">
-              <Sparkles size={13} />
+            <div className="mb-5 text-[15px] font-semibold text-cyan-500">
               Verse Next digital solutions
             </div>
-            <h1 className="text-[31px] font-semibold leading-[1.12] tracking-[-0.025em] text-white sm:text-[40px] lg:text-[48px]">
+            <h1 className="text-[34px] font-bold leading-[1.12] tracking-[-0.02em] text-[#071633] sm:text-[46px] lg:text-[54px]">
               Verse Next AI-powered digital solutions platform for websites, software and SEO growth.
             </h1>
-            <p className="mt-4 max-w-xl text-[15px] leading-7 text-slate-300">
-              Verse Next is an AI-powered digital solutions platform that builds enterprise-grade websites, software platforms, web applications, mobile apps, SEO systems, digital marketing campaigns, and AI automation with a sharp focus on performance, trust, search visibility, and lead generation.
+            <p className="mt-5 max-w-2xl text-[16px] leading-8 text-slate-600">
+              Verse Next builds business websites, software platforms, web applications, mobile apps, SEO systems, digital marketing campaigns, and AI automation with a sharp focus on performance, trust, search visibility, and lead generation.
             </p>
-            <div className="mt-6 flex flex-col gap-3 sm:flex-row">
-              <Link href="/contact" className="inline-flex items-center justify-center rounded-lg bg-blue-500 px-4 py-2.5 text-[13px] font-semibold text-white shadow-lg shadow-blue-950/30 transition hover:-translate-y-0.5 hover:bg-blue-400">
+            <div className="mt-8 flex flex-col gap-4 sm:flex-row">
+              <Link href="/contact" className="inline-flex items-center justify-center rounded-lg bg-blue-600 px-6 py-3 text-[15px] font-semibold text-white shadow-lg shadow-blue-500/25 transition hover:-translate-y-0.5 hover:bg-blue-700">
                 Get Free Consultation <ArrowRight className="ml-2" size={15} />
               </Link>
-              <Link href="/services" className="inline-flex items-center justify-center rounded-lg border border-white/15 bg-white/8 px-4 py-2.5 text-[13px] font-semibold text-white backdrop-blur transition hover:bg-white/12">
+              <Link href="/services" className="inline-flex items-center justify-center rounded-lg border border-blue-600 bg-white px-6 py-3 text-[15px] font-semibold text-blue-600 transition hover:bg-blue-50">
                 Explore Services
               </Link>
             </div>
 
-            <div className="mt-7 grid max-w-lg grid-cols-2 gap-3 sm:grid-cols-4">
-              {stats.map(([value, label]) => (
-                <div key={label} className="rounded-xl border border-white/10 bg-white/8 p-3 shadow-sm backdrop-blur">
-                  <div className="text-lg font-semibold text-white">{value}</div>
-                  <div className="mt-1 text-[11px] leading-4 text-slate-300">{label}</div>
+            <div className="mt-10 grid max-w-3xl grid-cols-2 gap-4 sm:grid-cols-4">
+              {stats.map(([value, label, Icon]) => {
+                const TypedIcon = Icon as ElementType;
+                return (
+                <div key={String(label)} className="flex items-center gap-3 border-r border-slate-200 pr-3 last:border-r-0">
+                  <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full bg-sky-100 text-blue-600">
+                    <TypedIcon size={21} />
+                  </div>
+                  <div>
+                    <div className="text-[22px] font-bold leading-none text-[#071633]">{value as string}</div>
+                    <div className="mt-1 text-[11px] leading-4 text-slate-500">{label as string}</div>
+                  </div>
                 </div>
-              ))}
+                );
+              })}
             </div>
           </div>
 
-          <div>
-            <div className="rounded-2xl border border-white/12 bg-[#071023]/88 p-4 shadow-2xl shadow-blue-950/30 backdrop-blur-xl">
-              <div className="rounded-xl border border-white/10 bg-white/[0.06] p-4 text-white">
-                <div className="mb-5 flex items-center justify-between">
-                  <div className="flex items-center gap-3">
-                    <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-white/10">
-                      <Bot size={19} />
-                    </div>
-                    <div>
-                      <div className="text-[13px] font-semibold">AI Project Assistant</div>
-                      <div className="text-[11px] text-slate-300">Lead guidance and service matching</div>
-                    </div>
+          <div className="relative">
+            <div className="rounded-[28px] border border-sky-200 bg-white/75 p-6 shadow-2xl shadow-sky-900/10 backdrop-blur-xl sm:p-8">
+              <div className="mb-8 flex items-center gap-5 border-b border-sky-100 pb-7">
+                <div className="flex h-24 w-24 shrink-0 items-center justify-center rounded-full bg-white shadow-xl shadow-sky-900/10">
+                  <div className="flex h-16 w-16 items-center justify-center rounded-full bg-sky-100 text-cyan-500">
+                    <Bot size={42} />
                   </div>
-                  <span className="rounded-full bg-emerald-400/15 px-2.5 py-1 text-[11px] text-emerald-200">Ready</span>
                 </div>
-                <div className="rounded-xl border border-white/10 bg-white/[0.06] p-4">
-                  <div className="mb-4 h-2 w-24 rounded-full bg-blue-400/70" />
-                  <div className="space-y-2">
-                    {[
-                      ["Website", "SEO-ready company and ecommerce websites"],
-                      ["Software", "Dashboards, portals, APIs and admin systems"],
-                      ["Growth", "SEO, marketing, design and video content"],
-                    ].map(([title, text]) => (
-                      <div key={title} className="flex items-start gap-3 rounded-lg bg-white/[0.06] p-3">
-                        <CheckCircle className="mt-0.5 text-[var(--accent)]" size={15} />
-                        <div>
-                          <div className="text-[12px] font-semibold text-white">{title}</div>
-                          <div className="text-[11px] leading-5 text-slate-300">{text}</div>
-                        </div>
-                      </div>
-                    ))}
+                <div>
+                  <h2 className="text-2xl font-bold text-[#071633]">AI Project Assistant</h2>
+                  <p className="mt-2 text-[15px] text-slate-500">Lead guidance and service matching</p>
+                  <div className="mt-4 inline-flex items-center gap-2 rounded-full bg-green-100 px-4 py-1.5 text-sm font-semibold text-green-700">
+                    <span className="h-2.5 w-2.5 rounded-full bg-green-500" />
+                    Ready
                   </div>
                 </div>
               </div>
-            </div>
-            <div className="mt-4 grid gap-3 sm:grid-cols-2">
-              {heroFeatures.map(([label, Icon]) => {
-                const TypedIcon = Icon;
-                return (
-                  <div key={label} className="flex items-center gap-2.5 rounded-xl border border-white/10 bg-white/[0.08] p-3 text-[12px] font-semibold text-slate-100">
-                    <TypedIcon size={15} className="text-blue-300" />
-                    {label}
-                  </div>
-                );
-              })}
+
+              <div className="space-y-4">
+                {[
+                  ["Website", Globe2],
+                  ["Software", Code2],
+                  ["Growth", BarChart3],
+                ].map(([title, Icon]) => {
+                  const TypedIcon = Icon as ElementType;
+                  return (
+                    <Link
+                      key={title as string}
+                      href={title === "Website" ? "/services/web-development" : title === "Software" ? "/services/digital-transformation" : "/services/seo-optimization"}
+                      className="flex items-center justify-between rounded-xl border border-sky-100 bg-white/80 p-4 shadow-sm transition hover:-translate-y-0.5 hover:border-blue-300 hover:shadow-lg"
+                    >
+                      <div className="flex items-center gap-4">
+                        <div className="flex h-12 w-12 items-center justify-center rounded-full bg-sky-100 text-blue-600">
+                          <TypedIcon size={23} />
+                        </div>
+                        <div className="text-lg font-semibold text-[#071633]">{title as string}</div>
+                      </div>
+                      <ArrowRight className="text-blue-600" size={22} />
+                    </Link>
+                  );
+                })}
+              </div>
             </div>
           </div>
         </div>

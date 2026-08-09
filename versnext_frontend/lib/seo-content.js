@@ -34,16 +34,17 @@ export const pageSeo = {
     ],
   },
   portfolio: {
-    title: "Portfolio - Selected Web, App, SEO and Software Work Samples",
+    title: "Solutions and Capabilities - Web, Software, AI and Apps",
     description:
-      "View selected Verse Next work samples, internal concepts and project-style examples for websites, apps, dashboards, SEO and digital systems.",
+      "Explore Verse Next capability demos for enterprise platforms, ecommerce stores, AI social media automation, real estate systems, CRM and mobile apps.",
     keywords: [
       "Verse Next portfolio",
-      "web development portfolio Pakistan",
-      "software project examples",
-      "digital agency portfolio",
-      "mobile app portfolio",
-      "business dashboard examples",
+      "software capability demos",
+      "web development solutions Pakistan",
+      "AI automation demos",
+      "ecommerce development demo",
+      "business CRM system",
+      "mobile app development demo",
     ],
   },
   contact: {
