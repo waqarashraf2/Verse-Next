@@ -271,7 +271,7 @@ export default function AboutPage() {
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbs) }} />
       {/* ========== Cursor Effect ========== */}
       {/* ========== HERO SECTION ========== */}
-      <section className="verse-wave-section relative py-32 overflow-hidden">
+      <section className="verse-wave-section relative pt-32 pb-10 overflow-hidden">
         <div className="absolute inset-0 bg-gradient-to-b from-white to-gray-50" />
         
         {/* Background Pattern */}
@@ -296,37 +296,10 @@ export default function AboutPage() {
               About <span className="text-[#4d61b7]">Versenext</span>
             </h1>
             
-            <p className="text-xl text-[#64748B] mb-10 max-w-3xl mx-auto">
+            <p className="text-xl text-[#64748B] mb-6 max-w-3xl mx-auto">
               We are a team of passionate innovators dedicated to transforming 
               businesses through practical digital systems, reliable delivery, and strategic thinking.
             </p>
-            
-            {/* Stats */}
-            <div className="grid grid-cols-2 md:grid-cols-4 gap-6 max-w-2xl mx-auto mt-12">
-              {[
-                { value: "2025", label: "Company Founded", icon: Clock, color: "#4d61b7" },
-                { value: "Core", label: "Specialist Team", icon: TeamIcon, color: "#6f7ed1" },
-                { value: "9", label: "Public Work Samples", icon: Trophy, color: "#071633" },
-                { value: "Trust", label: "First Approach", icon: Heart, color: "#4d61b7" },
-              ].map((stat, idx) => {
-                const Icon = stat.icon;
-                return (
-                  <motion.div
-                    key={idx}
-                    initial={{ opacity: 0, y: 20 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    transition={{ delay: 0.1 * idx }}
-                    className="text-center"
-                  >
-                    <div className="w-12 h-12 rounded-xl flex items-center justify-center mx-auto mb-3" style={{ backgroundColor: `${stat.color}10` }}>
-                      <Icon size={24} style={{ color: stat.color }} />
-                    </div>
-                    <div className="text-3xl font-bold text-[#071633]">{stat.value}</div>
-                    <div className="text-sm text-[#64748B]">{stat.label}</div>
-                  </motion.div>
-                );
-              })}
-            </div>
           </motion.div>
         </div>
       </section>

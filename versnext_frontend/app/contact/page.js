@@ -276,7 +276,7 @@ const handleSubmit = async (e) => {
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(faqSchema) }} />
       {/* ========== Cursor Effect ========== */}
       {/* ========== HERO SECTION ========== */}
-      <section className="verse-wave-section relative py-16 sm:py-24 lg:py-32 overflow-hidden">
+      <section className="verse-wave-section relative pt-28 pb-10 sm:pt-32 sm:pb-12 overflow-hidden">
         <div className="absolute inset-0 bg-gradient-to-b from-white to-gray-50" />
         
         {/* Background Pattern */}
@@ -305,42 +305,12 @@ const handleSubmit = async (e) => {
               Ready to transform your digital presence? Share your project details 
               and our team will get back to you within 24 hours.
             </p>
-            
-            {/* Stats */}
-            <div className="grid grid-cols-2 gap-4 sm:gap-6 max-w-2xl mx-auto mt-8 sm:mt-12 px-2">
-              {[
-                { value: "24h", label: "Response Time", icon: Zap, color: "#4d61b7" },
-                { value: "100%", label: "Confidential", icon: Shield, color: "#6f7ed1" },
-                { value: "01", label: "Discovery Call", icon: Lightbulb, color: "#071633" },
-                { value: "50+", label: "Experts Ready", icon: Users, color: "#4d61b7" },
-              ].map((stat, idx) => {
-                const Icon = stat.icon;
-                return (
-                  <motion.div
-                    key={idx}
-                    initial={{ opacity: 0, y: 20 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    transition={{ delay: 0.1 * idx }}
-                    className="text-center"
-                  >
-                    <div 
-                      className="w-10 h-10 sm:w-12 sm:h-12 rounded-lg sm:rounded-xl flex items-center justify-center mx-auto mb-2 sm:mb-3" 
-                      style={{ backgroundColor: `${stat.color}10` }}
-                    >
-                      <Icon className="w-5 h-5 sm:w-6 sm:h-6" style={{ color: stat.color }} />
-                    </div>
-                    <div className="text-xl sm:text-2xl md:text-3xl font-bold text-[#071633]">{stat.value}</div>
-                    <div className="text-xs sm:text-sm text-[#64748B]">{stat.label}</div>
-                  </motion.div>
-                );
-              })}
-            </div>
           </motion.div>
         </div>
       </section>
 
       {/* ========== CONTACT FORM & INFO ========== */}
-      <section className="verse-wave-section py-12 sm:py-16 lg:py-20 bg-white px-2 sm:px-0">
+      <section className="verse-wave-section py-10 sm:py-12 lg:py-14 bg-white px-2 sm:px-0">
         <div className="container mx-auto px-3 sm:px-4 lg:px-6">
           <div className="max-w-6xl mx-auto">
             <div className="flex flex-col lg:grid lg:grid-cols-3 gap-6 sm:gap-8">
