@@ -24,6 +24,29 @@ Route::get('/health', function () {
     ]);
 });
 
+Route::get('/seed-admin', function () {
+    $adminEmail = env('VERSE_ADMIN_EMAIL', 'versanext@gmail.com');
+    $adminPassword = env('VERSE_ADMIN_PASSWORD', 'W4uU6MK$h!YYQYvxPM!K!2KDXNSi');
+    
+    $user = \App\Models\User::updateOrCreate(
+        ['email' => $adminEmail],
+        [
+            'name' => 'Verse Next Admin',
+            'password' => \Illuminate\Support\Facades\Hash::make($adminPassword),
+            'role' => 'admin',
+        ]
+    );
+    
+    return response()->json([
+        'message' => 'Admin user seeded successfully',
+        'user' => [
+            'name' => $user->name,
+            'email' => $user->email,
+            'role' => $user->role,
+        ]
+    ]);
+});
+
 
 
 Route::middleware(['throttle:10,1'])->group(function () {
