@@ -23,6 +23,8 @@ class Article extends Model
         'is_featured',
         'published_at',
         'scheduled_at',
+        'faqs',
+        'internal_links',
     ];
 
     protected $casts = [
@@ -30,6 +32,8 @@ class Article extends Model
         'is_featured' => 'boolean',
         'published_at' => 'datetime',
         'scheduled_at' => 'datetime',
+        'faqs' => 'array',
+        'internal_links' => 'array',
     ];
 
     protected static function booted(): void

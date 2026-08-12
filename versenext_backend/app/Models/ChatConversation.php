@@ -11,11 +11,17 @@ class ChatConversation extends Model
         'session_id',
         'status',
         'metadata',
+        'user_id',
     ];
 
     protected $casts = [
         'metadata' => 'array',
     ];
+
+    public function user()
+    {
+        return $this->belongsTo(User::class);
+    }
 
     public function messages(): HasMany
     {

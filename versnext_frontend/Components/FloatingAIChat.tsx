@@ -39,6 +39,8 @@ export default function FloatingAIChat() {
   const [loading, setLoading] = useState(false);
   const [sessionId, setSessionId] = useState("");
   const [messages, setMessages] = useState<ChatMessage[]>(initialMessages);
+  const [token, setToken] = useState("");
+  const [user, setUser] = useState<{ name: string; email: string; role: string } | null>(null);
   const listRef = useRef<HTMLDivElement | null>(null);
 
   useEffect(() => {
@@ -46,6 +48,17 @@ export default function FloatingAIChat() {
     const nextSession = stored || createSessionId();
     window.localStorage.setItem("versenext_chat_session", nextSession);
     setSessionId(nextSession);
+
+    const savedToken = window.localStorage.getItem("versenext_user_token");
+    const savedUser = window.localStorage.getItem("versenext_user");
+    if (savedToken && savedUser) {
+      setToken(savedToken);
+      try {
+        setUser(JSON.parse(savedUser));
+      } catch (e) {
+        console.error(e);
+      }
+    }
   }, []);
 
   useEffect(() => {
@@ -60,9 +73,18 @@ export default function FloatingAIChat() {
       };
     }
 
+    const headers: Record<string, string> = {
+      "Content-Type": "application/json",
+      Accept: "application/json",
+    };
+
+    if (token) {
+      headers["Authorization"] = `Bearer ${token}`;
+    }
+
     const response = await fetch(`${apiBase}/chatbot/respond`, {
       method: "POST",
-      headers: { "Content-Type": "application/json", Accept: "application/json" },
+      headers,
       body: JSON.stringify({
         message: cleanMessage,
         session_id: sessionId,
@@ -129,7 +151,9 @@ export default function FloatingAIChat() {
                   <Bot size={20} />
                 </div>
                 <div className="min-w-0">
-                  <div className="truncate text-sm font-semibold">Verse Next AI Assistant</div>
+                  <div className="truncate text-sm font-semibold">
+                    {user ? `Chat (${user.name})` : "Verse Next AI Assistant"}
+                  </div>
                   <div className="text-xs text-slate-300">Online - English, Urdu, Roman Urdu</div>
                 </div>
               </div>

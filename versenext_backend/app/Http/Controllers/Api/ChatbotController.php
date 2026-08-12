@@ -23,14 +23,21 @@ class ChatbotController extends Controller
             'context' => 'nullable|array',
         ]);
 
+        $user = $request->user('sanctum');
+
         $conversation = ChatConversation::firstOrCreate(
             ['session_id' => $validated['session_id'] ?? (string) Str::uuid()],
             ['status' => 'open', 'metadata' => ['source' => 'floating_widget']]
         );
 
+        if ($user && !$conversation->user_id) {
+            $conversation->user_id = $user->id;
+            $conversation->save();
+        }
+
         ChatMessage::create([
             'chat_conversation_id' => $conversation->id,
-            'sender' => 'visitor',
+            'sender' => $user ? $user->name : 'visitor',
             'message' => $validated['message'],
             'metadata' => ['context' => $validated['context'] ?? []],
         ]);
@@ -328,10 +335,13 @@ class ChatbotController extends Controller
             return;
         }
 
+        $user = $conversation->user_id ? \App\Models\User::find($conversation->user_id) : null;
+        $senderDetails = $user ? "User: {$user->name} ({$user->email})" : "Guest Visitor";
+
         try {
             Mail::raw(
-                "New Verse Next chat message\n\nSession: {$conversation->session_id}\nIntent: {$intent}\n\nMessage:\n{$message}",
-                fn ($mail) => $mail->to($adminEmail)->subject('New Verse Next Chat Message')
+                "New Verse Next chat message received.\n\nSender: {$senderDetails}\nSession: {$conversation->session_id}\nIntent: {$intent}\n\nMessage:\n{$message}",
+                fn ($mail) => $mail->to($adminEmail)->subject("New Chat from {$senderDetails}")
             );
         } catch (\Throwable) {
             report('Chat admin email could not be sent. Check mail configuration.');

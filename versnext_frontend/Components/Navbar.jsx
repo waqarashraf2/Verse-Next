@@ -11,6 +11,25 @@ const Navbar = () => {
   const [isOpen, setIsOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
   const [visible, setVisible] = useState(true);
+  const [user, setUser] = useState(null);
+
+  useEffect(() => {
+    const savedUser = window.localStorage.getItem("versenext_user");
+    if (savedUser) {
+      try {
+        setUser(JSON.parse(savedUser));
+      } catch (e) {
+        console.error(e);
+      }
+    }
+  }, []);
+
+  const handleLogout = () => {
+    window.localStorage.removeItem("versenext_user");
+    window.localStorage.removeItem("versenext_user_token");
+    setUser(null);
+    window.location.reload();
+  };
 
   useEffect(() => {
     let lastScrollY = window.scrollY;
@@ -72,6 +91,26 @@ const Navbar = () => {
                 {item.label}
               </Link>
             ))}
+
+            {user ? (
+              <div className="flex items-center gap-4">
+                <span className="text-[14px] font-semibold text-[#071633]">Hi, {user.name}</span>
+                <button
+                  onClick={handleLogout}
+                  className="rounded-xl border border-red-200 bg-red-50 px-4 py-2 text-[13px] font-semibold text-red-700 hover:bg-red-100 transition cursor-pointer"
+                >
+                  Logout
+                </button>
+              </div>
+            ) : (
+              <Link
+                href="/login"
+                className="rounded-xl border border-slate-200 bg-slate-50 px-4 py-2 text-[13px] font-semibold text-[#071633] hover:bg-slate-100 transition"
+              >
+                Sign In
+              </Link>
+            )}
+
             <motion.div
               whileHover={{ scale: 1.05 }}
               whileTap={{ scale: 0.95 }}
@@ -115,6 +154,32 @@ const Navbar = () => {
                     {item.label}
                   </Link>
                 ))}
+
+                {user ? (
+                  <div className="pt-2 border-t border-slate-100">
+                    <span className="block px-3 py-2 text-sm font-semibold text-[#071633]">Logged in as {user.name}</span>
+                    <button
+                      onClick={() => {
+                        handleLogout();
+                        setIsOpen(false);
+                      }}
+                      className="mt-1 block w-full rounded-xl bg-red-50 py-3 text-center text-sm font-semibold text-red-700 hover:bg-red-100"
+                    >
+                      Logout
+                    </button>
+                  </div>
+                ) : (
+                  <div className="pt-2 border-t border-slate-100">
+                    <Link
+                      href="/login"
+                      className="block w-full rounded-xl border border-slate-200 py-3 text-center text-sm font-semibold text-[#071633] hover:bg-slate-50"
+                      onClick={() => setIsOpen(false)}
+                    >
+                      Sign In
+                    </Link>
+                  </div>
+                )}
+
                 <Link href="/contact" className="mt-3 block w-full rounded-xl bg-[#071633] py-3 text-center text-sm font-semibold text-white shadow-sm hover:bg-[#4d61b7]" onClick={() => setIsOpen(false)}>
                   Get Free Consultation
                 </Link>

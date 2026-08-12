@@ -205,6 +205,8 @@ class AdminPlatformController extends Controller
             'is_featured' => 'nullable|boolean',
             'published_at' => 'nullable|date',
             'scheduled_at' => 'nullable|date',
+            'faqs' => 'nullable|array',
+            'internal_links' => 'nullable|array',
         ]);
     }
 

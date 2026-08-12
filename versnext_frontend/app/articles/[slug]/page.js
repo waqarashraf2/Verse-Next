@@ -24,7 +24,7 @@ function mergeArticles(primaryArticles, fallbackItems) {
 async function fetchArticles() {
   try {
     const response = await fetch(`${API_BASE}/articles?per_page=100`, {
-      next: { revalidate: 3600 },
+      next: { revalidate: 10 },
     });
 
     if (!response.ok) return fallbackArticles;
@@ -43,7 +43,7 @@ async function fetchArticle(slug) {
 
   try {
     const response = await fetch(`${API_BASE}/articles/${slug}`, {
-      next: { revalidate: 3600 },
+      next: { revalidate: 10 },
     });
 
     if (response.ok) {
@@ -144,7 +144,7 @@ export default async function ArticleDetailPage({ params }) {
   const publishedDate = article.published_at ? new Date(article.published_at) : null;
   const tags = Array.isArray(article.tags) ? article.tags : [];
   const fallbackArticle = fallbackArticles.find((item) => item.slug === article.slug);
-  const internalLinks = article.internalLinks || fallbackArticle?.internalLinks || [];
+  const internalLinks = article.internal_links || article.internalLinks || fallbackArticle?.internalLinks || [];
   const faqs = article.faqs || fallbackArticle?.faqs || [];
 
   const articleSchema = {
@@ -274,7 +274,7 @@ export default async function ArticleDetailPage({ params }) {
             {sections.map((section, index) => (
               <section key={`${section.heading || "section"}-${index}`}>
                 {section.heading ? <h2 className="text-2xl font-semibold tracking-tight text-slate-950">{section.heading}</h2> : null}
-                <p className="mt-4 text-[16px] leading-8">{section.body}</p>
+                <div className="mt-4 text-[16px] leading-8 space-y-4" dangerouslySetInnerHTML={{ __html: section.body }} />
               </section>
             ))}
           </div>

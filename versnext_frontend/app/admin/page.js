@@ -44,6 +44,8 @@ const emptyArticleForm = {
   status: "draft",
   is_featured: false,
   published_at: "",
+  faqs: [],
+  internal_links: [],
 };
 
 function normalizeCollection(payload) {
@@ -82,6 +84,26 @@ export default function AdminPage() {
   const [data, setData] = useState(emptyCollections);
   const [activePanel, setActivePanel] = useState("dashboard");
   const [articleForm, setArticleForm] = useState(emptyArticleForm);
+  const [faqQuestion, setFaqQuestion] = useState("");
+  const [faqAnswer, setFaqAnswer] = useState("");
+  const [linkLabel, setLinkLabel] = useState("");
+  const [linkHref, setLinkHref] = useState("");
+
+  const insertAtCursor = (beforeVal, afterVal = "") => {
+    const textarea = document.getElementById("articleContentTextarea");
+    if (!textarea) return;
+    const start = textarea.selectionStart;
+    const end = textarea.selectionEnd;
+    const text = textarea.value;
+    const selected = text.substring(start, end);
+    const replacement = beforeVal + selected + afterVal;
+    const newContent = text.substring(0, start) + replacement + text.substring(end);
+    setArticleForm((current) => ({ ...current, content: newContent }));
+    setTimeout(() => {
+      textarea.focus();
+      textarea.setSelectionRange(start + beforeVal.length, start + beforeVal.length + selected.length);
+    }, 50);
+  };
 
   useEffect(() => {
     const savedToken = window.localStorage.getItem("verse_admin_token");
@@ -196,6 +218,8 @@ export default function AdminPage() {
       status: article.status || "draft",
       is_featured: Boolean(article.is_featured),
       published_at: article.published_at ? String(article.published_at).slice(0, 16) : "",
+      faqs: Array.isArray(article.faqs) ? article.faqs : [],
+      internal_links: Array.isArray(article.internal_links) ? article.internal_links : [],
     });
   };
 
@@ -215,6 +239,8 @@ export default function AdminPage() {
       reading_time: Number(articleForm.reading_time) || 1,
       published_at: articleForm.published_at || null,
       slug: articleForm.slug || undefined,
+      faqs: articleForm.faqs || [],
+      internal_links: articleForm.internal_links || [],
     };
 
     try {
@@ -473,17 +499,199 @@ export default function AdminPage() {
                   </label>
                 </div>
 
-                <label className="block">
+                <div className="block">
                   <span className="mb-2 block text-sm font-semibold text-[#071633]">Article Content</span>
+                  
+                  {/* Formatting Toolbar */}
+                  <div className="mb-2 flex flex-wrap gap-1.5 rounded-xl border border-slate-200 bg-slate-50 p-2">
+                    <button
+                      type="button"
+                      onClick={() => insertAtCursor("<strong>", "</strong>")}
+                      className="rounded-lg bg-white px-3 py-1.5 text-xs font-bold text-slate-800 shadow-sm border border-slate-200 hover:bg-slate-100"
+                    >
+                      Bold
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => insertAtCursor('<h2>', '</h2>')}
+                      className="rounded-lg bg-white px-3 py-1.5 text-xs font-bold text-slate-800 shadow-sm border border-slate-200 hover:bg-slate-100"
+                    >
+                      H2 Heading
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => insertAtCursor('<h3>', '</h3>')}
+                      className="rounded-lg bg-white px-3 py-1.5 text-xs font-bold text-slate-800 shadow-sm border border-slate-200 hover:bg-slate-100"
+                    >
+                      H3 Subheading
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => {
+                        const href = window.prompt("Enter URL:", "https://");
+                        if (href) {
+                          insertAtCursor(`<a href="${href}" class="text-blue-600 hover:underline">`, "</a>");
+                        }
+                      }}
+                      className="rounded-lg bg-white px-3 py-1.5 text-xs font-bold text-slate-800 shadow-sm border border-slate-200 hover:bg-slate-100"
+                    >
+                      Add Link
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => {
+                        const src = window.prompt("Enter Image URL:", "/articles/image.webp");
+                        const alt = window.prompt("Enter Image Alt Description:", "image description");
+                        if (src) {
+                          insertAtCursor(`<img src="${src}" alt="${alt || 'article image'}" class="rounded-xl w-full my-6 shadow-md" />\n`);
+                        }
+                      }}
+                      className="rounded-lg bg-white px-3 py-1.5 text-xs font-bold text-slate-800 shadow-sm border border-slate-200 hover:bg-slate-100"
+                    >
+                      Add Image
+                    </button>
+                  </div>
+
                   <textarea
+                    id="articleContentTextarea"
                     value={articleForm.content}
                     onChange={(event) => setArticleForm((current) => ({ ...current, content: event.target.value }))}
                     required
                     rows={12}
                     className="w-full rounded-xl border border-slate-300 px-4 py-3 font-mono text-sm leading-7 outline-none transition focus:border-[#4d61b7] focus:ring-2 focus:ring-[#4d61b7]/20"
-                    placeholder="Write humanized, useful content. Use short sections, examples, FAQs, and natural keywords."
+                    placeholder="Write humanized, useful content. You can insert links, custom headers, and images using the toolbar above."
                   />
-                </label>
+                </div>
+
+                {/* FAQs Manager */}
+                <div className="rounded-2xl border border-slate-200 p-4 bg-slate-50/50 space-y-4">
+                  <h3 className="text-sm font-bold text-[#071633]">Manage Article FAQs</h3>
+                  
+                  {articleForm.faqs.length > 0 && (
+                    <div className="space-y-2">
+                      {articleForm.faqs.map((faq, index) => (
+                        <div key={index} className="flex justify-between items-start gap-4 rounded-xl border border-slate-200 bg-white p-3 shadow-sm text-xs">
+                          <div>
+                            <div className="font-semibold text-slate-800">Q: {faq.question}</div>
+                            <div className="text-slate-500 mt-1">A: {faq.answer}</div>
+                          </div>
+                          <button
+                            type="button"
+                            onClick={() => {
+                              setArticleForm((current) => ({
+                                ...current,
+                                faqs: current.faqs.filter((_, i) => i !== index),
+                              }));
+                            }}
+                            className="text-red-600 hover:underline shrink-0 font-semibold"
+                          >
+                            Remove
+                          </button>
+                        </div>
+                      ))}
+                    </div>
+                  )}
+
+                  <div className="space-y-3 pt-2 border-t border-slate-200/60">
+                    <input
+                      type="text"
+                      placeholder="FAQ Question"
+                      value={faqQuestion}
+                      onChange={(e) => setFaqQuestion(e.target.value)}
+                      className="w-full rounded-xl border border-slate-300 bg-white px-3 py-2 text-xs outline-none focus:border-[#4d61b7]"
+                    />
+                    <textarea
+                      placeholder="FAQ Answer"
+                      value={faqAnswer}
+                      onChange={(e) => setFaqAnswer(e.target.value)}
+                      rows={2}
+                      className="w-full rounded-xl border border-slate-300 bg-white px-3 py-2 text-xs outline-none focus:border-[#4d61b7]"
+                    />
+                    <button
+                      type="button"
+                      onClick={() => {
+                        if (!faqQuestion.trim() || !faqAnswer.trim()) return;
+                        setArticleForm((current) => ({
+                          ...current,
+                          faqs: [...current.faqs, { question: faqQuestion, answer: faqAnswer }],
+                        }));
+                        setFaqQuestion("");
+                        setFaqAnswer("");
+                      }}
+                      className="rounded-xl bg-[#071633] px-4 py-2 text-xs font-semibold text-white hover:bg-[#4d61b7]"
+                    >
+                      Add FAQ Item
+                    </button>
+                  </div>
+                </div>
+
+                {/* Internal Links Manager */}
+                <div className="rounded-2xl border border-slate-200 p-4 bg-slate-50/50 space-y-4">
+                  <h3 className="text-sm font-bold text-[#071633]">Manage Call-to-Action Links</h3>
+                  
+                  {articleForm.internal_links.length > 0 && (
+                    <div className="space-y-2">
+                      {articleForm.internal_links.map((link, index) => (
+                        <div key={index} className="flex justify-between items-center gap-4 rounded-xl border border-slate-200 bg-white p-3 shadow-sm text-xs">
+                          <div>
+                            <span className="font-semibold text-slate-800">{link.label}</span>
+                            <span className="text-slate-400 ml-2">({link.href})</span>
+                          </div>
+                          <button
+                            type="button"
+                            onClick={() => {
+                              setArticleForm((current) => ({
+                                ...current,
+                                internal_links: current.internal_links.filter((_, i) => i !== index),
+                              }));
+                            }}
+                            className="text-red-600 hover:underline shrink-0 font-semibold"
+                          >
+                            Remove
+                          </button>
+                        </div>
+                      ))}
+                    </div>
+                  )}
+
+                  <div className="grid gap-3 grid-cols-2 pt-2 border-t border-slate-200/60 items-end">
+                    <div>
+                      <input
+                        type="text"
+                        placeholder="Link Label"
+                        value={linkLabel}
+                        onChange={(e) => setLinkLabel(e.target.value)}
+                        className="w-full rounded-xl border border-slate-300 bg-white px-3 py-2 text-xs outline-none focus:border-[#4d61b7]"
+                      />
+                    </div>
+                    <div>
+                      <input
+                        type="text"
+                        placeholder="Link Href (e.g. /services)"
+                        value={linkHref}
+                        onChange={(e) => setLinkHref(e.target.value)}
+                        className="w-full rounded-xl border border-slate-300 bg-white px-3 py-2 text-xs outline-none focus:border-[#4d61b7]"
+                      />
+                    </div>
+                    <div className="col-span-2">
+                      <button
+                        type="button"
+                        onClick={() => {
+                          if (!linkLabel.trim() || !linkHref.trim()) return;
+                          setArticleForm((current) => ({
+                            ...current,
+                            internal_links: [...current.internal_links, { label: linkLabel, href: linkHref }],
+                          }));
+                          setLinkLabel("");
+                          setLinkHref("");
+                        }}
+                        className="rounded-xl bg-[#071633] px-4 py-2 text-xs font-semibold text-white hover:bg-[#4d61b7]"
+                      >
+                        Add Link Item
+                      </button>
+                    </div>
+                  </div>
+                </div>
 
                 <div className="grid gap-4 md:grid-cols-3">
                   <label className="block">

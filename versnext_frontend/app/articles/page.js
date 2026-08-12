@@ -47,7 +47,7 @@ export const metadata = {
 async function getArticles() {
   try {
     const response = await fetch(`${API_BASE}/articles?per_page=24`, {
-      next: { revalidate: 3600 },
+      next: { revalidate: 10 },
     });
 
     if (!response.ok) return fallbackArticles;

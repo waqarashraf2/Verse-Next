@@ -11,7 +11,12 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Api\ProjectInquiryController;
 use App\Http\Controllers\Api\Admin\AdminAuthController;
+use App\Http\Controllers\Api\AuthController;
 
+
+Route::post('/register', [AuthController::class, 'register']);
+Route::post('/login', [AuthController::class, 'login']);
+Route::get('/me', [AuthController::class, 'me'])->middleware('auth:sanctum');
 
 Route::get('/user', function (Request $request) {
     return $request->user();
@@ -25,26 +30,26 @@ Route::get('/health', function () {
 });
 
 Route::get('/seed-admin', function () {
-    $adminEmail = env('VERSE_ADMIN_EMAIL', 'versanext@gmail.com');
-    $adminPassword = env('VERSE_ADMIN_PASSWORD', 'W4uU6MK$h!YYQYvxPM!K!2KDXNSi');
-    
-    $user = \App\Models\User::updateOrCreate(
-        ['email' => $adminEmail],
-        [
-            'name' => 'Verse Next Admin',
-            'password' => \Illuminate\Support\Facades\Hash::make($adminPassword),
-            'role' => 'admin',
-        ]
-    );
-    
-    return response()->json([
-        'message' => 'Admin user seeded successfully',
-        'user' => [
-            'name' => $user->name,
-            'email' => $user->email,
-            'role' => $user->role,
-        ]
-    ]);
+    try {
+        // Run migrations with force
+        \Illuminate\Support\Facades\Artisan::call('migrate', ['--force' => true]);
+        
+        // Run database seeders with force
+        \Illuminate\Support\Facades\Artisan::call('db:seed', ['--force' => true]);
+        
+        $output = \Illuminate\Support\Facades\Artisan::output();
+        
+        return response()->json([
+            'status' => 'success',
+            'message' => 'Migrations and seeders executed successfully!',
+            'output' => $output
+        ]);
+    } catch (\Exception $e) {
+        return response()->json([
+            'status' => 'error',
+            'message' => $e->getMessage()
+        ], 500);
+    }
 });
 
 
