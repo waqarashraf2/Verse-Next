@@ -3,6 +3,7 @@ import Image from "next/image";
 import { notFound } from "next/navigation";
 import { ArrowLeft, CalendarDays, Clock, Tags } from "lucide-react";
 import { articleToText, fallbackArticles } from "@/lib/editorial-content";
+import ShareButtons from "@/Components/ShareButtons";
 
 const API_BASE = process.env.NEXT_PUBLIC_API_BASE_URL || "https://api.versenext.com/api";
 const hiddenLegacySlugs = new Set([
@@ -297,45 +298,7 @@ export default async function ArticleDetailPage({ params }) {
           ) : null}
 
           {/* Social Sharing Section */}
-          <div className="mt-14 pt-6 border-t border-slate-200">
-            <h3 className="text-sm font-semibold uppercase tracking-wider text-slate-500">Share this article</h3>
-            <div className="mt-4 flex flex-wrap gap-2">
-              <a
-                href={`https://twitter.com/intent/tweet?url=https://versenext.com/articles/${article.slug}&text=${encodeURIComponent(article.title)}`}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="inline-flex items-center gap-2 rounded-xl border border-slate-200 bg-white px-4 py-2 text-xs font-semibold text-slate-700 hover:bg-slate-50 transition"
-              >
-                Twitter / X
-              </a>
-              <a
-                href={`https://www.facebook.com/sharer/sharer.php?u=https://versenext.com/articles/${article.slug}`}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="inline-flex items-center gap-2 rounded-xl border border-slate-200 bg-white px-4 py-2 text-xs font-semibold text-slate-700 hover:bg-slate-50 transition"
-              >
-                Facebook
-              </a>
-              <a
-                href={`https://www.linkedin.com/sharing/share-offsite/?url=https://versenext.com/articles/${article.slug}`}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="inline-flex items-center gap-2 rounded-xl border border-slate-200 bg-white px-4 py-2 text-xs font-semibold text-slate-700 hover:bg-slate-50 transition"
-              >
-                LinkedIn
-              </a>
-              <button
-                type="button"
-                onClick={() => {
-                  navigator.clipboard.writeText(`https://versenext.com/articles/${article.slug}`);
-                  alert("Link copied to clipboard!");
-                }}
-                className="inline-flex items-center gap-2 rounded-xl border border-slate-200 bg-white px-4 py-2 text-xs font-semibold text-slate-700 hover:bg-slate-50 transition"
-              >
-                Copy Link
-              </button>
-            </div>
-          </div>
+          <ShareButtons slug={article.slug} title={article.title} />
 
           <div className="mt-14 rounded-2xl border border-slate-200 bg-slate-50 p-6">
             <h2 className="text-xl font-semibold text-slate-950">Need this for your business?</h2>
