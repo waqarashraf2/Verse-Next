@@ -78,15 +78,18 @@ export async function generateMetadata({ params }) {
     };
   }
 
+  const baseTitle = (article.seo_title || article.title).replace(/\s*\|\s*Verse\s*Next/gi, "");
+  const cleanDescription = (article.seo_description || article.excerpt || "").slice(0, 150);
+
   return {
-    title: article.seo_title || article.title,
-    description: article.seo_description || article.excerpt,
+    title: baseTitle,
+    description: cleanDescription,
     alternates: {
       canonical: `/articles/${article.slug}/`,
     },
     openGraph: {
-      title: article.seo_title || article.title,
-      description: article.seo_description || article.excerpt,
+      title: baseTitle,
+      description: cleanDescription,
       url: `https://versenext.com/articles/${article.slug}/`,
       type: "article",
       publishedTime: article.published_at,
@@ -105,8 +108,8 @@ export async function generateMetadata({ params }) {
     },
     twitter: {
       card: "summary_large_image",
-      title: article.seo_title || article.title,
-      description: article.seo_description || article.excerpt,
+      title: baseTitle,
+      description: cleanDescription,
       images: article.featured_image ? [`https://versenext.com${article.featured_image}`] : undefined,
     },
   };
@@ -292,6 +295,47 @@ export default async function ArticleDetailPage({ params }) {
               </div>
             </section>
           ) : null}
+
+          {/* Social Sharing Section */}
+          <div className="mt-14 pt-6 border-t border-slate-200">
+            <h3 className="text-sm font-semibold uppercase tracking-wider text-slate-500">Share this article</h3>
+            <div className="mt-4 flex flex-wrap gap-2">
+              <a
+                href={`https://twitter.com/intent/tweet?url=https://versenext.com/articles/${article.slug}&text=${encodeURIComponent(article.title)}`}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="inline-flex items-center gap-2 rounded-xl border border-slate-200 bg-white px-4 py-2 text-xs font-semibold text-slate-700 hover:bg-slate-50 transition"
+              >
+                Twitter / X
+              </a>
+              <a
+                href={`https://www.facebook.com/sharer/sharer.php?u=https://versenext.com/articles/${article.slug}`}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="inline-flex items-center gap-2 rounded-xl border border-slate-200 bg-white px-4 py-2 text-xs font-semibold text-slate-700 hover:bg-slate-50 transition"
+              >
+                Facebook
+              </a>
+              <a
+                href={`https://www.linkedin.com/sharing/share-offsite/?url=https://versenext.com/articles/${article.slug}`}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="inline-flex items-center gap-2 rounded-xl border border-slate-200 bg-white px-4 py-2 text-xs font-semibold text-slate-700 hover:bg-slate-50 transition"
+              >
+                LinkedIn
+              </a>
+              <button
+                type="button"
+                onClick={() => {
+                  navigator.clipboard.writeText(`https://versenext.com/articles/${article.slug}`);
+                  alert("Link copied to clipboard!");
+                }}
+                className="inline-flex items-center gap-2 rounded-xl border border-slate-200 bg-white px-4 py-2 text-xs font-semibold text-slate-700 hover:bg-slate-50 transition"
+              >
+                Copy Link
+              </button>
+            </div>
+          </div>
 
           <div className="mt-14 rounded-2xl border border-slate-200 bg-slate-50 p-6">
             <h2 className="text-xl font-semibold text-slate-950">Need this for your business?</h2>

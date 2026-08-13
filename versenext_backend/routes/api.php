@@ -14,7 +14,6 @@ use App\Http\Controllers\Api\Admin\AdminAuthController;
 use App\Http\Controllers\Api\AuthController;
 
 
-
 Route::post('/register', [AuthController::class, 'register']);
 Route::post('/login', [AuthController::class, 'login']);
 Route::get('/me', [AuthController::class, 'me'])->middleware('auth:sanctum');
