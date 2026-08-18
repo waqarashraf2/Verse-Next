@@ -114,6 +114,17 @@ export default function ServicesPage() {
     },
     {
       id: 5,
+      slug: "ai-automation",
+      title: "AI Automation",
+      description: "Autonomous AI agents and workflow automation for lead qualification, CRM syncing, and operational efficiency.",
+      icon: Cpu,
+      features: ["Custom AI Agents", "Workflow Automation", "CRM Integration", "RAG Assistants", "Human-in-the-Loop"],
+      process: ["Audit", "Agent Design", "Integration", "Testing", "Deployment"],
+      color: "#071633",
+      expertise: ["AI Agents", "Workflow Automation", "LLM Integration"]
+    },
+    {
+      id: 6,
       slug: "social-media-management",
       title: "Social Media Management",
       description: "Complete social media management including content creation and community engagement.",
@@ -124,7 +135,7 @@ export default function ServicesPage() {
       expertise: ["Content Creation", "Community Management", "Analytics"]
     },
     {
-      id: 6,
+      id: 7,
       slug: "brand-strategy",
       title: "Brand Strategy",
       description: "Develop a strong brand identity that resonates with your target audience and drives loyalty.",
@@ -135,7 +146,7 @@ export default function ServicesPage() {
       expertise: ["Brand Identity", "Market Research", "Visual Design"]
     },
     {
-      id: 7,
+      id: 8,
       slug: "ui-ux-design",
       title: "UI/UX Design",
       description: "User-centered design solutions that enhance user experience and drive conversions.",
@@ -146,7 +157,7 @@ export default function ServicesPage() {
       expertise: ["UI Design", "UX Research", "Prototyping"]
     },
     {
-      id: 8,
+      id: 9,
       slug: "mobile-app-development",
       title: "Mobile App Development",
       description: "Native and cross-platform mobile applications for iOS and Android platforms.",
@@ -157,7 +168,7 @@ export default function ServicesPage() {
       expertise: ["iOS Development", "Android Development", "Cross-Platform"]
     },
     {
-      id: 9,
+      id: 10,
       slug: "cybersecurity-solutions",
       title: "Cybersecurity Solutions",
       description: "Comprehensive security measures to protect your digital assets and customer data.",
@@ -168,7 +179,7 @@ export default function ServicesPage() {
       expertise: ["Security Audits", "Compliance", "Monitoring"]
     },
     {
-      id: 10,
+      id: 11,
       slug: "cloud-infrastructure",
       title: "Cloud Infrastructure",
       description: "Cloud solutions for scalability, reliability, and optimized performance.",
@@ -179,7 +190,7 @@ export default function ServicesPage() {
       expertise: ["AWS", "Azure", "Kubernetes"]
     },
     {
-      id: 11,
+      id: 12,
       slug: "business-intelligence",
       title: "Business Intelligence",
       description: "Turn business data into useful dashboards, reports, and clearer operating decisions.",
@@ -190,7 +201,7 @@ export default function ServicesPage() {
       expertise: ["Data Analysis", "Visualization", "Reporting"]
     },
     {
-      id: 12,
+      id: 13,
       slug: "digital-transformation",
       title: "Digital Transformation",
       description: "Modernize outdated workflows with practical software, automation, integrations, and support.",
