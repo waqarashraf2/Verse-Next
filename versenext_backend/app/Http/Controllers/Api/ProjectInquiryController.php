@@ -8,12 +8,13 @@ use App\Models\ProjectInquiry;
 use Illuminate\Http\Request;
 use App\Mail\AdminInquiryMail;
 use App\Mail\ClientInquiryConfirmationMail;
+use App\Services\WhatsAppService;
 use Illuminate\Support\Facades\Mail;
 
 
 class ProjectInquiryController extends Controller
 {
-public function store(Request $request)
+public function store(Request $request, WhatsAppService $whatsAppService)
 {
     $validated = $request->validate([
         'full_name'       => 'required|string|max:255',
@@ -28,13 +29,19 @@ public function store(Request $request)
     // 1. Save inquiry
     $inquiry = ProjectInquiry::create($validated);
 
+    // 2. Send Emails
+    try {
+        Mail::to(['team@versenext.com', 'versanext@gmail.com'])
+            ->queue(new AdminInquiryMail($inquiry));
 
-Mail::to(['team@versenext.com', 'versanext@gmail.com'])
-    ->queue(new AdminInquiryMail($inquiry));
+        Mail::to($inquiry->email)
+            ->queue(new ClientInquiryConfirmationMail($inquiry));
+    } catch (\Throwable $e) {
+        \Illuminate\Support\Facades\Log::error('Mail sending failed: ' . $e->getMessage());
+    }
 
-Mail::to($inquiry->email)
-    ->queue(new ClientInquiryConfirmationMail($inquiry));
-
+    // 3. Send WhatsApp notification to Admin (03365968297)
+    $whatsAppService->sendInquiryAlert($inquiry);
 
     // 4. Return API response
     return response()->json([
@@ -43,5 +50,4 @@ Mail::to($inquiry->email)
         'data'    => new ProjectInquiryResource($inquiry),
     ], 201);
 }
-
 }

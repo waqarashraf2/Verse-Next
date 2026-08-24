@@ -41,4 +41,11 @@ return [
         'timeout' => env('GEMINI_TIMEOUT', 12),
     ],
 
+    'green_api' => [
+        'host' => env('GREEN_API_HOST', 'https://7107.api.greenapi.com'),
+        'id_instance' => env('GREEN_API_ID_INSTANCE', '710722718547'),
+        'api_token' => env('GREEN_API_API_TOKEN_INSTANCE', 'f10a6688163e43afbbfb04bbe25869ad4a07c096eabf4518a1'),
+        'admin_phone' => env('ADMIN_WHATSAPP_NUMBER', '923365968297'),
+    ],
+
 ];
