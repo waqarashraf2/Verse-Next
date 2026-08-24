@@ -1,8 +1,9 @@
 import Link from "next/link";
 import Image from "next/image";
-import { ArrowRight, BookOpen, CalendarDays, Search, Sparkles, Tags } from "lucide-react";
+import { ArrowRight, BookOpen, Search, Sparkles } from "lucide-react";
 import { fallbackArticles, recommendedKeywordClusters } from "@/lib/editorial-content";
 import { breadcrumbSchema, webPageSchema } from "@/lib/seo-content";
+import ArticlesExplorer from "@/Components/ArticlesExplorer";
 
 const API_BASE = process.env.NEXT_PUBLIC_API_BASE_URL || "https://api.versenext.com/api";
 const hiddenLegacySlugs = new Set([
@@ -64,7 +65,7 @@ async function getArticles() {
 export default async function ArticlesPage() {
   const articles = await getArticles();
   const featured = articles.find((article) => article.is_featured) || articles[0];
-  const rest = articles.filter((article) => article.slug !== featured?.slug);
+  const allArticles = [featured, ...articles.filter((article) => article.slug !== featured?.slug)].filter(Boolean);
 
   const collectionSchema = {
     "@context": "https://schema.org",
@@ -160,45 +161,11 @@ export default async function ArticlesPage() {
       </section>
 
       <section className="verse-wave-section bg-white px-4 py-16 sm:px-6 lg:px-8">
-        <div className="mx-auto grid max-w-7xl gap-5 md:grid-cols-2 lg:grid-cols-3">
-          {[featured, ...rest].filter(Boolean).map((article) => (
-            <article key={article.slug} className="verse-wave-card flex min-h-full flex-col rounded-2xl border border-slate-200 bg-white p-6 shadow-sm transition hover:-translate-y-1 hover:border-blue-500/30 hover:shadow-xl">
-              {article.featured_image ? (
-                <div className="relative mb-5 aspect-[16/9] overflow-hidden rounded-xl bg-slate-100">
-                  <Image
-                    src={article.featured_image}
-                    alt={`${article.title} cover image`}
-                    fill
-                    sizes="(min-width: 1024px) 380px, (min-width: 768px) 45vw, 100vw"
-                    className="object-cover"
-                    loading="lazy"
-                  />
-                </div>
-              ) : null}
-              <div className="mb-4 flex flex-wrap items-center gap-3 text-xs font-semibold text-slate-500">
-                <span className="rounded-full bg-blue-500/10 px-3 py-1 text-blue-600">{article.category || "Technology"}</span>
-                <span className="inline-flex items-center gap-1">
-                  <CalendarDays size={13} />
-                  {article.reading_time || 5} min read
-                </span>
-              </div>
-              <h2 className="text-xl font-bold leading-tight text-slate-950">{article.title}</h2>
-              <p className="mt-3 flex-1 text-sm leading-7 text-slate-600">{article.excerpt || article.seo_description}</p>
-              <div className="mt-5 flex flex-wrap gap-2">
-                {(Array.isArray(article.tags) ? article.tags : []).slice(0, 3).map((tag) => (
-                  <span key={tag} className="inline-flex items-center gap-1 rounded-full bg-slate-50 px-2.5 py-1 text-[11px] font-semibold text-slate-500">
-                    <Tags size={12} />
-                    {tag}
-                  </span>
-                ))}
-              </div>
-              <Link href={`/articles/${article.slug}`} className="mt-6 inline-flex items-center text-sm font-semibold text-blue-600">
-                Read guide <ArrowRight className="ml-2" size={15} />
-              </Link>
-            </article>
-          ))}
+        <div className="mx-auto max-w-7xl">
+          <ArticlesExplorer articles={allArticles} featuredArticle={featured} />
         </div>
       </section>
     </div>
   );
 }
+
