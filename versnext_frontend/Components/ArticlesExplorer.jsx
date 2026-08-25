@@ -196,11 +196,11 @@ export default function ArticlesExplorer({ articles = [], featuredArticle = null
                 </div>
 
                 {/* Title */}
-                <h2 className="text-xl font-bold leading-snug text-slate-950 transition-colors group-hover:text-blue-600">
+                <h3 className="text-xl font-bold leading-snug text-slate-950 transition-colors group-hover:text-blue-600">
                   <Link href={`/articles/${article.slug}`}>
                     {article.title}
                   </Link>
-                </h2>
+                </h3>
 
                 {/* Excerpt */}
                 <p className="mt-3 flex-1 text-sm leading-relaxed text-slate-600">

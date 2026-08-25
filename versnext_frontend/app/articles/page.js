@@ -22,14 +22,14 @@ function mergeArticles(primaryArticles, fallbackItems) {
 }
 
 export const metadata = {
-  title: "Technology Articles, SEO Guides and AI Automation Insights",
+  title: "Technology Articles, SEO & AI Guides",
   description:
     "Read Verse Next articles about web development, software, SEO, digital marketing, AI automation, and practical technology decisions for growing businesses.",
   alternates: {
     canonical: "/articles/",
   },
   openGraph: {
-    title: "Verse Next Articles and Technology Insights",
+    title: "Verse Next Articles & Technology Insights",
     description:
       "Human-written technology articles for business websites, SEO, AI automation, software development, and digital growth.",
     url: "https://versenext.com/articles/",
@@ -38,7 +38,7 @@ export const metadata = {
   },
   twitter: {
     card: "summary_large_image",
-    title: "Verse Next Articles and Technology Insights",
+    title: "Verse Next Articles & Technology Insights",
     description:
       "Human-written technology articles for business websites, SEO, AI automation, software development, and digital growth.",
     images: ["/icon-blue.png"],
@@ -65,7 +65,7 @@ async function getArticles() {
 export default async function ArticlesPage() {
   const articles = await getArticles();
   const featured = articles.find((article) => article.is_featured) || articles[0];
-  const allArticles = [featured, ...articles.filter((article) => article.slug !== featured?.slug)].filter(Boolean);
+  const listArticles = articles.filter((article) => article.slug !== featured?.slug);
 
   const collectionSchema = {
     "@context": "https://schema.org",
@@ -162,7 +162,7 @@ export default async function ArticlesPage() {
 
       <section className="verse-wave-section bg-white px-4 py-16 sm:px-6 lg:px-8">
         <div className="mx-auto max-w-7xl">
-          <ArticlesExplorer articles={allArticles} featuredArticle={featured} />
+          <ArticlesExplorer articles={listArticles} featuredArticle={featured} />
         </div>
       </section>
     </div>
