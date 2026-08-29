@@ -2,7 +2,8 @@
 
 import { FormEvent, useEffect, useRef, useState } from "react";
 import { AnimatePresence, motion } from "framer-motion";
-import { Bot, MessageCircle, Minus, Send, X } from "lucide-react";
+import { Bot, MessageCircle, Minus, PhoneCall, Send, Sparkles, X } from "lucide-react";
+import AriaVoiceCallModal from "./AriaVoiceCallModal";
 
 type ChatMessage = {
   role: "assistant" | "user" | "system";
@@ -35,6 +36,7 @@ function createSessionId() {
 
 export default function FloatingAIChat() {
   const [open, setOpen] = useState(false);
+  const [isVoiceCallOpen, setIsVoiceCallOpen] = useState(false);
   const [message, setMessage] = useState("");
   const [loading, setLoading] = useState(false);
   const [sessionId, setSessionId] = useState("");
@@ -157,7 +159,19 @@ export default function FloatingAIChat() {
                   <div className="text-xs text-slate-300">Online - English, Urdu, Roman Urdu</div>
                 </div>
               </div>
-              <div className="flex items-center gap-1">
+              <div className="flex items-center gap-1.5">
+                <button
+                  type="button"
+                  onClick={() => {
+                    setOpen(false);
+                    setIsVoiceCallOpen(true);
+                  }}
+                  className="flex items-center gap-1.5 rounded-full bg-gradient-to-r from-cyan-500 to-blue-600 px-3 py-1.5 text-xs font-semibold text-white shadow-md hover:from-cyan-400 hover:to-blue-500 transition"
+                  title="Start live voice call with Aria"
+                >
+                  <PhoneCall size={13} className="animate-pulse" />
+                  <span>Call Aria</span>
+                </button>
                 <button type="button" onClick={() => setOpen(false)} className="rounded-full p-2 hover:bg-white/10" aria-label="Minimize AI assistant">
                   <Minus size={17} />
                 </button>
@@ -234,14 +248,38 @@ export default function FloatingAIChat() {
         )}
       </AnimatePresence>
 
-      <button
-        type="button"
-        onClick={() => setOpen((current) => !current)}
-        className="ml-auto flex h-14 w-14 items-center justify-center rounded-full bg-blue-600 text-white shadow-2xl ring-4 ring-blue-100 transition hover:-translate-y-0.5"
-        aria-label="Open AI assistant"
-      >
-        {open ? <X size={23} /> : <MessageCircle size={24} />}
-      </button>
+      {/* Floating Action Bar */}
+      <div className="flex items-center gap-2.5">
+        <button
+          type="button"
+          onClick={() => setIsVoiceCallOpen(true)}
+          className="group flex items-center gap-2 rounded-full bg-gradient-to-r from-zinc-900 via-zinc-950 to-black px-4 py-3 text-white border border-cyan-500/40 shadow-xl hover:border-cyan-400 hover:shadow-cyan-500/20 transition-all cursor-pointer"
+        >
+          <div className="relative flex h-3 w-3">
+            <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-cyan-400 opacity-75"></span>
+            <span className="relative inline-flex rounded-full h-3 w-3 bg-cyan-500"></span>
+          </div>
+          <PhoneCall size={16} className="text-cyan-400 group-hover:scale-110 transition-transform" />
+          <span className="text-xs font-semibold tracking-wide text-zinc-100">
+            Call Aria <span className="text-cyan-400">(AI)</span>
+          </span>
+        </button>
+
+        <button
+          type="button"
+          onClick={() => setOpen((current) => !current)}
+          className="flex h-14 w-14 items-center justify-center rounded-full bg-blue-600 text-white shadow-2xl ring-4 ring-blue-100 transition hover:-translate-y-0.5"
+          aria-label="Open AI assistant"
+        >
+          {open ? <X size={23} /> : <MessageCircle size={24} />}
+        </button>
+      </div>
+
+      {/* Aria Voice Call Modal */}
+      <AriaVoiceCallModal
+        isOpen={isVoiceCallOpen}
+        onClose={() => setIsVoiceCallOpen(false)}
+      />
     </div>
   );
 }

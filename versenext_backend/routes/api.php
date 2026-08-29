@@ -12,6 +12,7 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Api\ProjectInquiryController;
 use App\Http\Controllers\Api\Admin\AdminAuthController;
 use App\Http\Controllers\Api\AuthController;
+use App\Http\Controllers\Api\VoiceAgentController;
 
 
 
@@ -55,11 +56,13 @@ Route::get('/seed-admin', function () {
 
 
 
-Route::middleware(['throttle:10,1'])->group(function () {
+Route::middleware(['throttle:20,1'])->group(function () {
     Route::post('/project-inquiry', [ProjectInquiryController::class, 'store']);
     Route::post('/leads', [LeadController::class, 'store']);
     Route::post('/consultations', [ConsultationController::class, 'store']);
     Route::post('/chatbot/respond', [ChatbotController::class, 'respond']);
+    Route::post('/voice-agent/start', [VoiceAgentController::class, 'start']);
+    Route::post('/voice-agent/respond', [VoiceAgentController::class, 'respond']);
 });
 
 Route::get('/knowledge-base', [KnowledgeBaseController::class, 'index']);

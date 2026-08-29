@@ -11,7 +11,7 @@ class GeminiChatService
     public function generate(string $message, string $intent, string $service, string $localReply): ?string
     {
         $apiKey = config('services.gemini.key');
-        $model = config('services.gemini.model', 'gemini-2.5-flash');
+        $model = config('services.gemini.model', 'gemini-3.6-flash');
 
         if (!$apiKey || !$model) {
             return null;
