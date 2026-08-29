@@ -355,8 +355,8 @@ export default function AriaVoiceCallModal({ isOpen, onClose }: AriaVoiceCallMod
       // Fetch or use initial greeting
       let greetingText =
         language === "ur"
-          ? "Assalam-o-Alaikum! VersNext me call karne ka shukriya. Mera naam Aria hai. Main aaj aapki kis tarah madad kar sakti hoon?"
-          : "Hello! Thank you for calling VersNext. My name is Aria, your AI assistant. How can I assist you today?";
+          ? "Assalam-o-Alaikum! Verse Next me call karne ka shukriya. Mera naam Aria hai. Main aaj aapki kis tarah madad kar sakti hoon?"
+          : "Hello! Thank you for calling Verse Next. My name is Aria, your AI assistant. How can I assist you today?";
 
       if (apiBase) {
         try {
@@ -470,7 +470,7 @@ export default function AriaVoiceCallModal({ isOpen, onClose }: AriaVoiceCallMod
                     Voice Agent
                   </span>
                 </h3>
-                <p className="text-xs text-zinc-400">VersNext AI Receptionist</p>
+                <p className="text-xs text-zinc-400">Verse Next AI Receptionist</p>
               </div>
             </div>
 
