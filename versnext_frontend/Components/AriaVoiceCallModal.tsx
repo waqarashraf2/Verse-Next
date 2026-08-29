@@ -198,11 +198,21 @@ export default function AriaVoiceCallModal({ isOpen, onClose }: AriaVoiceCallMod
         }
 
         if (!responseReply) {
-          // Fallback response if offline/no endpoint
-          responseReply =
-            language === "ur"
-              ? "Bohat shukriya! VersNext custom AI calling agents aur smart automations provide karta hai. Kya aap hamari team ke sath 15 minute ki quick discovery call schedule karna chahein ge?"
-              : "Thank you for sharing that! We specialize in custom AI calling agents and software automation. Would you like to schedule a quick 15-minute discovery call with our technical team?";
+          // Dynamic conversational fallback
+          const isUrdu = language === "ur" || /(?:kya|kaise|mujhe|aap|chahiye|batao|meeting|waqt)/i.test(userText);
+          if (/(?:service|services|kya karte|web|ai|calling|app)/i.test(userText)) {
+            responseReply = isUrdu
+              ? "Hum custom AI voice agents, web development, SaaS platforms aur business automation build karte hain. Aap ko kis service ki detail chahiye?"
+              : "We build custom AI voice calling agents, full-stack websites, and business automations. Which solution would you like to explore?";
+          } else if (/(?:meeting|schedule|book|call|demo)/i.test(userText)) {
+            responseReply = isUrdu
+              ? "Zaroor! Main aapki 15-minute discovery meeting arrange kar deti hoon. Aap ke liye kaunsa din aur time behtar rahega?"
+              : "I would be happy to set up a 15-minute discovery call with our technical team. What day and time works best for you?";
+          } else {
+            responseReply = isUrdu
+              ? "Ji bilkul, main aapki poori madad kar sakti hoon. Aap apne project ke bare mein batayein?"
+              : "I can help you with that! Could you tell me a little more about your requirements?";
+          }
         }
 
         if (booked) {
@@ -220,8 +230,10 @@ export default function AriaVoiceCallModal({ isOpen, onClose }: AriaVoiceCallMod
         speakText(responseReply);
       } catch (err) {
         console.error("Error communicating with Aria voice agent:", err);
-        const fallback =
-          "I understand. We would love to show you a live custom demonstration. What day and time works best for you?";
+        const isUrdu = language === "ur" || /(?:kya|kaise|mujhe|aap|chahiye|batao|meeting)/i.test(userText);
+        const fallback = isUrdu
+          ? "Ji main sun rahi hoon. Aap apne project ya meeting ke hawalay se kya janna chahte hain?"
+          : "I am listening. Could you please let me know your project details or preferred meeting time?";
         const agentMsg: VoiceMessage = {
           id: `aria-${Date.now()}`,
           role: "assistant",
