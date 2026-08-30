@@ -126,8 +126,8 @@ export default function AriaVoiceCallModal({ isOpen, onClose }: AriaVoiceCallMod
         utterance.voice = selectedVoice;
       }
 
-      utterance.pitch = 1.05;
-      utterance.rate = 1.05;
+      utterance.pitch = 1.06;
+      utterance.rate = 1.14;
       utterance.lang = language === "ur" ? "ur-PK" : "en-US";
 
       utterance.onstart = () => {
@@ -168,6 +168,7 @@ export default function AriaVoiceCallModal({ isOpen, onClose }: AriaVoiceCallMod
           }
           const player = audioPlayerRef.current;
           player.src = audioUrl;
+          player.playbackRate = 1.14;
 
           player.onplay = () => {
             isAgentSpeakingRef.current = true;
@@ -433,8 +434,8 @@ export default function AriaVoiceCallModal({ isOpen, onClose }: AriaVoiceCallMod
       // Fetch or use initial greeting
       let greetingText =
         language === "ur"
-          ? "Assalam-o-Alaikum! Verse Next me call karne ka shukriya. Mera naam Aria hai. Main aaj aapki kis tarah madad kar sakti hoon?"
-          : "Hello! Thank you for calling Verse Next. My name is Aria, your AI assistant. How can I assist you today?";
+          ? "Assalam-o-Alaikum! Verse Next me call karne ka shukriya. Main Aria hoon. Aaj aapki kis project me madad kar sakti hoon?"
+          : "Hey there! Thanks for calling Verse Next. I'm Aria. How can I help you today?";
       let greetingAudioUrl: string | null = null;
 
       if (apiBase) {
