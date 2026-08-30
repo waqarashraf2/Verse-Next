@@ -30,8 +30,10 @@ class AriaVoiceAgentService
 
         $cleanUserMessage = trim($userMessage);
         if ($cleanUserMessage === '') {
+            $fallbackReply = "I am listening. How can I help you with your project?";
             return [
-                'reply' => "I am listening. How can I help you with your project?",
+                'reply' => $fallbackReply,
+                'audio_url' => $this->generateHumanAudio($fallbackReply),
                 'lead_extracted' => null,
             ];
         }
@@ -68,9 +70,11 @@ class AriaVoiceAgentService
 
                     if ($cleanReply !== '') {
                         $leadData = $this->extractLeadDetails($cleanUserMessage, $conversationHistory);
+                        $audioUrl = $this->generateHumanAudio($cleanReply);
 
                         return [
                             'reply' => $cleanReply,
+                            'audio_url' => $audioUrl,
                             'lead_extracted' => $leadData,
                         ];
                     }
@@ -109,8 +113,89 @@ class AriaVoiceAgentService
 
         return [
             'reply' => $reply,
+            'audio_url' => $this->generateHumanAudio($reply),
             'lead_extracted' => $leadData,
         ];
+    }
+
+    public function generateHumanAudio(string $text, string $voice = 'Aoede'): ?string
+    {
+        $apiKey = config('services.gemini.key');
+        if (!$apiKey || trim($text) === '') {
+            return null;
+        }
+
+        $ttsModels = ['gemini-2.5-flash-preview-tts', 'gemini-3.1-flash-tts-preview'];
+
+        foreach ($ttsModels as $ttsModel) {
+            try {
+                $endpoint = "https://generativelanguage.googleapis.com/v1beta/models/{$ttsModel}:generateContent";
+
+                $response = Http::timeout(10)
+                    ->withHeaders([
+                        'Content-Type' => 'application/json',
+                        'x-goog-api-key' => $apiKey,
+                    ])
+                    ->post($endpoint, [
+                        'contents' => [
+                            [
+                                'role' => 'user',
+                                'parts' => [
+                                    ['text' => "Read warmly and naturally like a human receptionist: " . $text]
+                                ]
+                            ]
+                        ],
+                        'generationConfig' => [
+                            'responseModalities' => ['AUDIO'],
+                            'speechConfig' => [
+                                'voiceConfig' => [
+                                    'prebuiltVoiceConfig' => [
+                                        'voiceName' => $voice
+                                    ]
+                                ]
+                            ]
+                        ]
+                    ]);
+
+                if ($response->successful()) {
+                    $base64Pcm = data_get($response->json(), 'candidates.0.content.parts.0.inlineData.data');
+                    if ($base64Pcm) {
+                        $rawPcm = base64_decode($base64Pcm);
+                        $wavAudio = $this->pcmToWav($rawPcm, 24000, 1, 16);
+                        return 'data:audio/wav;base64,' . base64_encode($wavAudio);
+                    }
+                }
+            } catch (\Throwable $e) {
+                Log::warning("TTS Generation failed on {$ttsModel}: " . $e->getMessage());
+            }
+        }
+
+        return null;
+    }
+
+    private function pcmToWav(string $pcmData, int $sampleRate = 24000, int $channels = 1, int $bitsPerSample = 16): string
+    {
+        $dataLength = strlen($pcmData);
+        $headerLength = 44;
+        $totalLength = $dataLength + $headerLength - 8;
+        $byteRate = $sampleRate * $channels * ($bitsPerSample / 8);
+        $blockAlign = $channels * ($bitsPerSample / 8);
+
+        $header = 'RIFF' .
+            pack('V', $totalLength) .
+            'WAVE' .
+            'fmt ' .
+            pack('V', 16) . // Subchunk1Size
+            pack('v', 1) .  // AudioFormat (PCM)
+            pack('v', $channels) .
+            pack('V', $sampleRate) .
+            pack('V', $byteRate) .
+            pack('v', $blockAlign) .
+            pack('v', $bitsPerSample) .
+            'data' .
+            pack('V', $dataLength);
+
+        return $header . $pcmData;
     }
 
     private function buildSystemPrompt(): string

@@ -61,6 +61,7 @@ export default function AriaVoiceCallModal({ isOpen, onClose }: AriaVoiceCallMod
   const transcriptEndRef = useRef<HTMLDivElement | null>(null);
   const synthRef = useRef<SpeechSynthesis | null>(null);
   const currentUtteranceRef = useRef<SpeechSynthesisUtterance | null>(null);
+  const audioPlayerRef = useRef<HTMLAudioElement | null>(null);
   const isAgentSpeakingRef = useRef<boolean>(false);
   const isProcessingRef = useRef<boolean>(false);
 
@@ -78,7 +79,21 @@ export default function AriaVoiceCallModal({ isOpen, onClose }: AriaVoiceCallMod
     }
   }, [messages, showTranscript]);
 
-  // Speech Synthesis helper
+  // Stop any playing audio or speech
+  const stopAllAudio = useCallback(() => {
+    if (audioPlayerRef.current) {
+      try {
+        audioPlayerRef.current.pause();
+        audioPlayerRef.current.currentTime = 0;
+      } catch (e) {}
+    }
+    if (typeof window !== "undefined" && "speechSynthesis" in window) {
+      window.speechSynthesis.cancel();
+    }
+    isAgentSpeakingRef.current = false;
+  }, []);
+
+  // Speech Synthesis fallback helper
   const speakText = useCallback(
     (text: string) => {
       if (typeof window === "undefined" || !("speechSynthesis" in window)) return;
@@ -89,17 +104,17 @@ export default function AriaVoiceCallModal({ isOpen, onClose }: AriaVoiceCallMod
       const utterance = new SpeechSynthesisUtterance(text);
       currentUtteranceRef.current = utterance;
 
-      // Select female voice
+      // Select natural female voice
       const voices = window.speechSynthesis.getVoices();
       let selectedVoice = voices.find(
         (v) =>
-          v.name.includes("Female") ||
-          v.name.includes("Zira") ||
-          v.name.includes("Google US English") ||
-          v.name.includes("Samantha") ||
-          v.name.includes("Victoria") ||
           v.name.includes("Natural") ||
-          (language === "ur" && (v.lang.startsWith("ur") || v.lang.startsWith("hi")))
+          v.name.includes("Online (Natural)") ||
+          v.name.includes("Google US English") ||
+          v.name.includes("Aria") ||
+          v.name.includes("Jenny") ||
+          v.name.includes("Samantha") ||
+          v.name.includes("Female")
       );
 
       if (!selectedVoice && voices.length > 0) {
@@ -110,7 +125,7 @@ export default function AriaVoiceCallModal({ isOpen, onClose }: AriaVoiceCallMod
         utterance.voice = selectedVoice;
       }
 
-      utterance.pitch = 1.04;
+      utterance.pitch = 1.05;
       utterance.rate = 1.0;
       utterance.lang = language === "ur" ? "ur-PK" : "en-US";
 
@@ -139,15 +154,62 @@ export default function AriaVoiceCallModal({ isOpen, onClose }: AriaVoiceCallMod
     [isSpeakerMuted, isMicMuted, language]
   );
 
+  // Play Real Studio Human Voice Audio (or fallback to TTS)
+  const playAriaVoice = useCallback(
+    (audioUrl?: string | null, fallbackText: string = "") => {
+      if (isSpeakerMuted) return;
+      stopAllAudio();
+
+      if (audioUrl) {
+        try {
+          if (!audioPlayerRef.current) {
+            audioPlayerRef.current = new Audio();
+          }
+          const player = audioPlayerRef.current;
+          player.src = audioUrl;
+
+          player.onplay = () => {
+            isAgentSpeakingRef.current = true;
+            setAgentStatus("speaking");
+          };
+
+          player.onended = () => {
+            isAgentSpeakingRef.current = false;
+            if (!isMicMuted) {
+              setAgentStatus("listening");
+              startListening();
+            } else {
+              setAgentStatus("muted");
+            }
+          };
+
+          player.onerror = () => {
+            console.warn("Audio player error, falling back to speech synthesis");
+            speakText(fallbackText);
+          };
+
+          player.play().catch((err) => {
+            console.warn("Audio playback prevented:", err);
+            speakText(fallbackText);
+          });
+          return;
+        } catch (e) {
+          console.warn("Audio setup error:", e);
+        }
+      }
+
+      speakText(fallbackText);
+    },
+    [isSpeakerMuted, isMicMuted, stopAllAudio, speakText]
+  );
+
   // Send message to Backend
   const handleSendMessage = useCallback(
     async (userText: string) => {
       if (!userText.trim() || isProcessingRef.current) return;
 
       isProcessingRef.current = true;
-      if (window.speechSynthesis) {
-        window.speechSynthesis.cancel();
-      }
+      stopAllAudio();
 
       // Stop recognition while processing
       if (recognitionRef.current) {
@@ -174,6 +236,7 @@ export default function AriaVoiceCallModal({ isOpen, onClose }: AriaVoiceCallMod
         }));
 
         let responseReply = "";
+        let audioUrl: string | null = null;
         let booked = false;
 
         if (apiBase) {
@@ -193,6 +256,7 @@ export default function AriaVoiceCallModal({ isOpen, onClose }: AriaVoiceCallMod
           if (res.ok) {
             const data = await res.json();
             responseReply = data?.data?.reply || "";
+            audioUrl = data?.data?.audio_url || null;
             booked = !!data?.data?.booking_confirmed;
           }
         }
@@ -227,7 +291,7 @@ export default function AriaVoiceCallModal({ isOpen, onClose }: AriaVoiceCallMod
         };
 
         setMessages((prev) => [...prev, agentMsg]);
-        speakText(responseReply);
+        playAriaVoice(audioUrl, responseReply);
       } catch (err) {
         console.error("Error communicating with Aria voice agent:", err);
         const isUrdu = language === "ur" || /(?:kya|kaise|mujhe|aap|chahiye|batao|meeting)/i.test(userText);
@@ -241,12 +305,12 @@ export default function AriaVoiceCallModal({ isOpen, onClose }: AriaVoiceCallMod
           timestamp: new Date().toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" }),
         };
         setMessages((prev) => [...prev, agentMsg]);
-        speakText(fallback);
+        playAriaVoice(null, fallback);
       } finally {
         isProcessingRef.current = false;
       }
     },
-    [sessionId, messages, language, speakText]
+    [sessionId, messages, language, stopAllAudio, playAriaVoice]
   );
 
   // Initialize Speech Recognition (STT)
@@ -320,7 +384,7 @@ export default function AriaVoiceCallModal({ isOpen, onClose }: AriaVoiceCallMod
   useEffect(() => {
     if (!isOpen) {
       // Clean up when closed
-      if (window.speechSynthesis) window.speechSynthesis.cancel();
+      stopAllAudio();
       if (recognitionRef.current) {
         try {
           recognitionRef.current.abort();
@@ -357,6 +421,7 @@ export default function AriaVoiceCallModal({ isOpen, onClose }: AriaVoiceCallMod
         language === "ur"
           ? "Assalam-o-Alaikum! Verse Next me call karne ka shukriya. Mera naam Aria hai. Main aaj aapki kis tarah madad kar sakti hoon?"
           : "Hello! Thank you for calling Verse Next. My name is Aria, your AI assistant. How can I assist you today?";
+      let greetingAudioUrl: string | null = null;
 
       if (apiBase) {
         try {
@@ -368,6 +433,7 @@ export default function AriaVoiceCallModal({ isOpen, onClose }: AriaVoiceCallMod
           if (res.ok) {
             const data = await res.json();
             if (data?.data?.greeting) greetingText = data.data.greeting;
+            if (data?.data?.audio_url) greetingAudioUrl = data.data.audio_url;
           }
         } catch (e) {
           console.warn("Could not fetch remote greeting:", e);
@@ -382,20 +448,20 @@ export default function AriaVoiceCallModal({ isOpen, onClose }: AriaVoiceCallMod
       };
 
       setMessages([initialMsg]);
-      speakText(greetingText);
+      playAriaVoice(greetingAudioUrl, greetingText);
     }, 1200);
 
     return () => {
       clearTimeout(connectTimeout);
       if (timerRef.current) clearInterval(timerRef.current);
-      if (window.speechSynthesis) window.speechSynthesis.cancel();
+      stopAllAudio();
       if (recognitionRef.current) {
         try {
           recognitionRef.current.abort();
         } catch (e) {}
       }
     };
-  }, [isOpen, language, speakText]);
+  }, [isOpen, language, playAriaVoice, stopAllAudio]);
 
   // Toggle Mute Mic
   const toggleMuteMic = () => {
