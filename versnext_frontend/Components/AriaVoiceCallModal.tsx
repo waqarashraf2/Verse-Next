@@ -31,7 +31,18 @@ interface AriaVoiceCallModalProps {
   onClose: () => void;
 }
 
-const apiBase = process.env.NEXT_PUBLIC_API_BASE_URL || "";
+function getApiBase(): string {
+  if (process.env.NEXT_PUBLIC_API_BASE_URL) {
+    return process.env.NEXT_PUBLIC_API_BASE_URL.replace(/\/$/, "");
+  }
+  if (typeof window !== "undefined") {
+    if (window.location.hostname === "localhost" || window.location.hostname === "127.0.0.1") {
+      return "http://127.0.0.1:8000/api";
+    }
+    return "https://api.versenext.com/api";
+  }
+  return "https://api.versenext.com/api";
+}
 
 const quickCallStarters = [
   { label: "🤖 AI Calling Agent", text: "I need an AI voice calling agent for my business" },
@@ -245,8 +256,9 @@ export default function AriaVoiceCallModal({ isOpen, onClose }: AriaVoiceCallMod
         let audioUrl: string | null = null;
         let booked = false;
 
-        if (apiBase) {
-          const res = await fetch(`${apiBase}/voice-agent/respond`, {
+        const base = getApiBase();
+        if (base) {
+          const res = await fetch(`${base}/voice-agent/respond`, {
             method: "POST",
             headers: {
               "Content-Type": "application/json",
@@ -269,8 +281,10 @@ export default function AriaVoiceCallModal({ isOpen, onClose }: AriaVoiceCallMod
 
         if (!responseReply) {
           // Dynamic conversational fallback
-          const isUrdu = language === "ur" || /(?:kya|kaise|mujhe|aap|chahiye|batao|meeting|waqt)/i.test(userText);
-          if (/(?:service|services|kya karte|web|ai|calling|app)/i.test(userText)) {
+          const isUrdu = language === "ur" || /(?:kya|kaise|mujhe|aap|chahiye|batao|meeting|waqt|urdu|baat|bolo)/i.test(userText);
+          if (/(?:urdu|can you speak urdu|urdu me|urdu bolo)/i.test(userText)) {
+            responseReply = "Ji bilkul! Main Urdu me baat kar sakti hoon. Aap batayein main aaj aapki kya madad kar sakti hoon?";
+          } else if (/(?:service|services|kya karte|web|ai|calling|app|software)/i.test(userText)) {
             responseReply = isUrdu
               ? "Hum custom AI voice agents, web development, SaaS platforms aur business automation build karte hain. Aap ko kis service ki detail chahiye?"
               : "We build custom AI voice calling agents, full-stack websites, and business automations. Which solution would you like to explore?";
@@ -278,10 +292,14 @@ export default function AriaVoiceCallModal({ isOpen, onClose }: AriaVoiceCallMod
             responseReply = isUrdu
               ? "Zaroor! Main aapki 15-minute discovery meeting arrange kar deti hoon. Aap ke liye kaunsa din aur time behtar rahega?"
               : "I would be happy to set up a 15-minute discovery call with our technical team. What day and time works best for you?";
+          } else if (/(?:price|pricing|cost|kitne|kharcha)/i.test(userText)) {
+            responseReply = isUrdu
+              ? "Pricing project ke scope par depend karti hai. Hum call par aapko direct customized quote aur demo provide kar denge."
+              : "Pricing depends on your project requirements. We provide a customized estimate on a quick discovery call.";
           } else {
             responseReply = isUrdu
-              ? "Ji bilkul, main aapki poori madad kar sakti hoon. Aap apne project ke bare mein batayein?"
-              : "I can help you with that! Could you tell me a little more about your requirements?";
+              ? "Ji bilkul, main aapki poori madad kar sakti hoon. Aap apne project ke baare mein thoda aur batayein?"
+              : "I'd love to help you with that! Could you tell me a little more about your requirements?";
           }
         }
 
@@ -442,9 +460,10 @@ export default function AriaVoiceCallModal({ isOpen, onClose }: AriaVoiceCallMod
           : "Hey there! Thanks for calling Verse Next. I'm Aria. How can I help you today?";
       let greetingAudioUrl: string | null = null;
 
-      if (apiBase) {
+      const base = getApiBase();
+      if (base) {
         try {
-          const res = await fetch(`${apiBase}/voice-agent/start`, {
+          const res = await fetch(`${base}/voice-agent/start`, {
             method: "POST",
             headers: { "Content-Type": "application/json", Accept: "application/json" },
             body: JSON.stringify({ session_id: sid, language }),
