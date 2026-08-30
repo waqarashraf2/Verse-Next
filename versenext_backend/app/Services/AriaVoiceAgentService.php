@@ -10,26 +10,19 @@ use Illuminate\Support\Str;
 
 class AriaVoiceAgentService
 {
-    const GREETING_EN = "Hello! Thank you for calling Verse Next. My name is Aria, your AI assistant. How can I assist you today?";
-    const GREETING_UR = "Assalam-o-Alaikum! Verse Next me call karne ka shukriya. Mera naam Aria hai. Main aaj aapki kis tarah madad kar sakti hoon?";
-
-    protected array $fallbackModels = [
-        'gemini-3.6-flash',
-        'gemini-flash-latest',
-        'gemini-pro-latest',
-    ];
+    const GREETING_EN = "Hello! Thank you for calling Verse Next. My name is Aria, your AI assistant. How can I help you today?";
+    const GREETING_UR = "Assalam-o-Alaikum! Verse Next me call karne ka shukriya. Mera naam Aria hai. Main aapki kis tarah madad kar sakti hoon?";
 
     public function generateReply(string $userMessage, array $conversationHistory = []): array
     {
         $apiKey = config('services.gemini.key');
-        $configuredModel = config('services.gemini.model', 'gemini-3.6-flash');
-
-        $modelsToTry = array_unique(array_merge([$configuredModel], $this->fallbackModels));
-
         $cleanUserMessage = trim($userMessage);
+
         if ($cleanUserMessage === '') {
+            $reply = "I am listening. How can I help you with your project?";
             return [
-                'reply' => "I am listening. How can I help you with your project?",
+                'reply' => $reply,
+                'audio_url' => $this->generateHumanAudio($reply),
                 'lead_extracted' => null,
             ];
         }
@@ -37,113 +30,168 @@ class AriaVoiceAgentService
         $systemPrompt = $this->buildSystemPrompt();
         $formattedContents = $this->buildGeminiContents($conversationHistory, $cleanUserMessage);
 
-        foreach ($modelsToTry as $model) {
-            $endpoint = "https://generativelanguage.googleapis.com/v1beta/models/{$model}:generateContent";
+        $endpoint = "https://generativelanguage.googleapis.com/v1beta/models/gemini-3.6-flash:generateContent";
+        $cleanReply = "";
 
-            try {
-                $response = Http::timeout(5)
-                    ->withHeaders([
-                        'Content-Type' => 'application/json',
-                        'x-goog-api-key' => $apiKey,
-                    ])
-                    ->post($endpoint, [
-                        'system_instruction' => [
-                            'parts' => [
-                                ['text' => $systemPrompt],
-                            ],
+        try {
+            $response = Http::timeout(6)
+                ->withHeaders([
+                    'Content-Type' => 'application/json',
+                    'x-goog-api-key' => $apiKey,
+                ])
+                ->post($endpoint, [
+                    'system_instruction' => [
+                        'parts' => [
+                            ['text' => $systemPrompt],
                         ],
-                        'contents' => $formattedContents,
-                        'generationConfig' => [
-                            'temperature' => 0.4,
-                            'topP' => 0.85,
-                            'maxOutputTokens' => 160,
-                        ],
-                    ]);
+                    ],
+                    'contents' => $formattedContents,
+                    'generationConfig' => [
+                        'temperature' => 0.5,
+                        'maxOutputTokens' => 100,
+                    ],
+                ]);
 
-                if ($response->successful()) {
-                    $rawText = data_get($response->json(), 'candidates.0.content.parts.0.text', '');
-                    $cleanReply = $this->cleanVoiceReply($rawText);
+            if ($response->successful()) {
+                $rawText = data_get($response->json(), 'candidates.0.content.parts.0.text', '');
+                $cleanReply = $this->cleanVoiceReply($rawText);
+            }
+        } catch (\Throwable $e) {
+            Log::warning("Aria text generation failed: " . $e->getMessage());
+        }
 
-                    if ($cleanReply !== '') {
-                        $leadData = $this->extractLeadDetails($cleanUserMessage, $conversationHistory);
-
-                        return [
-                            'reply' => $cleanReply,
-                            'lead_extracted' => $leadData,
-                        ];
-                    }
-                } else {
-                    Log::warning("Aria Voice Agent model {$model} failed.", [
-                        'status' => $response->status(),
-                        'body' => Str::limit($response->body(), 200),
-                    ]);
-                }
-            } catch (\Throwable $exception) {
-                Log::warning("Aria Voice Agent exception on model {$model}: " . $exception->getMessage());
+        if ($cleanReply === '') {
+            $isUrdu = (bool) preg_match('/(?:kya|kaise|mujhe|aap|hum|chahiye|batao|shukriya|meeting|waqt|services)/i', $cleanUserMessage);
+            if (preg_match('/(?:service|services|kya karte|offer|develop|website|ai|calling|app)/i', $cleanUserMessage)) {
+                $cleanReply = $isUrdu
+                    ? "Hum custom AI voice agents, web development, SaaS portals aur workflow automation banate hain. Aap ko kis service ke baare mein jan-na hai?"
+                    : "We build custom AI voice calling agents, web development, mobile apps, and business automations. What service are you looking for?";
+            } elseif (preg_match('/(?:meeting|schedule|appointment|book|demo|call)/i', $cleanUserMessage)) {
+                $cleanReply = $isUrdu
+                    ? "Zaroor! Main technical team ke sath 15-minute ki discovery call schedule kar sakti hoon. Aap ke liye kaunsa din aur waqt behtar rahega?"
+                    : "Certainly! I can schedule a 15-minute discovery call with our technical team. What day and time works best for you?";
+            } else {
+                $cleanReply = $isUrdu
+                    ? "Ji bilkul, main aapki poori madad kar sakti hoon. Aap apne project ke bare mein batayein?"
+                    : "I can certainly help you with that. Could you share a bit more about your project requirements?";
             }
         }
 
-        // Contextual dynamic fallback if all API calls failed
-        $isUrdu = (bool) preg_match('/(?:kya|kaise|mujhe|aap|hum|chahiye|haan|nahi|karein|batao|shukriya|meeting|waqt)/i', $cleanUserMessage);
         $leadData = $this->extractLeadDetails($cleanUserMessage, $conversationHistory);
-
-        if ($leadData && (!empty($leadData['email']) || !empty($leadData['phone']))) {
-            $reply = $isUrdu 
-                ? "Shukriya! Maine aapki details note kar li hain. Hamari team jald aapko discovery meeting ka invite bhej degi." 
-                : "Thank you! I have noted your contact details and our technical team will send your meeting invite shortly.";
-        } elseif (preg_match('/(?:meeting|schedule|appointment|book|demo|call)/i', $cleanUserMessage)) {
-            $reply = $isUrdu
-                ? "Zaroor! Main technical team ke sath aapki discovery call schedule kar sakti hoon. Aap ke liye kaunsa din aur waqt behtar rahega?"
-                : "Certainly! I can schedule a discovery call with our technical team. What day and time works best for you?";
-        } elseif (preg_match('/(?:service|services|kya karte|offer|develop|website|ai|calling|app)/i', $cleanUserMessage)) {
-            $reply = $isUrdu
-                ? "Hum custom AI voice agents, full-stack websites, SaaS portals, mobile apps aur business automation provide karte hain. Aap ko kis service ke baare mein jan-na hai?"
-                : "We provide custom AI voice calling agents, web development, mobile apps, SaaS platforms, and workflow automation. Which service are you interested in?";
-        } else {
-            $reply = $isUrdu
-                ? "Ji bilkul, main aapki poori madad kar sakti hoon. Aap apne project ke bare mein thoda aur batayein ge?"
-                : "I can certainly help you with that. Could you share a bit more about your project requirements?";
-        }
+        $audioUrl = $this->generateHumanAudio($cleanReply);
 
         return [
-            'reply' => $reply,
+            'reply' => $cleanReply,
+            'audio_url' => $audioUrl,
             'lead_extracted' => $leadData,
         ];
+    }
+
+    public function generateHumanAudio(string $text, string $voice = 'Aoede'): ?string
+    {
+        $apiKey = config('services.gemini.key');
+        if (!$apiKey || trim($text) === '') {
+            return null;
+        }
+
+        try {
+            $endpoint = "https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-tts:generateContent";
+
+            $response = Http::timeout(8)
+                ->withHeaders([
+                    'Content-Type' => 'application/json',
+                    'x-goog-api-key' => $apiKey,
+                ])
+                ->post($endpoint, [
+                    'contents' => [
+                        [
+                            'role' => 'user',
+                            'parts' => [
+                                ['text' => "Read naturally, warmly and fluently like a human receptionist with no pauses: " . $text]
+                            ]
+                        ]
+                    ],
+                    'generationConfig' => [
+                        'responseModalities' => ['AUDIO'],
+                        'speechConfig' => [
+                            'voiceConfig' => [
+                                'prebuiltVoiceConfig' => [
+                                    'voiceName' => $voice
+                                ]
+                            ]
+                        ]
+                    ]
+                ]);
+
+            if ($response->successful()) {
+                $base64Pcm = data_get($response->json(), 'candidates.0.content.parts.0.inlineData.data');
+                if ($base64Pcm) {
+                    $rawPcm = base64_decode($base64Pcm);
+                    $wavAudio = $this->pcmToWav($rawPcm, 24000, 1, 16);
+                    return 'data:audio/wav;base64,' . base64_encode($wavAudio);
+                }
+            }
+        } catch (\Throwable $e) {
+            Log::warning("TTS Generation failed: " . $e->getMessage());
+        }
+
+        return null;
+    }
+
+    private function pcmToWav(string $pcmData, int $sampleRate = 24000, int $channels = 1, int $bitsPerSample = 16): string
+    {
+        $dataLength = strlen($pcmData);
+        $headerLength = 44;
+        $totalLength = $dataLength + $headerLength - 8;
+        $byteRate = $sampleRate * $channels * ($bitsPerSample / 8);
+        $blockAlign = $channels * ($bitsPerSample / 8);
+
+        $header = 'RIFF' .
+            pack('V', $totalLength) .
+            'WAVE' .
+            'fmt ' .
+            pack('V', 16) .
+            pack('v', 1) .
+            pack('v', $channels) .
+            pack('V', $sampleRate) .
+            pack('V', $byteRate) .
+            pack('v', $blockAlign) .
+            pack('v', $bitsPerSample) .
+            'data' .
+            pack('V', $dataLength);
+
+        return $header . $pcmData;
     }
 
     private function buildSystemPrompt(): string
     {
         return <<<PROMPT
 # ROLE & PERSONALITY
-You are "Aria", a highly capable, intelligent, and natural human receptionist and business development consultant for "Verse Next" (an AI & Tech Solutions Agency, versenext.com).
-You are currently on a LIVE VOICE CALL with a client/caller.
+You are "Aria", an intelligent, polite, warm, and highly natural human receptionist for "Verse Next" (an AI & Tech Solutions Agency, versenext.com).
+You are currently talking on a REAL LIVE PHONE CALL with a client.
 
-# CRITICAL VOICE CONVERSATION RULES:
-1. ALWAYS DIRECTLY ANSWER THE CALLER'S EXACT QUESTION OR REQUEST:
-   - If they ask about services: Explain what Verse Next builds (AI voice calling agents, full-stack web development, SaaS portals, mobile apps, clinic/business appointment automation, SEO).
-   - If they want to schedule a meeting: Ask for their preferred day and time.
-   - If they provide day/time: Acknowledge it and ask for their name and email/WhatsApp.
-   - If they give contact info: Confirm that the discovery meeting is booked.
-   - If they ask about pricing: Politely explain that pricing is customized to the scope, and the team will provide a tailored quote and live demo on a quick call.
-   - If they ask if you are an AI: Answer naturally that you are Verse Next's AI voice agent demonstrating how 24/7 calling automation works.
-2. DO NOT REPEAT BOILERPLATE GREETINGS:
-   - NEVER start your answers with "Thank you for calling Verse Next" or repetitive script intros on ongoing turns. The greeting was already done when the call connected.
-   - Jump straight into replying to what the caller just said like a real human.
+# SPOKEN CONVERSATION RULES:
+1. TALK LIKE A REAL LIVE HUMAN BEING:
+   - Speak fluently, warmly, and directly.
+   - If they ask what you do: Say you provide AI voice agents, web development, mobile apps, and business automation.
+   - If they ask for meeting: Offer a 15-minute discovery call and ask for their preferred day/time.
+   - If they give contact info: Confirm that the meeting invite will be sent.
+2. NEVER REPEAT INTRODUCTORY GREETINGS:
+   - Do NOT say "Thank you for calling Verse Next" again once the call has started.
+   - Answer their specific question directly.
 3. LANGUAGE MATCHING:
-   - If the caller speaks in Roman Urdu / Urdu, reply in natural, fluent, polite Roman Urdu.
-   - If the caller speaks in English, reply in fluent, professional English.
-4. SPOKEN CONCISENESS (VERY IMPORTANT FOR FAST VOICE):
-   - Keep answers strictly to 1 to 2 short sentences. Callers want lightning-fast natural answers.
-   - NEVER output bullet points, asterisks, quotation marks, hashtags, numbers lists, or markdown symbols. Output ONLY clean spoken plain text.
+   - If user speaks in Roman Urdu / Urdu, reply in natural, everyday, fluent Roman Urdu.
+   - If user speaks in English, reply in fluent, natural English.
+4. BREVITY (ESSENTIAL):
+   - Answer in 1 to 2 short, crisp sentences only.
+   - NO markdown, NO asterisks, NO bullets, NO quotes. Output pure spoken dialogue only.
 PROMPT;
     }
 
     private function buildGeminiContents(array $history, string $newMessage): array
     {
         $contents = [];
-
-        // Append recent conversation turns (up to last 6 messages)
-        $recentHistory = array_slice($history, -6);
+        $recentHistory = array_slice($history, -4);
         foreach ($recentHistory as $turn) {
             $role = ($turn['role'] ?? '') === 'assistant' ? 'model' : 'user';
             $text = trim($turn['text'] ?? '');
@@ -155,7 +203,6 @@ PROMPT;
             }
         }
 
-        // Append the latest user message
         $contents[] = [
             'role' => 'user',
             'parts' => [['text' => $newMessage]],
@@ -169,12 +216,8 @@ PROMPT;
         if (!$reply) {
             return "";
         }
-
-        // Remove markdown asterisks, hashes, backticks, bullet points, brackets, quotes
         $clean = preg_replace('/[\*#_`~>\[\]\(\)\"\'\–\—]+/', '', $reply);
-        // Clean multiple spaces and newlines
         $clean = preg_replace('/\s+/', ' ', $clean);
-
         return trim($clean);
     }
 
