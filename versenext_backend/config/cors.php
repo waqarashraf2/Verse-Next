@@ -6,12 +6,7 @@ return [
 
     'allowed_methods' => ['*'],
 
-    'allowed_origins' => array_filter([
-        env('FRONTEND_URL', 'https://versenext.com'),
-        'https://www.versenext.com',
-        'http://localhost:3000',
-        'http://127.0.0.1:3000',
-    ]),
+    'allowed_origins' => ['*'],
 
     'allowed_origins_patterns' => [],
 

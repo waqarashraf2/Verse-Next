@@ -11,13 +11,14 @@ use Illuminate\Support\Str;
 class AriaVoiceAgentService
 {
     const AGENT_NAME = "Daniyal";
-    const GREETING_EN = "Hey there! Thanks for calling Verse Next. This is Daniyal. How can I help you today?";
-    const GREETING_UR = "Assalam-o-Alaikum! Verse Next se Daniyal baat kar raha hoon. Ji batayein, main aap ki kya madad kar sakta hoon?";
+    const GREETING_EN = "Hey there! Thanks for calling Verse Next. This is Daniyal, your AI solutions consultant. How can I help you today?";
 
     protected array $fallbackModels = [
+        'gemini-3.1-flash-lite',
+        'gemini-3.5-flash-lite',
+        'gemini-2.5-flash-lite',
         'gemini-3.6-flash',
         'gemini-flash-latest',
-        'gemini-pro-latest',
     ];
 
     public function generateReply(string $userMessage, array $conversationHistory = []): array
@@ -26,7 +27,7 @@ class AriaVoiceAgentService
         $cleanUserMessage = trim($userMessage);
 
         if ($cleanUserMessage === '') {
-            $reply = "Ji batayein, main sun raha hoon. Aap apne business ya project ke baare mein kya discuss karna chahte hain?";
+            $reply = "I'm listening. Tell me about your business or the automation project you'd like to discuss.";
             return [
                 'reply' => $reply,
                 'audio_url' => $this->generateHumanAudio($reply),
@@ -57,7 +58,7 @@ class AriaVoiceAgentService
                         'contents' => $formattedContents,
                         'generationConfig' => [
                             'temperature' => 0.65,
-                            'maxOutputTokens' => 250,
+                            'maxOutputTokens' => 200,
                         ],
                     ]);
 
@@ -73,32 +74,18 @@ class AriaVoiceAgentService
             }
         }
 
-        // Smart dynamic fallback if Gemini API fails
+        // Context-aware dynamic fallback only in rare network downtime
         if ($cleanReply === '') {
-            $isUrdu = (bool) preg_match('/(?:kya|kaise|mujhe|aap|hum|chahiye|batao|shukriya|meeting|waqt|services|kaam|urdu|baat|bolo|kar sakte|clinic|agent)/i', $cleanUserMessage);
-
-            if (preg_match('/(?:urdu|can you speak urdu|urdu me|urdu bolo|urdu aati)/i', $cleanUserMessage)) {
-                $cleanReply = "Haan ji bilkul! Main Urdu me baat kar raha hoon. Aap batayein aapki kya requirement hai?";
-            } elseif (preg_match('/(?:clinic|patient|doctor|hospital)/i', $cleanUserMessage)) {
-                $cleanReply = $isUrdu
-                    ? "Zabardast! Hum clinic ke liye aisa AI voice agent banate hain jo 24 ghante patient ki call receive karega, unki appointment book karega aur calendar me schedule kar dega. Aapke clinic me daily lag bhag kitni calls aati hain?"
-                    : "Awesome! We build 24/7 AI receptionist agents for clinics that answer patient inquiries, book appointments, and sync directly with your calendar. Roughly how many calls do you receive daily?";
-            } elseif (preg_match('/(?:service|services|kya karte|offer|develop|website|ai|calling|app|software|automation)/i', $cleanUserMessage)) {
-                $cleanReply = $isUrdu
-                    ? "Hum custom AI voice calling agents, CRM aur WhatsApp automation, aur full-stack web solutions build karte hain. Aap ko kis service ke baare mein detail chahiye?"
-                    : "We build custom 24/7 AI calling agents, CRM & WhatsApp automations, and full-stack web platforms. Which solution are you interested in?";
-            } elseif (preg_match('/(?:meeting|schedule|appointment|book|demo|call|zoom|meet)/i', $cleanUserMessage)) {
-                $cleanReply = $isUrdu
-                    ? "Is par detail me baat karne ke liye hum 10-15 minute ki quick demo call rakh lete hain. Aap kis din aur kis time free honge?"
-                    : "To discuss this in detail, we can schedule a quick 10-15 minute Zoom discovery call. What day and time works best for you?";
-            } elseif (preg_match('/(?:price|pricing|cost|kitne paise|kitna kharcha|budget|rate)/i', $cleanUserMessage)) {
-                $cleanReply = $isUrdu
-                    ? "Hamara pricing model business scale aur monthly calling minutes par depend karta hai. Hum 15 minute ki demo call me live system dikha kar exact quote share kar denge."
-                    : "Our pricing depends on your calling volume and scope. On a quick 15-minute demo call, we will show you a live walkthrough and provide an exact tailored quote.";
+            if (preg_match('/(?:clinic|patient|doctor|dental|hospital|appointment|receptionist)/i', $cleanUserMessage)) {
+                $cleanReply = "We build custom 24/7 AI voice receptionists for clinics that answer patient inquiries, book appointments, and sync live with your calendar. How many calls does your clinic receive daily?";
+            } elseif (preg_match('/(?:price|pricing|cost|quote|how much|rate|budget)/i', $cleanUserMessage)) {
+                $cleanReply = "Our pricing is tailored to your business scale and monthly calling volume. In a quick 15-minute demo call, we can show you a live system and provide an exact quotation.";
+            } elseif (preg_match('/(?:meeting|schedule|book|demo|call|zoom|calendar)/i', $cleanUserMessage)) {
+                $cleanReply = "Let's schedule a 15-minute Zoom discovery call to map out your exact system requirements. What day and time works best for you?";
+            } elseif (preg_match('/(?:service|services|what do you do|build|offer|develop|website|ai|agent|automation)/i', $cleanUserMessage)) {
+                $cleanReply = "At Verse Next, we engineer custom AI voice calling agents, CRM and WhatsApp automations, and full-stack web platforms. Which area would you like to explore?";
             } else {
-                $cleanReply = $isUrdu
-                    ? "Ji bilkul theek hai, main samajh gaya. Iske baare mein thoda aur batayein taake main aapko best solution suggest kar sakoon?"
-                    : "Got it, that makes sense! Could you share a bit more about your workflow so I can suggest the best approach?";
+                $cleanReply = "I understand your requirement. To ensure we architect the exact solution you need, could you share a bit more detail about your current workflow?";
             }
         }
 
@@ -120,7 +107,7 @@ class AriaVoiceAgentService
             return null;
         }
 
-        // Layer 1: Gemini Male Studio TTS (Fenrir / Puck)
+        // Layer 1: Gemini Male Studio Audio (Fenrir / Puck)
         if ($apiKey) {
             $ttsModels = ['gemini-2.5-flash-preview-tts', 'gemini-3.1-flash-tts-preview'];
             foreach ($ttsModels as $ttsModel) {
@@ -136,7 +123,7 @@ class AriaVoiceAgentService
                                 [
                                     'role' => 'user',
                                     'parts' => [
-                                        ['text' => "Speak loud, clear, calm, confident, and 100% natural like a male business consultant: " . $cleanText]
+                                        ['text' => "Speak loud, confident, deep, and completely natural like a male AI business consultant: " . $cleanText]
                                     ]
                                 ]
                             ],
@@ -161,17 +148,15 @@ class AriaVoiceAgentService
                         }
                     }
                 } catch (\Throwable $e) {
-                    Log::warning("Gemini TTS male layer failed: " . $e->getMessage());
+                    Log::warning("Gemini male TTS failed: " . $e->getMessage());
                 }
             }
         }
 
-        // Layer 2: Guaranteed Neural Google Audio Engine
+        // Layer 2: High-Definition Male English Audio
         try {
-            $isUrdu = (bool) preg_match('/(?:kya|kaise|mujhe|aap|hum|chahiye|batao|shukriya|zaroor|hain|hoon|ji|kar|sakta|theek|acha|samajh|khayal)/i', $cleanText);
-            $lang = $isUrdu ? 'ur' : 'en';
             $encoded = urlencode($cleanText);
-            $url = "https://translate.google.com/translate_tts?ie=UTF-8&tl={$lang}&client=tw-ob&q={$encoded}";
+            $url = "https://translate.google.com/translate_tts?ie=UTF-8&tl=en-US&client=tw-ob&q={$encoded}";
 
             $res = Http::timeout(4)
                 ->withHeaders([
@@ -184,7 +169,7 @@ class AriaVoiceAgentService
                 return 'data:audio/mp3;base64,' . base64_encode($res->body());
             }
         } catch (\Throwable $e) {
-            Log::warning("Fallback male TTS failed: " . $e->getMessage());
+            Log::warning("Fallback English TTS failed: " . $e->getMessage());
         }
 
         return null;
@@ -219,32 +204,28 @@ class AriaVoiceAgentService
     {
         return <<<PROMPT
 # IDENTITY & PERSONA
-You are "Daniyal", a sharp, friendly, confident, and highly professional male AI consultant representing "Verse Next" (an AI & Tech Automation Agency, versenext.com).
-You are having a real-time spoken voice phone call with a client.
-Your voice must sound natural, calm, confident, warm, and 100% human.
+You are "Daniyal", a sharp, articulate, confident, and highly intelligent male AI business and tech solutions consultant at "Verse Next" (an AI & Tech Solutions Agency, versenext.com).
+You are speaking on a live, real-time voice call with a prospective client.
+Your voice is deep, confident, energetic, polite, and 100% human.
 
-# CRITICAL CONVERSATIONAL RULES (NO ROBOTIC / SCRIPTED BEHAVIOR):
-1. NEVER USE SCRIPTED OR FIXED OPENINGS/CLOSINGS:
-   - Do not sound like a pre-recorded IVR machine.
-   - Do not repeat "Thank you for calling Verse Next" during ongoing conversation.
-2. DYNAMIC & CONTEXTUAL:
-   - Always listen carefully to the caller's specific question and answer THAT question directly.
-   - If they ask in Urdu or ask "Can you speak in Urdu?", answer naturally in fluent Roman Urdu ("Haan ji bilkul!").
-3. SPOKEN URDU NATURAL TONE:
-   - Use natural, modern Pakistani spoken Urdu/Roman Urdu ("Haan ji bilkul", "Sahi hai", "Zabardast", "Main samajh gaya", "Aap bilkul fikar na karein", "Done ho gaya!").
-   - NEVER use archaic, bookish words or stiff repetitive phrases.
-4. ACTIVE LISTENING:
-   - Use natural conversational acknowledgments like a real human ("Acha", "Right", "Got it", "Bilkul theek", "Zabardast").
-5. CONCISE & CRISP:
-   - Keep voice replies strictly between 1 to 2 short sentences.
-   - Let the conversation feel like an interactive two-way chat.
-   - NEVER use markdown asterisks, bullets, brackets, or emojis. Output spoken plain text only.
+# CRITICAL CONVERSATION INSTRUCTIONS:
+1. STRICTLY ENGLISH ONLY:
+   - Always converse in fluent, natural, professional English.
+2. NO SCRIPTED OR CANNED RESPONSES:
+   - NEVER repeat "Thank you for calling Verse Next" during ongoing conversation.
+   - Actively analyze the caller's EXACT question and give a direct, consultative answer with high clarity.
+   - If they describe a project (e.g. clinic booking, e-commerce automation, real estate agent, CRM pipeline), validate their idea, explain specifically how Verse Next solves it, and ask a relevant follow-up question.
+3. CONVERSATIONAL BREVITY:
+   - Speak in 1 to 2 crisp, impactful, natural sentences.
+   - Never output bullet points, asterisks, quotation marks, or markdown symbols. Output pure spoken dialogue only.
+4. ACTIONABLE CONSULTATION & DISCOVERY CALL BOOKING:
+   - When the client is interested, smoothly offer a 15-minute live demo call on Zoom or Google Meet.
+   - Ask for their preferred day/time and collect their Name and Email address or WhatsApp number to send the calendar invite.
 
-# KNOWLEDGE BASE - VERSE NEXT SERVICES:
-- AI Calling & Receptionist Agents: For Clinics (patient booking), Real Estate, Customer Support, Agencies, and E-commerce.
-- Custom Business Automations: Connecting calls to WhatsApp, CRM, Google Calendar, and SMS.
-- 24/7 Availability: Never missing any customer lead or appointment.
-- Meeting Scheduling: 15-minute quick discovery call / demo on Zoom or Google Meet. Collect Name, Email/WhatsApp, and preferred date/time.
+# VERSE NEXT KNOWLEDGE BASE:
+- Custom AI Voice Calling & Receptionist Agents: Automated Clinic/Dental Appointments, Real Estate Inbound/Outbound, Customer Support, Lead Qualification.
+- Full Business Automations: Live CRM integration, WhatsApp notifications, Google Calendar sync, SMS alerts.
+- Full-Stack Web & Software Engineering: Custom SaaS platforms, responsive web apps, automated dashboards.
 PROMPT;
     }
 
@@ -305,12 +286,12 @@ PROMPT;
         }
 
         $name = null;
-        if (preg_match('/(?:my name is|name is|i am|mera naam hai|mera naam)\s+([A-Za-z\s\.\']{2,30})(?:,|\.|\s+and|\s+aur|$)/i', $allUserText, $matches)) {
+        if (preg_match('/(?:my name is|name is|i am|this is)\s+([A-Za-z\s\.\']{2,30})(?:,|\.|\s+and|$)/i', $allUserText, $matches)) {
             $name = trim($matches[1]);
         }
 
         $preferredTime = null;
-        if (preg_match('/(?:tomorrow|today|monday|tuesday|wednesday|thursday|friday|saturday|sunday|kal|parso)\s*(?:at\s*)?(?:\d{1,2}(?::\d{2})?\s*(?:am|pm|baje)?)?/i', $allUserText, $matches)) {
+        if (preg_match('/(?:tomorrow|today|monday|tuesday|wednesday|thursday|friday|saturday|sunday)\s*(?:at\s*)?(?:\d{1,2}(?::\d{2})?\s*(?:am|pm)?)?/i', $allUserText, $matches)) {
             $preferredTime = trim($matches[0]);
         }
 
