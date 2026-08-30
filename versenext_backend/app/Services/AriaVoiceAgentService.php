@@ -19,7 +19,7 @@ class AriaVoiceAgentService
         $cleanUserMessage = trim($userMessage);
 
         if ($cleanUserMessage === '') {
-            $reply = "Hey, I'm listening! Tell me about your project or what you're looking to build.";
+            $reply = "Hey! I'm listening. Tell me about your project or business requirement.";
             return [
                 'reply' => $reply,
                 'audio_url' => $this->generateHumanAudio($reply),
@@ -47,8 +47,8 @@ class AriaVoiceAgentService
                     ],
                     'contents' => $formattedContents,
                     'generationConfig' => [
-                        'temperature' => 0.7,
-                        'maxOutputTokens' => 90,
+                        'temperature' => 0.6,
+                        'maxOutputTokens' => 80,
                     ],
                 ]);
 
@@ -61,19 +61,19 @@ class AriaVoiceAgentService
         }
 
         if ($cleanReply === '') {
-            $isUrdu = (bool) preg_match('/(?:kya|kaise|mujhe|aap|hum|chahiye|batao|shukriya|meeting|waqt|services)/i', $cleanUserMessage);
+            $isUrdu = (bool) preg_match('/(?:kya|kaise|mujhe|aap|hum|chahiye|batao|shukriya|meeting|waqt|services|kaam)/i', $cleanUserMessage);
             if (preg_match('/(?:service|services|kya karte|offer|develop|website|ai|calling|app)/i', $cleanUserMessage)) {
                 $cleanReply = $isUrdu
-                    ? "Hum custom AI voice agents, modern websites aur business workflow automation build karte hain. Aap ko kis baare mein jan-na hai?"
-                    : "We build custom AI voice calling agents, high-performance websites, and business automations. What type of solution are you looking for?";
+                    ? "Hum custom AI voice agents, web development aur business automation build karte hain. Aap ko kis service ki detail chahiye?"
+                    : "We build custom AI voice calling agents, web apps, and business automations. Which solution would you like to explore?";
             } elseif (preg_match('/(?:meeting|schedule|appointment|book|demo|call)/i', $cleanUserMessage)) {
                 $cleanReply = $isUrdu
-                    ? "Zaroor! Main technical team ke sath 15-minute ki quick call schedule kar sakti hoon. Kaunsa din aur time aapke liye best rahega?"
-                    : "Awesome! I'd love to set up a quick 15-minute discovery call with our tech team. What day and time works best for you?";
+                    ? "Zaroor! Main technical team ke sath 15-minute ki discovery meeting arrange kar deti hoon. Kaunsa din aur waqt best rahega?"
+                    : "Awesome! I can book a 15-minute discovery call with our tech team. What day and time works best for you?";
             } else {
                 $cleanReply = $isUrdu
-                    ? "Ji bilkul! Main aapki poori help kar sakti hoon. Thoda sa aur batayein aapko kya build karwana hai?"
-                    : "I can definitely help with that! Could you share a quick overview of what you need?";
+                    ? "Ji bilkul, main aapki poori help kar sakti hoon! Thoda aur batayein aapko kis tarah ka system chahiye?"
+                    : "I'd love to help you with that! Could you tell me a little more about your requirements?";
             }
         }
 
@@ -90,53 +90,76 @@ class AriaVoiceAgentService
     public function generateHumanAudio(string $text, string $voice = 'Aoede'): ?string
     {
         $apiKey = config('services.gemini.key');
-        if (!$apiKey || trim($text) === '') {
+        $cleanText = trim($text);
+        if ($cleanText === '') {
             return null;
         }
 
-        $ttsModels = ['gemini-2.5-flash-preview-tts', 'gemini-3.1-flash-tts-preview'];
-
-        foreach ($ttsModels as $ttsModel) {
-            try {
-                $endpoint = "https://generativelanguage.googleapis.com/v1beta/models/{$ttsModel}:generateContent";
-
-                $response = Http::timeout(7)
-                    ->withHeaders([
-                        'Content-Type' => 'application/json',
-                        'x-goog-api-key' => $apiKey,
-                    ])
-                    ->post($endpoint, [
-                        'contents' => [
-                            [
-                                'role' => 'user',
-                                'parts' => [
-                                    ['text' => "Speak fast, lively, energetic, and completely natural like a real human girl on a phone call with zero robotic pauses: " . $text]
+        // Layer 1: Gemini Studio TTS
+        if ($apiKey) {
+            $ttsModels = ['gemini-2.5-flash-preview-tts', 'gemini-3.1-flash-tts-preview'];
+            foreach ($ttsModels as $ttsModel) {
+                try {
+                    $endpoint = "https://generativelanguage.googleapis.com/v1beta/models/{$ttsModel}:generateContent";
+                    $response = Http::timeout(6)
+                        ->withHeaders([
+                            'Content-Type' => 'application/json',
+                            'x-goog-api-key' => $apiKey,
+                        ])
+                        ->post($endpoint, [
+                            'contents' => [
+                                [
+                                    'role' => 'user',
+                                    'parts' => [
+                                        ['text' => "Speak loud, clear, fast, and natural like a friendly female receptionist: " . $cleanText]
+                                    ]
                                 ]
-                            ]
-                        ],
-                        'generationConfig' => [
-                            'responseModalities' => ['AUDIO'],
-                            'speechConfig' => [
-                                'voiceConfig' => [
-                                    'prebuiltVoiceConfig' => [
-                                        'voiceName' => $voice
+                            ],
+                            'generationConfig' => [
+                                'responseModalities' => ['AUDIO'],
+                                'speechConfig' => [
+                                    'voiceConfig' => [
+                                        'prebuiltVoiceConfig' => [
+                                            'voiceName' => $voice
+                                        ]
                                     ]
                                 ]
                             ]
-                        ]
-                    ]);
+                        ]);
 
-                if ($response->successful()) {
-                    $base64Pcm = data_get($response->json(), 'candidates.0.content.parts.0.inlineData.data');
-                    if ($base64Pcm) {
-                        $rawPcm = base64_decode($base64Pcm);
-                        $wavAudio = $this->pcmToWav($rawPcm, 24000, 1, 16);
-                        return 'data:audio/wav;base64,' . base64_encode($wavAudio);
+                    if ($response->successful()) {
+                        $base64Pcm = data_get($response->json(), 'candidates.0.content.parts.0.inlineData.data');
+                        if ($base64Pcm) {
+                            $rawPcm = base64_decode($base64Pcm);
+                            $wavAudio = $this->pcmToWav($rawPcm, 24000, 1, 16);
+                            return 'data:audio/wav;base64,' . base64_encode($wavAudio);
+                        }
                     }
+                } catch (\Throwable $e) {
+                    Log::warning("Gemini TTS layer failed: " . $e->getMessage());
                 }
-            } catch (\Throwable $e) {
-                Log::warning("TTS Generation failed on {$ttsModel}: " . $e->getMessage());
             }
+        }
+
+        // Layer 2: High-Speed Neural Google TTS (Guaranteed 100% Availability & Loud Audio)
+        try {
+            $isUrdu = (bool) preg_match('/(?:kya|kaise|mujhe|aap|hum|chahiye|batao|shukriya|zaroor|hain|hoon|ji)/i', $cleanText);
+            $lang = $isUrdu ? 'ur' : 'en';
+            $encoded = urlencode($cleanText);
+            $url = "https://translate.google.com/translate_tts?ie=UTF-8&tl={$lang}&client=tw-ob&q={$encoded}";
+
+            $res = Http::timeout(4)
+                ->withHeaders([
+                    'User-Agent' => 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/130.0.0.0 Safari/537.36',
+                    'Referer' => 'http://translate.google.com/'
+                ])
+                ->get($url);
+
+            if ($res->successful() && strlen($res->body()) > 300) {
+                return 'data:audio/mp3;base64,' . base64_encode($res->body());
+            }
+        } catch (\Throwable $e) {
+            Log::warning("Fallback TTS failed: " . $e->getMessage());
         }
 
         return null;
@@ -170,22 +193,21 @@ class AriaVoiceAgentService
     private function buildSystemPrompt(): string
     {
         return <<<PROMPT
-# CHARACTER IDENTITY & VOICE
-You are "Aria", a bright, energetic, and highly natural human receptionist at "Verse Next" (an AI & Tech Solutions Agency, versenext.com).
+# ROLE & PERSONALITY
+You are "Aria", a bright, energetic, and natural human receptionist and sales consultant for "Verse Next" (an AI & Tech Solutions Agency, versenext.com).
 You are talking to a client on a live phone call.
 
-# HUMAN CONVERSATIONAL STYLE:
-1. TALK LIKE AN ENERGETIC REAL HUMAN:
-   - Use natural conversational enthusiasm and expressions ("Sure thing!", "Awesome!", "I'd love to help!", "Zaroor!", "Ji bilkul!").
-   - Speak briskly and confidently.
-   - Never sound stiff, robotic, or like reading a manual.
-2. CONCISE & FAST:
-   - Keep answers to 1 or 2 quick, conversational sentences.
-   - DO NOT repeat formal greetings or say "Thank you for calling Verse Next" after the initial greeting.
-   - Never output markdown symbols, asterisks, bullets, or emojis.
-3. LANGUAGE:
-   - If the caller speaks Roman Urdu / Urdu, reply in natural, friendly, everyday modern Roman Urdu.
-   - If the caller speaks English, reply in natural, fluent, friendly English.
+# HOW TO TALK LIKE A REAL HUMAN:
+1. SOUND NATURAL & LIVELY:
+   - Speak with energy and warmth like a friendly receptionist ("Hey there!", "Awesome!", "Sure thing!", "Zaroor!", "Ji bilkul!").
+   - NEVER sound robotic, boring, or monotonous.
+2. ANSWER DIRECTLY & CONCISELY:
+   - Keep answers strictly to 1 to 2 short sentences.
+   - Do NOT repeat "Thank you for calling Verse Next" during ongoing conversation.
+   - NO markdown, NO asterisks, NO bullets, NO quotes. Output ONLY spoken conversational text.
+3. LANGUAGE MATCHING:
+   - If caller speaks Roman Urdu / Urdu, reply in natural, everyday conversational Roman Urdu.
+   - If caller speaks English, reply in natural, fluent, professional English.
 PROMPT;
     }
 

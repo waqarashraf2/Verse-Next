@@ -155,7 +155,7 @@ export default function AriaVoiceCallModal({ isOpen, onClose }: AriaVoiceCallMod
     [isSpeakerMuted, isMicMuted, language]
   );
 
-  // Play Real Studio Human Voice Audio (or fallback to TTS)
+  // Play Real Studio Human Voice Audio
   const playAriaVoice = useCallback(
     (audioUrl?: string | null, fallbackText: string = "") => {
       if (isSpeakerMuted || !isCallActiveRef.current) return;
@@ -168,7 +168,8 @@ export default function AriaVoiceCallModal({ isOpen, onClose }: AriaVoiceCallMod
           }
           const player = audioPlayerRef.current;
           player.src = audioUrl;
-          player.playbackRate = 1.14;
+          player.volume = 1.0;
+          player.playbackRate = 1.15;
 
           player.onplay = () => {
             isAgentSpeakingRef.current = true;
@@ -190,10 +191,13 @@ export default function AriaVoiceCallModal({ isOpen, onClose }: AriaVoiceCallMod
             speakText(fallbackText);
           };
 
-          player.play().catch((err) => {
-            console.warn("Audio playback prevented:", err);
-            speakText(fallbackText);
-          });
+          const playPromise = player.play();
+          if (playPromise !== undefined) {
+            playPromise.catch((err) => {
+              console.warn("Audio playback prevented:", err);
+              speakText(fallbackText);
+            });
+          }
           return;
         } catch (e) {
           console.warn("Audio setup error:", e);
