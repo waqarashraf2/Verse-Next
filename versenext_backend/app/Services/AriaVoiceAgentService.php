@@ -15,9 +15,7 @@ class AriaVoiceAgentService
 
     protected array $fallbackModels = [
         'gemini-3.6-flash',
-        'gemini-3.7-flash',
         'gemini-flash-latest',
-        'gemini-2.5-flash-lite',
         'gemini-pro-latest',
     ];
 
@@ -30,10 +28,8 @@ class AriaVoiceAgentService
 
         $cleanUserMessage = trim($userMessage);
         if ($cleanUserMessage === '') {
-            $fallbackReply = "I am listening. How can I help you with your project?";
             return [
-                'reply' => $fallbackReply,
-                'audio_url' => $this->generateHumanAudio($fallbackReply),
+                'reply' => "I am listening. How can I help you with your project?",
                 'lead_extracted' => null,
             ];
         }
@@ -45,7 +41,7 @@ class AriaVoiceAgentService
             $endpoint = "https://generativelanguage.googleapis.com/v1beta/models/{$model}:generateContent";
 
             try {
-                $response = Http::timeout((int) config('services.gemini.timeout', 12))
+                $response = Http::timeout(5)
                     ->withHeaders([
                         'Content-Type' => 'application/json',
                         'x-goog-api-key' => $apiKey,
@@ -58,9 +54,9 @@ class AriaVoiceAgentService
                         ],
                         'contents' => $formattedContents,
                         'generationConfig' => [
-                            'temperature' => 0.6,
-                            'topP' => 0.9,
-                            'maxOutputTokens' => 800,
+                            'temperature' => 0.4,
+                            'topP' => 0.85,
+                            'maxOutputTokens' => 160,
                         ],
                     ]);
 
@@ -70,11 +66,9 @@ class AriaVoiceAgentService
 
                     if ($cleanReply !== '') {
                         $leadData = $this->extractLeadDetails($cleanUserMessage, $conversationHistory);
-                        $audioUrl = $this->generateHumanAudio($cleanReply);
 
                         return [
                             'reply' => $cleanReply,
-                            'audio_url' => $audioUrl,
                             'lead_extracted' => $leadData,
                         ];
                     }
@@ -113,89 +107,8 @@ class AriaVoiceAgentService
 
         return [
             'reply' => $reply,
-            'audio_url' => $this->generateHumanAudio($reply),
             'lead_extracted' => $leadData,
         ];
-    }
-
-    public function generateHumanAudio(string $text, string $voice = 'Aoede'): ?string
-    {
-        $apiKey = config('services.gemini.key');
-        if (!$apiKey || trim($text) === '') {
-            return null;
-        }
-
-        $ttsModels = ['gemini-2.5-flash-preview-tts', 'gemini-3.1-flash-tts-preview'];
-
-        foreach ($ttsModels as $ttsModel) {
-            try {
-                $endpoint = "https://generativelanguage.googleapis.com/v1beta/models/{$ttsModel}:generateContent";
-
-                $response = Http::timeout(10)
-                    ->withHeaders([
-                        'Content-Type' => 'application/json',
-                        'x-goog-api-key' => $apiKey,
-                    ])
-                    ->post($endpoint, [
-                        'contents' => [
-                            [
-                                'role' => 'user',
-                                'parts' => [
-                                    ['text' => "Read warmly and naturally like a human receptionist: " . $text]
-                                ]
-                            ]
-                        ],
-                        'generationConfig' => [
-                            'responseModalities' => ['AUDIO'],
-                            'speechConfig' => [
-                                'voiceConfig' => [
-                                    'prebuiltVoiceConfig' => [
-                                        'voiceName' => $voice
-                                    ]
-                                ]
-                            ]
-                        ]
-                    ]);
-
-                if ($response->successful()) {
-                    $base64Pcm = data_get($response->json(), 'candidates.0.content.parts.0.inlineData.data');
-                    if ($base64Pcm) {
-                        $rawPcm = base64_decode($base64Pcm);
-                        $wavAudio = $this->pcmToWav($rawPcm, 24000, 1, 16);
-                        return 'data:audio/wav;base64,' . base64_encode($wavAudio);
-                    }
-                }
-            } catch (\Throwable $e) {
-                Log::warning("TTS Generation failed on {$ttsModel}: " . $e->getMessage());
-            }
-        }
-
-        return null;
-    }
-
-    private function pcmToWav(string $pcmData, int $sampleRate = 24000, int $channels = 1, int $bitsPerSample = 16): string
-    {
-        $dataLength = strlen($pcmData);
-        $headerLength = 44;
-        $totalLength = $dataLength + $headerLength - 8;
-        $byteRate = $sampleRate * $channels * ($bitsPerSample / 8);
-        $blockAlign = $channels * ($bitsPerSample / 8);
-
-        $header = 'RIFF' .
-            pack('V', $totalLength) .
-            'WAVE' .
-            'fmt ' .
-            pack('V', 16) . // Subchunk1Size
-            pack('v', 1) .  // AudioFormat (PCM)
-            pack('v', $channels) .
-            pack('V', $sampleRate) .
-            pack('V', $byteRate) .
-            pack('v', $blockAlign) .
-            pack('v', $bitsPerSample) .
-            'data' .
-            pack('V', $dataLength);
-
-        return $header . $pcmData;
     }
 
     private function buildSystemPrompt(): string
@@ -219,8 +132,8 @@ You are currently on a LIVE VOICE CALL with a client/caller.
 3. LANGUAGE MATCHING:
    - If the caller speaks in Roman Urdu / Urdu, reply in natural, fluent, polite Roman Urdu.
    - If the caller speaks in English, reply in fluent, professional English.
-4. SPOKEN CONCISENESS (VERY IMPORTANT):
-   - Keep answers between 1 to 3 short sentences. Callers want quick, natural conversational responses.
+4. SPOKEN CONCISENESS (VERY IMPORTANT FOR FAST VOICE):
+   - Keep answers strictly to 1 to 2 short sentences. Callers want lightning-fast natural answers.
    - NEVER output bullet points, asterisks, quotation marks, hashtags, numbers lists, or markdown symbols. Output ONLY clean spoken plain text.
 PROMPT;
     }
@@ -229,8 +142,8 @@ PROMPT;
     {
         $contents = [];
 
-        // Append recent conversation turns (up to last 10 messages)
-        $recentHistory = array_slice($history, -10);
+        // Append recent conversation turns (up to last 6 messages)
+        $recentHistory = array_slice($history, -6);
         foreach ($recentHistory as $turn) {
             $role = ($turn['role'] ?? '') === 'assistant' ? 'model' : 'user';
             $text = trim($turn['text'] ?? '');

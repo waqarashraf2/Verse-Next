@@ -39,15 +39,12 @@ class VoiceAgentController extends Controller
             'metadata' => ['role' => 'assistant', 'type' => 'call_greeting'],
         ]);
 
-        $audioUrl = $this->voiceService->generateHumanAudio($greeting);
-
         return response()->json([
             'status' => true,
             'data' => [
                 'session_id' => $sessionId,
                 'agent_name' => 'Aria',
                 'greeting' => $greeting,
-                'audio_url' => $audioUrl,
                 'role' => 'AI Receptionist & Business Development',
             ],
         ]);
@@ -80,7 +77,6 @@ class VoiceAgentController extends Controller
         // Generate Aria's spoken response
         $result = $this->voiceService->generateReply($validated['message'], $history);
         $spokenReply = $result['reply'];
-        $audioUrl = $result['audio_url'] ?? null;
         $leadExtracted = $result['lead_extracted'];
         $bookingCreated = null;
 
@@ -107,7 +103,6 @@ class VoiceAgentController extends Controller
             'data' => [
                 'session_id' => $sessionId,
                 'reply' => $spokenReply,
-                'audio_url' => $audioUrl,
                 'booking_confirmed' => (bool) $bookingCreated,
                 'booking_id' => $bookingCreated?->id,
             ],

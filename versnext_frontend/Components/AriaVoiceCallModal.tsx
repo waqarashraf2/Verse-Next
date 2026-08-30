@@ -64,6 +64,7 @@ export default function AriaVoiceCallModal({ isOpen, onClose }: AriaVoiceCallMod
   const audioPlayerRef = useRef<HTMLAudioElement | null>(null);
   const isAgentSpeakingRef = useRef<boolean>(false);
   const isProcessingRef = useRef<boolean>(false);
+  const isCallActiveRef = useRef<boolean>(false);
 
   // Format Duration
   const formatTime = (seconds: number) => {
@@ -97,7 +98,7 @@ export default function AriaVoiceCallModal({ isOpen, onClose }: AriaVoiceCallMod
   const speakText = useCallback(
     (text: string) => {
       if (typeof window === "undefined" || !("speechSynthesis" in window)) return;
-      if (isSpeakerMuted) return;
+      if (isSpeakerMuted || !isCallActiveRef.current) return;
 
       window.speechSynthesis.cancel();
 
@@ -126,7 +127,7 @@ export default function AriaVoiceCallModal({ isOpen, onClose }: AriaVoiceCallMod
       }
 
       utterance.pitch = 1.05;
-      utterance.rate = 1.0;
+      utterance.rate = 1.05;
       utterance.lang = language === "ur" ? "ur-PK" : "en-US";
 
       utterance.onstart = () => {
@@ -136,7 +137,7 @@ export default function AriaVoiceCallModal({ isOpen, onClose }: AriaVoiceCallMod
 
       utterance.onend = () => {
         isAgentSpeakingRef.current = false;
-        if (!isMicMuted) {
+        if (!isMicMuted && isCallActiveRef.current) {
           setAgentStatus("listening");
           startListening();
         } else {
@@ -146,7 +147,7 @@ export default function AriaVoiceCallModal({ isOpen, onClose }: AriaVoiceCallMod
 
       utterance.onerror = () => {
         isAgentSpeakingRef.current = false;
-        if (!isMicMuted) setAgentStatus("listening");
+        if (!isMicMuted && isCallActiveRef.current) setAgentStatus("listening");
       };
 
       window.speechSynthesis.speak(utterance);
@@ -157,7 +158,7 @@ export default function AriaVoiceCallModal({ isOpen, onClose }: AriaVoiceCallMod
   // Play Real Studio Human Voice Audio (or fallback to TTS)
   const playAriaVoice = useCallback(
     (audioUrl?: string | null, fallbackText: string = "") => {
-      if (isSpeakerMuted) return;
+      if (isSpeakerMuted || !isCallActiveRef.current) return;
       stopAllAudio();
 
       if (audioUrl) {
@@ -175,7 +176,7 @@ export default function AriaVoiceCallModal({ isOpen, onClose }: AriaVoiceCallMod
 
           player.onended = () => {
             isAgentSpeakingRef.current = false;
-            if (!isMicMuted) {
+            if (!isMicMuted && isCallActiveRef.current) {
               setAgentStatus("listening");
               startListening();
             } else {
@@ -206,7 +207,7 @@ export default function AriaVoiceCallModal({ isOpen, onClose }: AriaVoiceCallMod
   // Send message to Backend
   const handleSendMessage = useCallback(
     async (userText: string) => {
-      if (!userText.trim() || isProcessingRef.current) return;
+      if (!userText.trim() || isProcessingRef.current || !isCallActiveRef.current) return;
 
       isProcessingRef.current = true;
       stopAllAudio();
@@ -230,7 +231,7 @@ export default function AriaVoiceCallModal({ isOpen, onClose }: AriaVoiceCallMod
       setAgentStatus("thinking");
 
       try {
-        const historyPayload = messages.slice(-8).map((m) => ({
+        const historyPayload = messages.slice(-6).map((m) => ({
           role: m.role,
           text: m.text,
         }));
@@ -279,6 +280,8 @@ export default function AriaVoiceCallModal({ isOpen, onClose }: AriaVoiceCallMod
           }
         }
 
+        if (!isCallActiveRef.current) return;
+
         if (booked) {
           setBookingConfirmed(true);
         }
@@ -293,6 +296,7 @@ export default function AriaVoiceCallModal({ isOpen, onClose }: AriaVoiceCallMod
         setMessages((prev) => [...prev, agentMsg]);
         playAriaVoice(audioUrl, responseReply);
       } catch (err) {
+        if (!isCallActiveRef.current) return;
         console.error("Error communicating with Aria voice agent:", err);
         const isUrdu = language === "ur" || /(?:kya|kaise|mujhe|aap|chahiye|batao|meeting)/i.test(userText);
         const fallback = isUrdu
@@ -315,7 +319,7 @@ export default function AriaVoiceCallModal({ isOpen, onClose }: AriaVoiceCallMod
 
   // Initialize Speech Recognition (STT)
   const startListening = useCallback(() => {
-    if (isMicMuted || isAgentSpeakingRef.current || isProcessingRef.current) return;
+    if (isMicMuted || isAgentSpeakingRef.current || isProcessingRef.current || !isCallActiveRef.current) return;
     if (typeof window === "undefined") return;
 
     const SpeechRecognition =
@@ -329,6 +333,7 @@ export default function AriaVoiceCallModal({ isOpen, onClose }: AriaVoiceCallMod
     try {
       if (recognitionRef.current) {
         try {
+          recognitionRef.current.onend = null;
           recognitionRef.current.abort();
         } catch (e) {}
       }
@@ -339,12 +344,13 @@ export default function AriaVoiceCallModal({ isOpen, onClose }: AriaVoiceCallMod
       recognition.lang = language === "ur" ? "ur-PK" : "en-US";
 
       recognition.onstart = () => {
-        if (!isAgentSpeakingRef.current) {
+        if (!isAgentSpeakingRef.current && isCallActiveRef.current) {
           setAgentStatus("listening");
         }
       };
 
       recognition.onresult = (event: any) => {
+        if (!isCallActiveRef.current) return;
         const transcript = event.results[0][0].transcript;
         if (transcript && transcript.trim()) {
           handleSendMessage(transcript);
@@ -355,21 +361,22 @@ export default function AriaVoiceCallModal({ isOpen, onClose }: AriaVoiceCallMod
         if (event.error !== "no-speech") {
           console.warn("Speech recognition error:", event.error);
         }
-        if (!isAgentSpeakingRef.current && !isMicMuted) {
+        if (!isAgentSpeakingRef.current && !isMicMuted && isCallActiveRef.current) {
           setAgentStatus("listening");
         }
       };
 
       recognition.onend = () => {
+        if (!isCallActiveRef.current) return;
         if (!isAgentSpeakingRef.current && !isMicMuted && !isProcessingRef.current) {
           // Restart listening automatically after brief silence
           setTimeout(() => {
-            if (!isAgentSpeakingRef.current && !isMicMuted) {
+            if (isCallActiveRef.current && !isAgentSpeakingRef.current && !isMicMuted) {
               try {
                 recognition.start();
               } catch (e) {}
             }
-          }, 400);
+          }, 300);
         }
       };
 
@@ -384,10 +391,13 @@ export default function AriaVoiceCallModal({ isOpen, onClose }: AriaVoiceCallMod
   useEffect(() => {
     if (!isOpen) {
       // Clean up when closed
+      isCallActiveRef.current = false;
       stopAllAudio();
       if (recognitionRef.current) {
         try {
+          recognitionRef.current.onend = null;
           recognitionRef.current.abort();
+          recognitionRef.current = null;
         } catch (e) {}
       }
       if (timerRef.current) clearInterval(timerRef.current);
@@ -398,6 +408,7 @@ export default function AriaVoiceCallModal({ isOpen, onClose }: AriaVoiceCallMod
       return;
     }
 
+    isCallActiveRef.current = true;
     const sid = `aria-call-${Date.now()}-${Math.random().toString(36).slice(2, 7)}`;
     setSessionId(sid);
     setCallState("connecting");
@@ -409,11 +420,14 @@ export default function AriaVoiceCallModal({ isOpen, onClose }: AriaVoiceCallMod
 
     // Connect call
     const connectTimeout = setTimeout(async () => {
+      if (!isCallActiveRef.current) return;
       setCallState("active");
 
       // Start timer
       timerRef.current = setInterval(() => {
-        setCallDuration((prev) => prev + 1);
+        if (isCallActiveRef.current) {
+          setCallDuration((prev) => prev + 1);
+        }
       }, 1000);
 
       // Fetch or use initial greeting
@@ -440,6 +454,8 @@ export default function AriaVoiceCallModal({ isOpen, onClose }: AriaVoiceCallMod
         }
       }
 
+      if (!isCallActiveRef.current) return;
+
       const initialMsg: VoiceMessage = {
         id: `aria-init`,
         role: "assistant",
@@ -449,7 +465,7 @@ export default function AriaVoiceCallModal({ isOpen, onClose }: AriaVoiceCallMod
 
       setMessages([initialMsg]);
       playAriaVoice(greetingAudioUrl, greetingText);
-    }, 1200);
+    }, 800);
 
     return () => {
       clearTimeout(connectTimeout);
@@ -457,7 +473,9 @@ export default function AriaVoiceCallModal({ isOpen, onClose }: AriaVoiceCallMod
       stopAllAudio();
       if (recognitionRef.current) {
         try {
+          recognitionRef.current.onend = null;
           recognitionRef.current.abort();
+          recognitionRef.current = null;
         } catch (e) {}
       }
     };
@@ -484,26 +502,32 @@ export default function AriaVoiceCallModal({ isOpen, onClose }: AriaVoiceCallMod
   const toggleSpeaker = () => {
     if (!isSpeakerMuted) {
       setIsSpeakerMuted(true);
-      if (window.speechSynthesis) window.speechSynthesis.cancel();
+      stopAllAudio();
     } else {
       setIsSpeakerMuted(false);
     }
   };
 
-  // End Call Handler
+  // End Call Handler (Instant Clean Hangup)
   const handleEndCall = () => {
-    setCallState("ended");
-    if (window.speechSynthesis) window.speechSynthesis.cancel();
+    isCallActiveRef.current = false;
+    stopAllAudio();
+
     if (recognitionRef.current) {
       try {
+        recognitionRef.current.onend = null;
         recognitionRef.current.abort();
+        recognitionRef.current = null;
       } catch (e) {}
     }
-    if (timerRef.current) clearInterval(timerRef.current);
 
-    setTimeout(() => {
-      onClose();
-    }, 900);
+    if (timerRef.current) {
+      clearInterval(timerRef.current);
+      timerRef.current = null;
+    }
+
+    setCallState("ended");
+    onClose();
   };
 
   if (!isOpen) return null;
@@ -555,6 +579,15 @@ export default function AriaVoiceCallModal({ isOpen, onClose }: AriaVoiceCallMod
               <div className="px-2.5 py-1 rounded-full bg-zinc-800/80 border border-zinc-700 text-xs font-mono font-medium text-cyan-400">
                 {formatTime(callDuration)}
               </div>
+
+              <button
+                type="button"
+                onClick={handleEndCall}
+                className="p-1.5 rounded-full hover:bg-zinc-800 text-zinc-400 hover:text-white transition-colors"
+                title="Close / End Call"
+              >
+                <PhoneOff className="w-4 h-4 text-rose-400" />
+              </button>
             </div>
           </div>
 
