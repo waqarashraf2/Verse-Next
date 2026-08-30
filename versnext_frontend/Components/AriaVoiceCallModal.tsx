@@ -116,17 +116,16 @@ export default function AriaVoiceCallModal({ isOpen, onClose }: AriaVoiceCallMod
       const utterance = new SpeechSynthesisUtterance(text);
       currentUtteranceRef.current = utterance;
 
-      // Select natural female voice
+      // Select natural male consultant voice
       const voices = window.speechSynthesis.getVoices();
       let selectedVoice = voices.find(
         (v) =>
-          v.name.includes("Natural") ||
-          v.name.includes("Online (Natural)") ||
-          v.name.includes("Google US English") ||
-          v.name.includes("Aria") ||
-          v.name.includes("Jenny") ||
-          v.name.includes("Samantha") ||
-          v.name.includes("Female")
+          v.name.includes("Guy") ||
+          v.name.includes("Ryan") ||
+          v.name.includes("David") ||
+          v.name.includes("George") ||
+          v.name.includes("Male") ||
+          (language === "ur" && (v.lang.startsWith("ur") || v.lang.startsWith("hi")))
       );
 
       if (!selectedVoice && voices.length > 0) {
@@ -137,7 +136,7 @@ export default function AriaVoiceCallModal({ isOpen, onClose }: AriaVoiceCallMod
         utterance.voice = selectedVoice;
       }
 
-      utterance.pitch = 1.06;
+      utterance.pitch = 0.98;
       utterance.rate = 1.14;
       utterance.lang = language === "ur" ? "ur-PK" : "en-US";
 
@@ -456,8 +455,8 @@ export default function AriaVoiceCallModal({ isOpen, onClose }: AriaVoiceCallMod
       // Fetch or use initial greeting
       let greetingText =
         language === "ur"
-          ? "Assalam-o-Alaikum! Verse Next me call karne ka shukriya. Main Aria hoon. Aaj aapki kis project me madad kar sakti hoon?"
-          : "Hey there! Thanks for calling Verse Next. I'm Aria. How can I help you today?";
+          ? "Assalam-o-Alaikum! Verse Next se Daniyal baat kar raha hoon. Ji batayein, main aap ki kya madad kar sakta hoon?"
+          : "Hey there! Thanks for calling Verse Next. This is Daniyal. How can I help you today?";
       let greetingAudioUrl: string | null = null;
 
       const base = getApiBase();
@@ -579,12 +578,12 @@ export default function AriaVoiceCallModal({ isOpen, onClose }: AriaVoiceCallMod
               </span>
               <div>
                 <h3 className="font-semibold text-sm sm:text-base text-zinc-100 flex items-center gap-1.5">
-                  Aria
+                  Daniyal
                   <span className="text-[10px] uppercase font-bold tracking-widest px-2 py-0.5 rounded-full bg-gradient-to-r from-cyan-500/20 to-blue-500/20 border border-cyan-500/30 text-cyan-300">
-                    Voice Agent
+                    AI Consultant
                   </span>
                 </h3>
-                <p className="text-xs text-zinc-400">Verse Next AI Receptionist</p>
+                <p className="text-xs text-zinc-400">Verse Next AI Consultant</p>
               </div>
             </div>
 
@@ -648,7 +647,7 @@ export default function AriaVoiceCallModal({ isOpen, onClose }: AriaVoiceCallMod
                 <div className="w-full h-full rounded-full bg-zinc-950 flex flex-col items-center justify-center relative overflow-hidden">
                   <div className="absolute inset-0 bg-gradient-to-t from-cyan-900/40 to-transparent" />
                   <Headphones className="w-10 h-10 text-cyan-400 mb-1 animate-pulse" />
-                  <span className="text-xs font-semibold tracking-wider text-cyan-200">ARIA</span>
+                  <span className="text-xs font-semibold tracking-wider text-cyan-200">DANIYAL</span>
                 </div>
               </div>
             </div>
@@ -664,13 +663,13 @@ export default function AriaVoiceCallModal({ isOpen, onClose }: AriaVoiceCallMod
               {callState === "active" && agentStatus === "speaking" && (
                 <>
                   <Radio className="w-3.5 h-3.5 text-cyan-400 animate-spin" />
-                  <span className="text-xs font-medium text-cyan-300">Aria is speaking...</span>
+                  <span className="text-xs font-medium text-cyan-300">Daniyal is speaking...</span>
                 </>
               )}
               {callState === "active" && agentStatus === "thinking" && (
                 <>
                   <Sparkles className="w-3.5 h-3.5 text-blue-400 animate-pulse" />
-                  <span className="text-xs font-medium text-blue-300">Aria is thinking...</span>
+                  <span className="text-xs font-medium text-blue-300">Daniyal is thinking...</span>
                 </>
               )}
               {callState === "active" && agentStatus === "listening" && (

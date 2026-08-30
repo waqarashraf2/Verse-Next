@@ -167,10 +167,10 @@ export default function FloatingAIChat() {
                     setIsVoiceCallOpen(true);
                   }}
                   className="flex items-center gap-1.5 rounded-full bg-gradient-to-r from-cyan-500 to-blue-600 px-3 py-1.5 text-xs font-semibold text-white shadow-md hover:from-cyan-400 hover:to-blue-500 transition"
-                  title="Start live voice call with Aria"
+                  title="Start live voice call with Daniyal"
                 >
                   <PhoneCall size={13} className="animate-pulse" />
-                  <span>Call Aria</span>
+                  <span>Call Daniyal</span>
                 </button>
                 <button type="button" onClick={() => setOpen(false)} className="rounded-full p-2 hover:bg-white/10" aria-label="Minimize AI assistant">
                   <Minus size={17} />
@@ -261,7 +261,7 @@ export default function FloatingAIChat() {
           </div>
           <PhoneCall size={16} className="text-cyan-400 group-hover:scale-110 transition-transform" />
           <span className="text-xs font-semibold tracking-wide text-zinc-100">
-            Call Aria <span className="text-cyan-400">(AI)</span>
+            Call Daniyal <span className="text-cyan-400">(AI)</span>
           </span>
         </button>
 

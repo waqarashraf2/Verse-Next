@@ -45,10 +45,10 @@ class VoiceAgentController extends Controller
             'status' => true,
             'data' => [
                 'session_id' => $sessionId,
-                'agent_name' => 'Aria',
+                'agent_name' => AriaVoiceAgentService::AGENT_NAME,
                 'greeting' => $greeting,
                 'audio_url' => $audioUrl,
-                'role' => 'AI Receptionist & Business Development',
+                'role' => 'AI Consultant & Business Development',
             ],
         ]);
     }
