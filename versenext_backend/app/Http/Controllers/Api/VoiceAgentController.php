@@ -29,14 +29,14 @@ class VoiceAgentController extends Controller
 
         $conversation = ChatConversation::firstOrCreate(
             ['session_id' => $sessionId],
-            ['status' => 'open', 'metadata' => ['source' => 'aria_voice_call', 'agent' => 'Aria']]
+            ['status' => 'open', 'metadata' => ['source' => 'voice_agent_call', 'agent' => AriaVoiceAgentService::AGENT_NAME]]
         );
 
         ChatMessage::create([
             'chat_conversation_id' => $conversation->id,
-            'sender' => 'aria_voice_agent',
+            'sender' => 'voice_agent',
             'message' => $greeting,
-            'metadata' => ['role' => 'assistant', 'type' => 'call_greeting'],
+            'metadata' => ['role' => 'assistant', 'type' => 'call_greeting', 'agent' => AriaVoiceAgentService::AGENT_NAME],
         ]);
 
         $audioUrl = $this->voiceService->generateHumanAudio($greeting);
@@ -66,7 +66,7 @@ class VoiceAgentController extends Controller
 
         $conversation = ChatConversation::firstOrCreate(
             ['session_id' => $sessionId],
-            ['status' => 'open', 'metadata' => ['source' => 'aria_voice_call', 'agent' => 'Aria']]
+            ['status' => 'open', 'metadata' => ['source' => 'voice_agent_call', 'agent' => AriaVoiceAgentService::AGENT_NAME]]
         );
 
         // Record User spoken message
@@ -77,7 +77,7 @@ class VoiceAgentController extends Controller
             'metadata' => ['type' => 'caller_speech'],
         ]);
 
-        // Generate Aria's spoken response
+        // Generate Daniyal's spoken response
         $result = $this->voiceService->generateReply($validated['message'], $history);
         $spokenReply = $result['reply'];
         $audioUrl = $result['audio_url'] ?? null;
@@ -91,14 +91,15 @@ class VoiceAgentController extends Controller
             );
         }
 
-        // Record Aria's spoken response
+        // Record spoken response
         ChatMessage::create([
             'chat_conversation_id' => $conversation->id,
-            'sender' => 'aria_voice_agent',
+            'sender' => 'voice_agent',
             'message' => $spokenReply,
             'metadata' => [
                 'type' => 'assistant_speech',
                 'booking_created' => (bool) $bookingCreated,
+                'agent' => AriaVoiceAgentService::AGENT_NAME,
             ],
         ]);
 

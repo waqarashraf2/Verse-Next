@@ -76,6 +76,7 @@ export default function AriaVoiceCallModal({ isOpen, onClose }: AriaVoiceCallMod
   const isAgentSpeakingRef = useRef<boolean>(false);
   const isProcessingRef = useRef<boolean>(false);
   const isCallActiveRef = useRef<boolean>(false);
+  const startListeningRef = useRef<() => void>(() => {});
 
   // Format Duration
   const formatTime = (seconds: number) => {
@@ -149,7 +150,7 @@ export default function AriaVoiceCallModal({ isOpen, onClose }: AriaVoiceCallMod
         isAgentSpeakingRef.current = false;
         if (!isMicMuted && isCallActiveRef.current) {
           setAgentStatus("listening");
-          startListening();
+          startListeningRef.current?.();
         } else {
           setAgentStatus("muted");
         }
@@ -171,6 +172,16 @@ export default function AriaVoiceCallModal({ isOpen, onClose }: AriaVoiceCallMod
       if (isSpeakerMuted || !isCallActiveRef.current) return;
       stopAllAudio();
 
+      isAgentSpeakingRef.current = true;
+      setAgentStatus("speaking");
+
+      if (recognitionRef.current) {
+        try {
+          recognitionRef.current.onend = null;
+          recognitionRef.current.abort();
+        } catch (e) {}
+      }
+
       if (audioUrl) {
         try {
           if (!audioPlayerRef.current) {
@@ -190,7 +201,7 @@ export default function AriaVoiceCallModal({ isOpen, onClose }: AriaVoiceCallMod
             isAgentSpeakingRef.current = false;
             if (!isMicMuted && isCallActiveRef.current) {
               setAgentStatus("listening");
-              startListening();
+              startListeningRef.current?.();
             } else {
               setAgentStatus("muted");
             }
@@ -408,6 +419,10 @@ export default function AriaVoiceCallModal({ isOpen, onClose }: AriaVoiceCallMod
       console.warn("Recognition start failed:", e);
     }
   }, [isMicMuted, language, handleSendMessage]);
+
+  useEffect(() => {
+    startListeningRef.current = startListening;
+  }, [startListening]);
 
   // Start Call on Open
   useEffect(() => {
@@ -745,7 +760,7 @@ export default function AriaVoiceCallModal({ isOpen, onClose }: AriaVoiceCallMod
             {showTranscript && (
               <div className="flex-1 overflow-y-auto space-y-2.5 p-3 rounded-2xl bg-zinc-950/60 border border-zinc-800/80 text-xs">
                 {messages.length === 0 ? (
-                  <p className="text-zinc-500 italic text-center py-4">Connecting to Aria...</p>
+                  <p className="text-zinc-500 italic text-center py-4">Connecting to Daniyal...</p>
                 ) : (
                   messages.map((msg) => (
                     <div
@@ -755,7 +770,7 @@ export default function AriaVoiceCallModal({ isOpen, onClose }: AriaVoiceCallMod
                       }`}
                     >
                       <span className="text-[10px] text-zinc-500 mb-0.5 px-1 font-mono">
-                        {msg.role === "user" ? "You" : "Aria"} • {msg.timestamp}
+                        {msg.role === "user" ? "You" : "Daniyal"} • {msg.timestamp}
                       </span>
                       <div
                         className={`max-w-[85%] rounded-2xl px-3.5 py-2 leading-relaxed ${

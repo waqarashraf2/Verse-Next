@@ -12,13 +12,12 @@ class AriaVoiceAgentService
 {
     const AGENT_NAME = "Daniyal";
     const GREETING_EN = "Hey there! Thanks for calling Verse Next. This is Daniyal, your AI solutions consultant. How can I help you today?";
+    const GREETING_UR = "Assalam-o-Alaikum! Verse Next se Daniyal baat kar raha hoon. Ji batayein, main aap ki kya madad kar sakta hoon?";
 
     protected array $fallbackModels = [
-        'gemini-3.1-flash-lite',
         'gemini-3.5-flash-lite',
-        'gemini-2.5-flash-lite',
-        'gemini-3.6-flash',
-        'gemini-flash-latest',
+        'gemini-flash-lite-latest',
+        'gemini-3.8-flash',
     ];
 
     public function generateReply(string $userMessage, array $conversationHistory = []): array
@@ -44,7 +43,12 @@ class AriaVoiceAgentService
             $endpoint = "https://generativelanguage.googleapis.com/v1beta/models/{$model}:generateContent";
 
             try {
-                $response = Http::timeout(8)
+                $response = Http::timeout(6)
+                    ->withOptions([
+                        'curl' => [
+                            CURLOPT_IPRESOLVE => CURL_IPRESOLVE_V4,
+                        ],
+                    ])
                     ->withHeaders([
                         'Content-Type' => 'application/json',
                         'x-goog-api-key' => $apiKey,
@@ -109,11 +113,16 @@ class AriaVoiceAgentService
 
         // Layer 1: Gemini Male Studio Audio (Fenrir / Puck)
         if ($apiKey) {
-            $ttsModels = ['gemini-2.5-flash-preview-tts', 'gemini-3.1-flash-tts-preview'];
+            $ttsModels = ['gemini-3.8-flash-lite-tts'];
             foreach ($ttsModels as $ttsModel) {
                 try {
                     $endpoint = "https://generativelanguage.googleapis.com/v1beta/models/{$ttsModel}:generateContent";
                     $response = Http::timeout(6)
+                        ->withOptions([
+                            'curl' => [
+                                CURLOPT_IPRESOLVE => CURL_IPRESOLVE_V4,
+                            ],
+                        ])
                         ->withHeaders([
                             'Content-Type' => 'application/json',
                             'x-goog-api-key' => $apiKey,
@@ -140,10 +149,14 @@ class AriaVoiceAgentService
                         ]);
 
                     if ($response->successful()) {
-                        $base64Pcm = data_get($response->json(), 'candidates.0.content.parts.0.inlineData.data');
-                        if ($base64Pcm) {
-                            $rawPcm = base64_decode($base64Pcm);
-                            $wavAudio = $this->pcmToWav($rawPcm, 24000, 1, 16);
+                        $base64Audio = data_get($response->json(), 'candidates.0.content.parts.0.inlineData.data');
+                        if ($base64Audio) {
+                            $rawAudio = base64_decode($base64Audio);
+                            // If audio is already a WAV file (starts with RIFF), return directly without duplicate header
+                            if (substr($rawAudio, 0, 4) === 'RIFF') {
+                                return 'data:audio/wav;base64,' . $base64Audio;
+                            }
+                            $wavAudio = $this->pcmToWav($rawAudio, 24000, 1, 16);
                             return 'data:audio/wav;base64,' . base64_encode($wavAudio);
                         }
                     }
@@ -159,6 +172,11 @@ class AriaVoiceAgentService
             $url = "https://translate.google.com/translate_tts?ie=UTF-8&tl=en-US&client=tw-ob&q={$encoded}";
 
             $res = Http::timeout(4)
+                ->withOptions([
+                    'curl' => [
+                        CURLOPT_IPRESOLVE => CURL_IPRESOLVE_V4,
+                    ],
+                ])
                 ->withHeaders([
                     'User-Agent' => 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/130.0.0.0 Safari/537.36',
                     'Referer' => 'http://translate.google.com/'
@@ -209,8 +227,9 @@ You are speaking on a live, real-time voice call with a prospective client.
 Your voice is deep, confident, energetic, polite, and 100% human.
 
 # CRITICAL CONVERSATION INSTRUCTIONS:
-1. STRICTLY ENGLISH ONLY:
-   - Always converse in fluent, natural, professional English.
+1. LANGUAGE ADAPTABILITY (ENGLISH & ROMAN URDU):
+   - If the caller speaks or writes in Urdu / Roman Urdu (e.g. "mujhe calling agent chahiye", "aap kya service dete ho", "meeting schedule karni hai"), reply in clear, professional, natural Roman Urdu.
+   - If the caller speaks in English, reply in fluent, natural, professional English.
 2. NO SCRIPTED OR CANNED RESPONSES:
    - NEVER repeat "Thank you for calling Verse Next" during ongoing conversation.
    - Actively analyze the caller's EXACT question and give a direct, consultative answer with high clarity.

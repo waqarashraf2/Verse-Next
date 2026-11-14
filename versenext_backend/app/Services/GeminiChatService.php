@@ -18,47 +18,56 @@ class GeminiChatService
         }
 
         $prompt = $this->buildPrompt($message, $intent, $service, $localReply);
-        $endpoint = "https://generativelanguage.googleapis.com/v1beta/models/{$model}:generateContent";
+        $models = array_unique(array_filter([$model, 'gemini-3.5-flash-lite', 'gemini-flash-lite-latest']));
 
-        try {
-            $response = Http::timeout((int) config('services.gemini.timeout', 12))
-                ->withHeaders([
-                    'Content-Type' => 'application/json',
-                    'x-goog-api-key' => $apiKey,
-                ])
-                ->post($endpoint, [
-                    'contents' => [
-                        [
-                            'role' => 'user',
-                            'parts' => [
-                                ['text' => $prompt],
+        foreach ($models as $currentModel) {
+            $endpoint = "https://generativelanguage.googleapis.com/v1beta/models/{$currentModel}:generateContent";
+
+            try {
+                $response = Http::timeout((int) config('services.gemini.timeout', 8))
+                    ->withOptions([
+                        'curl' => [
+                            CURLOPT_IPRESOLVE => CURL_IPRESOLVE_V4,
+                        ],
+                    ])
+                    ->withHeaders([
+                        'Content-Type' => 'application/json',
+                        'x-goog-api-key' => $apiKey,
+                    ])
+                    ->post($endpoint, [
+                        'contents' => [
+                            [
+                                'role' => 'user',
+                                'parts' => [
+                                    ['text' => $prompt],
+                                ],
                             ],
                         ],
-                    ],
-                    'generationConfig' => [
-                        'temperature' => 0.45,
-                        'topP' => 0.85,
-                        'maxOutputTokens' => 280,
-                    ],
-                ]);
+                        'generationConfig' => [
+                            'temperature' => 0.45,
+                            'topP' => 0.85,
+                            'maxOutputTokens' => 280,
+                        ],
+                    ]);
 
-            if (!$response->successful()) {
-                Log::warning('Gemini chatbot request failed.', [
+                if ($response->successful()) {
+                    $text = data_get($response->json(), 'candidates.0.content.parts.0.text');
+                    $clean = $this->cleanReply(is_string($text) ? $text : null);
+                    if ($clean) {
+                        return $clean;
+                    }
+                }
+
+                Log::warning('Gemini chatbot request failed on model.', [
                     'status' => $response->status(),
-                    'model' => $model,
+                    'model' => $currentModel,
                 ]);
-
-                return null;
+            } catch (\Throwable $exception) {
+                Log::warning('Gemini chatbot exception: ' . $exception->getMessage(), ['model' => $currentModel]);
             }
-
-            $text = data_get($response->json(), 'candidates.0.content.parts.0.text');
-
-            return $this->cleanReply(is_string($text) ? $text : null);
-        } catch (\Throwable $exception) {
-            report($exception);
-
-            return null;
         }
+
+        return null;
     }
 
     private function buildPrompt(string $message, string $intent, string $service, string $localReply): string
