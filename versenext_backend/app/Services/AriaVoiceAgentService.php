@@ -20,6 +20,12 @@ class AriaVoiceAgentService
         'gemini-3.8-flash',
     ];
 
+    protected array $ttsModels = [
+        'gemini-3.8-flash-tts',
+        'gemini-3.1-flash-tts-preview',
+        'gemini-2.5-flash-preview-tts',
+    ];
+
     public function generateReply(string $userMessage, array $conversationHistory = []): array
     {
         $apiKey = config('services.gemini.key');
@@ -103,91 +109,85 @@ class AriaVoiceAgentService
         ];
     }
 
-    public function generateHumanAudio(string $text, string $voice = 'Fenrir'): ?string
+    public function generateHumanAudio(string $text, string $voice = 'Puck'): ?string
     {
         $apiKey = config('services.gemini.key');
         $cleanText = trim($text);
-        if ($cleanText === '') {
+        if ($cleanText === '' || !$apiKey) {
             return null;
         }
 
-        // Layer 1: Gemini Male Studio Audio (Fenrir / Puck)
-        if ($apiKey) {
-            $ttsModels = ['gemini-3.8-flash-lite-tts'];
-            foreach ($ttsModels as $ttsModel) {
-                try {
-                    $endpoint = "https://generativelanguage.googleapis.com/v1beta/models/{$ttsModel}:generateContent";
-                    $response = Http::timeout(6)
-                        ->withOptions([
-                            'curl' => [
-                                CURLOPT_IPRESOLVE => CURL_IPRESOLVE_V4,
-                            ],
-                        ])
-                        ->withHeaders([
-                            'Content-Type' => 'application/json',
-                            'x-goog-api-key' => $apiKey,
-                        ])
-                        ->post($endpoint, [
-                            'contents' => [
-                                [
-                                    'role' => 'user',
-                                    'parts' => [
-                                        ['text' => "Speak loud, confident, deep, and completely natural like a male AI business consultant: " . $cleanText]
-                                    ]
+        // 1. Fast Cache check (eliminates latency and quota usage for repeated phrases like greetings)
+        $cacheDir = storage_path('app/voice_cache');
+        if (!is_dir($cacheDir)) {
+            @mkdir($cacheDir, 0775, true);
+        }
+        $cacheFile = $cacheDir . '/' . md5($cleanText . '_' . $voice) . '.wav';
+        if (file_exists($cacheFile) && filesize($cacheFile) > 1000) {
+            $rawAudio = file_get_contents($cacheFile);
+            return 'data:audio/wav;base64,' . base64_encode($rawAudio);
+        }
+
+        // 2. Cascade through available Gemini TTS models using single consistent male voice (Puck)
+        foreach ($this->ttsModels as $ttsModel) {
+            $endpoint = "https://generativelanguage.googleapis.com/v1beta/models/{$ttsModel}:generateContent";
+
+            try {
+                $response = Http::timeout(8)
+                    ->withOptions([
+                        'curl' => [
+                            CURLOPT_IPRESOLVE => CURL_IPRESOLVE_V4,
+                        ],
+                    ])
+                    ->withHeaders([
+                        'Content-Type' => 'application/json',
+                        'x-goog-api-key' => $apiKey,
+                    ])
+                    ->post($endpoint, [
+                        'contents' => [
+                            [
+                                'role' => 'user',
+                                'parts' => [
+                                    ['text' => $cleanText]
                                 ]
-                            ],
-                            'generationConfig' => [
-                                'responseModalities' => ['AUDIO'],
-                                'speechConfig' => [
-                                    'voiceConfig' => [
-                                        'prebuiltVoiceConfig' => [
-                                            'voiceName' => $voice
-                                        ]
+                            ]
+                        ],
+                        'generationConfig' => [
+                            'responseModalities' => ['AUDIO'],
+                            'speechConfig' => [
+                                'voiceConfig' => [
+                                    'prebuiltVoiceConfig' => [
+                                        'voiceName' => $voice
                                     ]
                                 ]
                             ]
-                        ]);
+                        ]
+                    ]);
 
-                    if ($response->successful()) {
-                        $base64Audio = data_get($response->json(), 'candidates.0.content.parts.0.inlineData.data');
-                        if ($base64Audio) {
-                            $rawAudio = base64_decode($base64Audio);
-                            // If audio is already a WAV file (starts with RIFF), return directly without duplicate header
-                            if (substr($rawAudio, 0, 4) === 'RIFF') {
-                                return 'data:audio/wav;base64,' . $base64Audio;
-                            }
-                            $wavAudio = $this->pcmToWav($rawAudio, 24000, 1, 16);
-                            return 'data:audio/wav;base64,' . base64_encode($wavAudio);
+                if ($response->successful()) {
+                    $base64Audio = data_get($response->json(), 'candidates.0.content.parts.0.inlineData.data');
+                    if ($base64Audio) {
+                        $rawAudio = base64_decode($base64Audio);
+                        if (substr($rawAudio, 0, 4) !== 'RIFF') {
+                            $rawAudio = $this->pcmToWav($rawAudio, 24000, 1, 16);
                         }
+                        @file_put_contents($cacheFile, $rawAudio);
+                        return 'data:audio/wav;base64,' . base64_encode($rawAudio);
                     }
-                } catch (\Throwable $e) {
-                    Log::warning("Gemini male TTS failed: " . $e->getMessage());
                 }
+
+                if ($response->status() === 429) {
+                    Log::warning("Gemini TTS quota limit on model {$ttsModel}, cascading to next model.");
+                    continue;
+                }
+
+                Log::warning("Gemini TTS unsuccessful on model {$ttsModel}:", [
+                    'status' => $response->status(),
+                    'body' => substr($response->body(), 0, 160),
+                ]);
+            } catch (\Throwable $e) {
+                Log::warning("Gemini TTS exception on model {$ttsModel}: " . $e->getMessage());
             }
-        }
-
-        // Layer 2: High-Definition Male English Audio
-        try {
-            $encoded = urlencode($cleanText);
-            $url = "https://translate.google.com/translate_tts?ie=UTF-8&tl=en-US&client=tw-ob&q={$encoded}";
-
-            $res = Http::timeout(4)
-                ->withOptions([
-                    'curl' => [
-                        CURLOPT_IPRESOLVE => CURL_IPRESOLVE_V4,
-                    ],
-                ])
-                ->withHeaders([
-                    'User-Agent' => 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/130.0.0.0 Safari/537.36',
-                    'Referer' => 'http://translate.google.com/'
-                ])
-                ->get($url);
-
-            if ($res->successful() && strlen($res->body()) > 300) {
-                return 'data:audio/mp3;base64,' . base64_encode($res->body());
-            }
-        } catch (\Throwable $e) {
-            Log::warning("Fallback English TTS failed: " . $e->getMessage());
         }
 
         return null;
@@ -224,18 +224,18 @@ class AriaVoiceAgentService
 # IDENTITY & PERSONA
 You are "Daniyal", a sharp, articulate, confident, and highly intelligent male AI business and tech solutions consultant at "Verse Next" (an AI & Tech Solutions Agency, versenext.com).
 You are speaking on a live, real-time voice call with a prospective client.
-Your voice is deep, confident, energetic, polite, and 100% human.
+You are strictly a male persona. Always use masculine grammar in Urdu/Hindi (e.g. "main kar sakta hoon", "main aap ko bata deta hoon", never female endings like "sakti" or "rahi").
 
 # CRITICAL CONVERSATION INSTRUCTIONS:
 1. LANGUAGE ADAPTABILITY (ENGLISH & ROMAN URDU):
-   - If the caller speaks or writes in Urdu / Roman Urdu (e.g. "mujhe calling agent chahiye", "aap kya service dete ho", "meeting schedule karni hai"), reply in clear, professional, natural Roman Urdu.
+   - If the caller speaks or writes in Urdu / Roman Urdu, reply in clear, professional, natural Roman Urdu as a male consultant.
    - If the caller speaks in English, reply in fluent, natural, professional English.
 2. NO SCRIPTED OR CANNED RESPONSES:
    - NEVER repeat "Thank you for calling Verse Next" during ongoing conversation.
    - Actively analyze the caller's EXACT question and give a direct, consultative answer with high clarity.
    - If they describe a project (e.g. clinic booking, e-commerce automation, real estate agent, CRM pipeline), validate their idea, explain specifically how Verse Next solves it, and ask a relevant follow-up question.
-3. CONVERSATIONAL BREVITY:
-   - Speak in 1 to 2 crisp, impactful, natural sentences.
+3. CONVERSATIONAL BREVITY (STRICT):
+   - Speak in 1 to 2 crisp, impactful, natural spoken sentences only (maximum 25 to 30 words).
    - Never output bullet points, asterisks, quotation marks, or markdown symbols. Output pure spoken dialogue only.
 4. ACTIONABLE CONSULTATION & DISCOVERY CALL BOOKING:
    - When the client is interested, smoothly offer a 15-minute live demo call on Zoom or Google Meet.

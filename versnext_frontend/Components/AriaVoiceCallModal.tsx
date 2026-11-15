@@ -117,28 +117,45 @@ export default function AriaVoiceCallModal({ isOpen, onClose }: AriaVoiceCallMod
       const utterance = new SpeechSynthesisUtterance(text);
       currentUtteranceRef.current = utterance;
 
-      // Select natural male consultant voice
+      // Strict filter against any female voice signatures across OSes and browsers
+      const femaleKeywords = [
+        "female", "zira", "samantha", "karen", "victoria", "swara", "heera",
+        "kalpana", "geeta", "ayanda", "susan", "hazel", "catherine", "jenny",
+        "aria", "sonia", "priya", "ananya", "neerja", "yuna", "mei-jia", "eva",
+        "elena", "sabina", "cosimo", "alice", "fiona"
+      ];
+      const isFemale = (v: SpeechSynthesisVoice) => {
+        const n = v.name.toLowerCase();
+        return femaleKeywords.some((kw) => n.includes(kw));
+      };
+
+      // Select strictly male consultant voice
       const voices = window.speechSynthesis.getVoices();
+      const maleKeywords = ["guy", "ryan", "david", "mark", "george", "james", "alex", "daniel", "richard", "male", "madhav", "hemant", "prabhat"];
+      
       let selectedVoice = voices.find(
-        (v) =>
-          v.name.includes("Guy") ||
-          v.name.includes("Ryan") ||
-          v.name.includes("David") ||
-          v.name.includes("George") ||
-          v.name.includes("Male") ||
-          (language === "ur" && (v.lang.startsWith("ur") || v.lang.startsWith("hi")))
+        (v) => !isFemale(v) && maleKeywords.some((kw) => v.name.toLowerCase().includes(kw))
       );
 
+      // If Urdu/Hindi voice is requested, only pick if strictly male
+      if (!selectedVoice && language === "ur") {
+        selectedVoice = voices.find(
+          (v) => !isFemale(v) && (v.lang.startsWith("ur") || v.lang.startsWith("hi"))
+        );
+      }
+
+      // Fallback: any available non-female voice
       if (!selectedVoice && voices.length > 0) {
-        selectedVoice = voices[0];
+        selectedVoice = voices.find((v) => !isFemale(v));
       }
 
       if (selectedVoice) {
         utterance.voice = selectedVoice;
       }
 
-      utterance.pitch = 0.98;
-      utterance.rate = 1.14;
+      // Enforce professional male baritone pitch & natural pacing
+      utterance.pitch = 0.85;
+      utterance.rate = 1.02;
       utterance.lang = language === "ur" ? "ur-PK" : "en-US";
 
       utterance.onstart = () => {
@@ -293,14 +310,14 @@ export default function AriaVoiceCallModal({ isOpen, onClose }: AriaVoiceCallMod
           // Dynamic conversational fallback
           const isUrdu = language === "ur" || /(?:kya|kaise|mujhe|aap|chahiye|batao|meeting|waqt|urdu|baat|bolo)/i.test(userText);
           if (/(?:urdu|can you speak urdu|urdu me|urdu bolo)/i.test(userText)) {
-            responseReply = "Ji bilkul! Main Urdu me baat kar sakti hoon. Aap batayein main aaj aapki kya madad kar sakti hoon?";
+            responseReply = "Ji bilkul! Main Urdu me baat kar sakta hoon. Aap batayein main aaj aapki kya madad kar sakta hoon?";
           } else if (/(?:service|services|kya karte|web|ai|calling|app|software)/i.test(userText)) {
             responseReply = isUrdu
               ? "Hum custom AI voice agents, web development, SaaS platforms aur business automation build karte hain. Aap ko kis service ki detail chahiye?"
               : "We build custom AI voice calling agents, full-stack websites, and business automations. Which solution would you like to explore?";
           } else if (/(?:meeting|schedule|book|call|demo)/i.test(userText)) {
             responseReply = isUrdu
-              ? "Zaroor! Main aapki 15-minute discovery meeting arrange kar deti hoon. Aap ke liye kaunsa din aur time behtar rahega?"
+              ? "Zaroor! Main aapki 15-minute discovery meeting arrange kar deta hoon. Aap ke liye kaunsa din aur time behtar rahega?"
               : "I would be happy to set up a 15-minute discovery call with our technical team. What day and time works best for you?";
           } else if (/(?:price|pricing|cost|kitne|kharcha)/i.test(userText)) {
             responseReply = isUrdu
@@ -308,7 +325,7 @@ export default function AriaVoiceCallModal({ isOpen, onClose }: AriaVoiceCallMod
               : "Pricing depends on your project requirements. We provide a customized estimate on a quick discovery call.";
           } else {
             responseReply = isUrdu
-              ? "Ji bilkul, main aapki poori madad kar sakti hoon. Aap apne project ke baare mein thoda aur batayein?"
+              ? "Ji bilkul, main aapki poori madad kar sakta hoon. Aap apne project ke baare mein thoda aur batayein?"
               : "I'd love to help you with that! Could you tell me a little more about your requirements?";
           }
         }
@@ -320,7 +337,7 @@ export default function AriaVoiceCallModal({ isOpen, onClose }: AriaVoiceCallMod
         }
 
         const agentMsg: VoiceMessage = {
-          id: `aria-${Date.now()}`,
+          id: `daniyal-${Date.now()}`,
           role: "assistant",
           text: responseReply,
           timestamp: new Date().toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" }),
@@ -330,13 +347,13 @@ export default function AriaVoiceCallModal({ isOpen, onClose }: AriaVoiceCallMod
         playAriaVoice(audioUrl, responseReply);
       } catch (err) {
         if (!isCallActiveRef.current) return;
-        console.error("Error communicating with Aria voice agent:", err);
+        console.error("Error communicating with Daniyal voice agent:", err);
         const isUrdu = language === "ur" || /(?:kya|kaise|mujhe|aap|chahiye|batao|meeting)/i.test(userText);
         const fallback = isUrdu
-          ? "Ji main sun rahi hoon. Aap apne project ya meeting ke hawalay se kya janna chahte hain?"
+          ? "Ji main sun raha hoon. Aap apne project ya meeting ke hawalay se kya janna chahte hain?"
           : "I am listening. Could you please let me know your project details or preferred meeting time?";
         const agentMsg: VoiceMessage = {
-          id: `aria-${Date.now()}`,
+          id: `daniyal-${Date.now()}`,
           role: "assistant",
           text: fallback,
           timestamp: new Date().toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" }),
