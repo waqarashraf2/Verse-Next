@@ -137,7 +137,8 @@ jobs:
             -o ServerAliveInterval=15 \
             -o ServerAliveCountMax=2 \
             "$SSH_USER@$SSH_HOST" \
-            "cd '$BACKEND_PATH' &&
+            "export PATH=\"/opt/alt/php82/usr/bin:\$PATH\" &&
+             cd '$BACKEND_PATH' &&
              test -f .env &&
              composer install --no-dev --no-interaction --prefer-dist --optimize-autoloader &&
              php artisan migrate --force &&
